@@ -2,7 +2,7 @@ import 'package:event_booking_app_ui/screens/signin_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
-  SplashScreen({super.key});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Initialize animation controller for fade effect
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
 
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
         if (mounted) {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
+              pageBuilder: (context, animation, secondaryAnimation) => const SignInScreen(),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 return FadeTransition(opacity: animation, child: child);
               },
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: FadeTransition(
         opacity: _animation,
-        child: Stack(
+        child: const Stack(
           children: <Widget>[
             Align(
               alignment: Alignment.topRight,

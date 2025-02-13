@@ -12,11 +12,11 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _fullNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
-  TextEditingController _mobileNumberController = TextEditingController(); // For mobile number
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController(); // For mobile number
 
   String? _gender; // "Male", "Female", or "Other"
   bool _isStudent = false;
@@ -45,20 +45,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 50),
-                Text("Sign Up", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
-                SizedBox(height: 20),
+                const SizedBox(height: 50),
+                const Text("Sign Up", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 20),
 
                 // Full Name
                 TextFormField(
                   controller: _fullNameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Full Name",
                     border: OutlineInputBorder(),
                   ),
@@ -67,12 +67,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 // Email
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
@@ -84,12 +84,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 // Mobile Number
                 TextFormField(
                   controller: _mobileNumberController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Mobile Number",
                     border: OutlineInputBorder(),
                   ),
@@ -102,13 +102,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 // Password
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Password",
                     border: OutlineInputBorder(),
                   ),
@@ -118,13 +118,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 // Confirm Password
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Confirm Password",
                     border: OutlineInputBorder(),
                   ),
@@ -134,12 +134,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Gender Selection (Dropdown)
                 DropdownButtonFormField<String>(
                   value: _gender,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Gender",
                     border: OutlineInputBorder(),
                   ),
@@ -156,12 +156,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                   validator: (value) => value == null ? "Please select a gender" : null,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 // User Role Selection (Checkboxes)
-                Text("Sign up as:"),
+                const Text("Sign up as:"),
                 CheckboxListTile(
-                  title: Text("Student"),
+                  title: const Text("Student"),
                   value: _isStudent,
                   onChanged: (bool? value) {
                     setState(() {
@@ -171,7 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                 ),
                 CheckboxListTile(
-                  title: Text("Faculty Member"),
+                  title: const Text("Faculty Member"),
                   value: _isFacultyMember,
                   onChanged: (bool? value) {
                     setState(() {
@@ -180,16 +180,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     });
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Sign Up Button
                 GestureDetector(
                   onTap: _signUp,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     decoration: BoxDecoration(
                       color: MyTheme.primaryColor,
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                      borderRadius: const BorderRadius.all(Radius.circular(18)),
                     ),
                     child: Center(
                       child: Text(
@@ -200,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "393421467591",
+    "project_id": "event-hub-509cd",
+    "storage_bucket": "event-hub-509cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393421467591:android:b66fa5a4801d3892fc33e2",
+        "android_client_info": {
+          "package_name": "com.example.event_booking_app_ui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGVV1Ij_lcX0yRBGd9pBM6bFSQq-VhFTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393421467591:android:78dbab74a65d6ad8fc33e2",
+        "android_client_info": {
+          "package_name": "com.example.event_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGVV1Ij_lcX0yRBGd9pBM6bFSQq-VhFTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -35,11 +35,11 @@ class _SignInScreenState extends State<SignInScreen> {
       if (_validateEmail(email) && _validatePassword(password)) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Invalid email or password. Please try again.'),
             backgroundColor: Colors.red,
           ),
@@ -54,23 +54,23 @@ class _SignInScreenState extends State<SignInScreen> {
       body: Stack(
         children: [
           // Background Images
-          Align(
+          const Align(
             alignment: Alignment.topLeft,
             child: Image(image: AssetImage('assets/backgrounds/signin_top_left.png')),
           ),
-          Align(
+          const Align(
             alignment: Alignment.topRight,
             child: Image(image: AssetImage('assets/backgrounds/signin_top_right.png')),
           ),
-          Align(
+          const Align(
             alignment: Alignment.centerRight,
             child: Image(image: AssetImage('assets/backgrounds/signin_center_right.png')),
           ),
-          Align(
+          const Align(
             alignment: Alignment.bottomLeft,
             child: Image(image: AssetImage('assets/backgrounds/signin_bottom_left.png')),
           ),
-          Align(
+          const Align(
             alignment: Alignment.bottomRight,
             child: Image(image: AssetImage('assets/backgrounds/signin_bottom_right.png')),
           ),
@@ -87,26 +87,26 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 54),
-                          Center(child: Image(image: AssetImage('assets/images/logo.png'))),
-                          SizedBox(height: 12),
-                          Center(
+                          const SizedBox(height: 54),
+                          const Center(child: Image(image: AssetImage('assets/images/logo.png'))),
+                          const SizedBox(height: 12),
+                          const Center(
                             child: Text(
                               'EventHub',
                               style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                             ),
                           ),
-                          SizedBox(height: 12),
-                          Text(
+                          const SizedBox(height: 12),
+                          const Text(
                             'Sign In',
                             style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                           ),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
                           // Email Field
                           TextFormField(
                             controller: _emailController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               prefixIcon: Padding(
                                 padding: EdgeInsets.all(12),
                                 child: Image(image: AssetImage('assets/icons/mail.png')),
@@ -126,14 +126,14 @@ class _SignInScreenState extends State<SignInScreen> {
                               return null;
                             },
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
 
                           // Password Field with Toggle Visibility
                           TextFormField(
                             controller: _passwordController,
                             obscureText: !_isPasswordVisible,
                             decoration: InputDecoration(
-                              prefixIcon: Padding(
+                              prefixIcon: const Padding(
                                 padding: EdgeInsets.all(12),
                                 child: Image(image: AssetImage('assets/icons/locked.png')),
                               ),
@@ -148,7 +148,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   });
                                 },
                               ),
-                              border: OutlineInputBorder(
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
                               ),
                               hintText: 'Your Password',
@@ -163,7 +163,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               return null;
                             },
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
 
                           // Remember Me & Forgot Password
                           Row(
@@ -176,29 +176,29 @@ class _SignInScreenState extends State<SignInScreen> {
                                   });
                                 },
                               ),
-                              Text('Remember Me'),
-                              Spacer(),
+                              const Text('Remember Me'),
+                              const Spacer(),
                               TextButton(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
+                                    MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
                                   );
                                 },
-                                child: Text('Forgot Password?'),
+                                child: const Text('Forgot Password?'),
                               ),
                             ],
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
 
                           // Sign In Button
                           GestureDetector(
                             onTap: _signIn,
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               decoration: BoxDecoration(
                                 color: MyTheme.primaryColor,
-                                borderRadius: BorderRadius.all(Radius.circular(18)),
+                                borderRadius: const BorderRadius.all(Radius.circular(18)),
                               ),
                               child: Center(
                                 child: Text(
@@ -208,11 +208,11 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 26),
+                          const SizedBox(height: 26),
 
                           // OR Divider
                           Center(child: Text('OR', style: TextStyle(fontSize: 18, color: MyTheme.grey))),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
 
                           // Social Login Buttons
                           Center(
@@ -221,7 +221,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ElevatedButton.icon(
                                   onPressed: () {},
                                   icon: Image.asset('assets/icons/google.png', width: 24),
-                                  label: Text('Login with Google'),
+                                  label: const Text('Login with Google'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
@@ -230,11 +230,11 @@ class _SignInScreenState extends State<SignInScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 ElevatedButton.icon(
                                   onPressed: () {},
                                   icon: Image.asset('assets/icons/facebook.png', width: 24),
-                                  label: Text('Login with Facebook'),
+                                  label: const Text('Login with Facebook'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
@@ -246,19 +246,19 @@ class _SignInScreenState extends State<SignInScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
                           // Sign Up Prompt
                           Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Don't have an account?", style: TextStyle(fontSize: 16)),
+                                const Text("Don't have an account?", style: TextStyle(fontSize: 16)),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
                                     );
                                   },
                                   child: Text(
