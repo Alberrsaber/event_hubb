@@ -1,5 +1,6 @@
+
 import 'package:flutter/material.dart';
-import 'splash_screen.dart'; 
+import './screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(), 
+      title: 'Event Booking App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: SplashScreen(), // Start with the SplashScreen
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -1,4 +1,4 @@
-package com.example.event_hub
+package com.example.event_booking_app_ui
 
 import io.flutter.embedding.android.FlutterActivity
 

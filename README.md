@@ -1,4 +1,4 @@
-# event_hub
+# event_booking_app_ui
 
 A new Flutter project.
 

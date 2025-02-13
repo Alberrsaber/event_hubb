@@ -1,6 +1,6 @@
 {
-    "name": "event_hub",
-    "short_name": "event_hub",
+    "name": "event_booking_app_ui",
+    "short_name": "event_booking_app_ui",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
