@@ -1,8 +1,11 @@
+import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:event_booking_app_ui/screens/signup_screen.dart';
-import 'package:event_booking_app_ui/screens/resset_password_screen.dart'; 
+import 'package:event_booking_app_ui/screens/resset_password_screen.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -12,40 +15,20 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  var controller = Get.put(AuthController());
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
   bool _isPasswordVisible = false; // Toggles password visibility
 
   bool _validateEmail(String email) {
-    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(email);
+    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+        .hasMatch(email);
   }
 
   bool _validatePassword(String password) {
     return password.length >= 6;
-  }
-
-  void _signIn() {
-    if (_formKey.currentState!.validate()) {
-      String email = _emailController.text.trim();
-      String password = _passwordController.text.trim();
-
-      if (_validateEmail(email) && _validatePassword(password)) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid email or password. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -56,30 +39,39 @@ class _SignInScreenState extends State<SignInScreen> {
           // Background Images
           const Align(
             alignment: Alignment.topLeft,
-            child: Image(image: AssetImage('assets/backgrounds/signin_top_left.png')),
+            child: Image(
+                image: AssetImage('assets/backgrounds/signin_top_left.png')),
           ),
           const Align(
             alignment: Alignment.topRight,
-            child: Image(image: AssetImage('assets/backgrounds/signin_top_right.png')),
+            child: Image(
+                image: AssetImage('assets/backgrounds/signin_top_right.png')),
           ),
           const Align(
             alignment: Alignment.centerRight,
-            child: Image(image: AssetImage('assets/backgrounds/signin_center_right.png')),
+            child: Image(
+                image:
+                    AssetImage('assets/backgrounds/signin_center_right.png')),
           ),
           const Align(
             alignment: Alignment.bottomLeft,
-            child: Image(image: AssetImage('assets/backgrounds/signin_bottom_left.png')),
+            child: Image(
+                image: AssetImage('assets/backgrounds/signin_bottom_left.png')),
           ),
           const Align(
             alignment: Alignment.bottomRight,
-            child: Image(image: AssetImage('assets/backgrounds/signin_bottom_right.png')),
+            child: Image(
+                image:
+                    AssetImage('assets/backgrounds/signin_bottom_right.png')),
           ),
 
           LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints viewportConstraints) {
+            builder:
+                (BuildContext context, BoxConstraints viewportConstraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                  constraints:
+                      BoxConstraints(minHeight: viewportConstraints.maxHeight),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Form(
@@ -88,44 +80,48 @@ class _SignInScreenState extends State<SignInScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 54),
-                          const Center(child: Image(image: AssetImage('assets/images/logo.png'))),
+                          const Center(
+                              child: Image(
+                                  image: AssetImage('assets/images/logo.png'))),
                           const SizedBox(height: 12),
                           const Center(
                             child: Text(
                               'EventHub',
-                              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  fontSize: 28, fontWeight: FontWeight.w500),
                             ),
                           ),
                           const SizedBox(height: 12),
                           const Text(
                             'Sign In',
-                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                fontSize: 28, fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(height: 12),
 
                           // Email Field
                           TextFormField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                              prefixIcon: Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Image(image: AssetImage('assets/icons/mail.png')),
+                              controller: _emailController,
+                              decoration: const InputDecoration(
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Image(
+                                      image:
+                                          AssetImage('assets/icons/mail.png')),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
+                                ),
+                                hintText: 'abc@gmail.com',
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                              ),
-                              hintText: 'abc@gmail.com',
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!_validateEmail(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
-                            },
-                          ),
+                              validator: (value) {
+                                if (_emailController.text.isEmpty ) {
+                                  return "Email is required ";
+                                } else {
+                                  return null;
+                                }
+                              }),
                           const SizedBox(height: 10),
 
                           // Password Field with Toggle Visibility
@@ -135,11 +131,15 @@ class _SignInScreenState extends State<SignInScreen> {
                             decoration: InputDecoration(
                               prefixIcon: const Padding(
                                 padding: EdgeInsets.all(12),
-                                child: Image(image: AssetImage('assets/icons/locked.png')),
+                                child: Image(
+                                    image:
+                                        AssetImage('assets/icons/locked.png')),
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                   color: Colors.grey,
                                 ),
                                 onPressed: () {
@@ -149,18 +149,17 @@ class _SignInScreenState extends State<SignInScreen> {
                                 },
                               ),
                               border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12)),
                               ),
                               hintText: 'Your Password',
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                              if (_passwordController.text.isEmpty) {
+                                return "Password is required";
+                              } else {
+                                return null;
                               }
-                              if (!_validatePassword(value)) {
-                                return 'Password must be at least 6 characters';
-                              }
-                              return null;
                             },
                           ),
                           const SizedBox(height: 8),
@@ -182,7 +181,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ResetPasswordScreen()),
                                   );
                                 },
                                 child: const Text('Forgot Password?'),
@@ -193,17 +194,27 @@ class _SignInScreenState extends State<SignInScreen> {
 
                           // Sign In Button
                           GestureDetector(
-                            onTap: _signIn,
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                controller.SignIn(
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  context,
+                                );
+                              }
+                            },
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               decoration: BoxDecoration(
                                 color: MyTheme.primaryColor,
-                                borderRadius: const BorderRadius.all(Radius.circular(18)),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(18)),
                               ),
                               child: Center(
                                 child: Text(
                                   'SIGN IN',
-                                  style: TextStyle(color: MyTheme.white, fontSize: 16),
+                                  style: TextStyle(
+                                      color: MyTheme.white, fontSize: 16),
                                 ),
                               ),
                             ),
@@ -211,7 +222,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           const SizedBox(height: 26),
 
                           // OR Divider
-                          Center(child: Text('OR', style: TextStyle(fontSize: 18, color: MyTheme.grey))),
+                          Center(
+                              child: Text('OR',
+                                  style: TextStyle(
+                                      fontSize: 18, color: MyTheme.grey))),
                           const SizedBox(height: 8),
 
                           // Social Login Buttons
@@ -220,7 +234,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               children: [
                                 ElevatedButton.icon(
                                   onPressed: () {},
-                                  icon: Image.asset('assets/icons/google.png', width: 24),
+                                  icon: Image.asset('assets/icons/google.png',
+                                      width: 24),
                                   label: const Text('Login with Google'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
@@ -233,7 +248,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 const SizedBox(height: 8),
                                 ElevatedButton.icon(
                                   onPressed: () {},
-                                  icon: Image.asset('assets/icons/facebook.png', width: 24),
+                                  icon: Image.asset('assets/icons/facebook.png',
+                                      width: 24),
                                   label: const Text('Login with Facebook'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
@@ -253,17 +269,23 @@ class _SignInScreenState extends State<SignInScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Don't have an account?", style: TextStyle(fontSize: 16)),
+                                const Text("Don't have an account?",
+                                    style: TextStyle(fontSize: 16)),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SignUpScreen()),
                                     );
                                   },
                                   child: Text(
                                     "Sign up",
-                                    style: TextStyle(color: MyTheme.primaryColor, fontSize: 16, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: MyTheme.primaryColor,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],

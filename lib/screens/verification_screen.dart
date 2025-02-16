@@ -1,15 +1,15 @@
 import 'dart:async';
+import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class VerificationScreen extends StatefulWidget {
-  final String userType;
   final String email;
 
   const VerificationScreen({
     super.key,
-    required this.userType,
     required this.email,
   });
 
@@ -21,6 +21,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   int _secondsRemaining = 60;
   late Timer _timer;
   bool _isResendEnabled = false;
+  var controller = Get.put(AuthController());
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void _resendCode() {
     if (_isResendEnabled) {
       _startTimer();
+      controller.SendEmailVerfication();
       // TODO: Implement resend code logic
     }
   }
@@ -86,7 +88,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
             child: Image.asset('assets/backgrounds/signin_bottom_right.png'),
           ),
           LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints viewportConstraints) {
+            builder:
+                (BuildContext context, BoxConstraints viewportConstraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
@@ -112,7 +115,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text('We’ve sent you a verification code to your email:'),
+                        const Text(
+                            'We’ve sent you a verification code to your email:'),
                         Text(
                           widget.email,
                           style: const TextStyle(
@@ -129,14 +133,19 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                 width: 50,
                                 child: TextField(
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                                  style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w700),
                                   keyboardType: TextInputType.number,
                                   maxLength: 1,
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   decoration: const InputDecoration(
                                     counterText: '',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(12)),
                                     ),
                                     hintText: '_',
                                   ),
@@ -182,15 +191,20 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           children: [
                             Text(
                               'Re-send code in ',
-                              style: TextStyle(fontSize: 18, color: MyTheme.grey),
+                              style:
+                                  TextStyle(fontSize: 18, color: MyTheme.grey),
                             ),
                             GestureDetector(
                               onTap: _isResendEnabled ? _resendCode : null,
                               child: Text(
-                                _isResendEnabled ? 'Resend Code' : '$_secondsRemaining sec',
+                                _isResendEnabled
+                                    ? 'Resend Code'
+                                    : '$_secondsRemaining sec',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: _isResendEnabled ? MyTheme.primaryColor : MyTheme.grey,
+                                  color: _isResendEnabled
+                                      ? MyTheme.primaryColor
+                                      : MyTheme.grey,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

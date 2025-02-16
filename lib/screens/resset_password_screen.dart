@@ -1,5 +1,8 @@
+import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
+import 'package:event_booking_app_ui/screens/signin_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'verification_screen.dart'; // Import the VerificationScreen
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -12,17 +15,20 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  var controller = Get.put(AuthController());
 
   bool _validateEmail(String email) {
-    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(email);
+    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+        .hasMatch(email);
   }
 
   void _sendResetLink() {
     if (_formKey.currentState!.validate()) {
+      controller.resetPassword(_emailController.text,context);
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => VerificationScreen(email: _emailController.text.trim(), userType: '',),
+          builder: (context) => SignInScreen()
         ),
       );
     }
@@ -34,17 +40,29 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       body: Stack(
         children: [
           // Background Images
-          Align(alignment: Alignment.topLeft, child: Image.asset('assets/backgrounds/signin_top_left.png')),
-          Align(alignment: Alignment.topRight, child: Image.asset('assets/backgrounds/signin_top_right.png')),
-          Align(alignment: Alignment.centerRight, child: Image.asset('assets/backgrounds/signin_center_right.png')),
-          Align(alignment: Alignment.bottomLeft, child: Image.asset('assets/backgrounds/signin_bottom_left.png')),
-          Align(alignment: Alignment.bottomRight, child: Image.asset('assets/backgrounds/signin_bottom_right.png')),
+          Align(
+              alignment: Alignment.topLeft,
+              child: Image.asset('assets/backgrounds/signin_top_left.png')),
+          Align(
+              alignment: Alignment.topRight,
+              child: Image.asset('assets/backgrounds/signin_top_right.png')),
+          Align(
+              alignment: Alignment.centerRight,
+              child: Image.asset('assets/backgrounds/signin_center_right.png')),
+          Align(
+              alignment: Alignment.bottomLeft,
+              child: Image.asset('assets/backgrounds/signin_bottom_left.png')),
+          Align(
+              alignment: Alignment.bottomRight,
+              child: Image.asset('assets/backgrounds/signin_bottom_right.png')),
 
           LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints viewportConstraints) {
+            builder:
+                (BuildContext context, BoxConstraints viewportConstraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                  constraints:
+                      BoxConstraints(minHeight: viewportConstraints.maxHeight),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Form(
@@ -65,7 +83,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           // Title
                           const Text(
                             'Reset Password',
-                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                fontSize: 28, fontWeight: FontWeight.w500),
                           ),
 
                           const SizedBox(height: 16),
@@ -84,7 +103,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12)),
                               ),
                               hintText: 'abc@email.com',
                               prefixIcon: Padding(
@@ -93,13 +113,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!_validateEmail(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
+                              return controller.validateEmail(value);
                             },
                           ),
 
@@ -110,11 +124,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             child: GestureDetector(
                               onTap: _sendResetLink,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   color: MyTheme.primaryColor,
-                                  borderRadius: const BorderRadius.all(Radius.circular(18)),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(18)),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

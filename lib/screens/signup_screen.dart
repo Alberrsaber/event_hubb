@@ -1,4 +1,7 @@
+import 'package:event_booking_app_ui/controllers/auth_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'verification_screen.dart'; // Import VerificationScreen
 import 'package:event_booking_app_ui/my_theme.dart'; // Import MyTheme
 
@@ -11,30 +14,36 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  var controller = Get.put(AuthController());
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _mobileNumberController = TextEditingController(); // For mobile number
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _mobileNumberController =
+      TextEditingController(); // For mobile number
 
   String? _gender; // "Male", "Female", or "Other"
   bool _isStudent = false;
   bool _isFacultyMember = false;
-
   void _signUp() {
-    if (_formKey.currentState!.validate() && _gender != null && (_isStudent || _isFacultyMember)) {
+    if (_formKey.currentState!.validate() &&
+        _gender != null &&
+        (_isStudent || _isFacultyMember)) {
       String userType = _isStudent ? "Student" : "Faculty Member";
+      controller.SignUp(_fullNameController.text,
+          _emailController.text, _passwordController.text,_mobileNumberController.text,userType, context);
+
       // Navigate to Verification Screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerificationScreen(
-            email: _emailController.text,
-            userType: userType,
-          ),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => VerificationScreen(
+      //       email: _emailController.text,
+      //       userType: userType,
+      //     ),
+      //   ),
+      // );
     } else {
       setState(() {}); // Update UI for error message
     }
@@ -52,7 +61,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 50),
-                const Text("Sign Up", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
+                const Text("Sign Up",
+                    style:
+                        TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 20),
 
                 // Full Name
@@ -63,7 +74,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "This field cannot be empty";
+                    if (value == null || value.isEmpty)
+                      return "This field cannot be empty";
                     return null;
                   },
                 ),
@@ -77,11 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please enter your email";
-                    if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}\$').hasMatch(value)) {
-                      return "Enter a valid email";
-                    }
-                    return null;
+                    return controller.validateEmail(value);
                   },
                 ),
                 const SizedBox(height: 10),
@@ -93,13 +101,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     labelText: "Mobile Number",
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType: TextInputType.phone, // Set keyboard type to phone
+                  keyboardType:
+                      TextInputType.phone, // Set keyboard type to phone
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please enter your mobile number";
-                    if (!RegExp(r'^[0-9]{10}\$').hasMatch(value)) {
-                      return "Enter a valid 10-digit mobile number";
-                    }
-                    return null;
+                    return controller.validatePhoneNumber(value);
                   },
                 ),
                 const SizedBox(height: 10),
@@ -113,8 +118,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please enter a password";
-                    if (value.length < 6) return "Password must be at least 6 characters";
+                    if (value == null || value.isEmpty)
+                      return "Please enter a password";
+                    if (value.length < 6)
+                      return "Password must be at least 6 characters";
                     return null;
                   },
                 ),
@@ -129,8 +136,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please confirm your password";
-                    if (value != _passwordController.text) return "Passwords do not match";
+                    if (value == null || value.isEmpty)
+                      return "Please confirm your password";
+                    if (value != _passwordController.text)
+                      return "Passwords do not match";
                     return null;
                   },
                 ),
@@ -154,7 +163,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _gender = value;
                     });
                   },
-                  validator: (value) => value == null ? "Please select a gender" : null,
+                  validator: (value) =>
+                      value == null ? "Please select a gender" : null,
                 ),
                 const SizedBox(height: 10),
 

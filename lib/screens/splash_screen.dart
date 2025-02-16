@@ -31,14 +31,15 @@ class _SplashScreenState extends State<SplashScreen>
       if (status == AnimationStatus.completed) {
         // Navigate to SignInScreen after animation completes
         if (mounted) {
-          Navigator.of(context).pushReplacement(
+            Navigator.of(context).pushReplacement(
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const SignInScreen(),
+              pageBuilder: (context, animation, secondaryAnimation) =>  const SignInScreen(),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 return FadeTransition(opacity: animation, child: child);
               },
             ),
           );
+          
         }
       }
     });
