@@ -137,8 +137,8 @@ class AuthController extends GetxController {
           .doc(FirebaseAuth.instance.currentUser!.uid);
       print(userName);
       await store.set({
-        'userName': userName, // John Doe
-        'userEmail': userEmail, // Stokes and Sons
+        'userName': userName, 
+        'userEmail': userEmail, 
         'userPassword': userPassword,
         'userPhone': userPhone,
         'userQualification': userQualification,
@@ -224,7 +224,7 @@ class AuthController extends GetxController {
     final phoneRegExp = RegExp(r'^\d{11}$');
 
     if (!phoneRegExp.hasMatch(value)) {
-      return 'Invalid phone number format (10 digits required).';
+      return 'Invalid phone number format (11 digits required).';
     }
 
     return null;
