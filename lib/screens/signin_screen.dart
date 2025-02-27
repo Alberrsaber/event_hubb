@@ -1,7 +1,6 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:event_booking_app_ui/screens/signup_screen.dart';
 import 'package:event_booking_app_ui/screens/resset_password_screen.dart';
 import 'package:get/get.dart';
@@ -21,15 +20,6 @@ class _SignInScreenState extends State<SignInScreen> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
   bool _isPasswordVisible = false; // Toggles password visibility
-
-  bool _validateEmail(String email) {
-    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-        .hasMatch(email);
-  }
-
-  bool _validatePassword(String password) {
-    return password.length >= 6;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +106,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 hintText: 'abc@gmail.com',
                               ),
                               validator: (value) {
-                                if (_emailController.text.isEmpty ) {
+                                if (_emailController.text.isEmpty) {
                                   return "Email is required ";
                                 } else {
                                   return null;
@@ -233,7 +223,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             child: Column(
                               children: [
                                 ElevatedButton.icon(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    controller.signInWithGoogle(context);
+                                  },
                                   icon: Image.asset('assets/icons/google.png',
                                       width: 24),
                                   label: const Text('Login with Google'),

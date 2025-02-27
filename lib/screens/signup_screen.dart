@@ -1,4 +1,6 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
+import 'package:event_booking_app_ui/models/event_model.dart';
+import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,9 +22,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  final TextEditingController _mobileNumberController =
-      TextEditingController(); // For mobile number
-
+  final TextEditingController _mobileNumberController = TextEditingController();
+  // For mobile number
   String? _gender; // "Male", "Female", or "Other"
   bool _isStudent = false;
   bool _isFacultyMember = false;
@@ -31,19 +32,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _gender != null &&
         (_isStudent || _isFacultyMember)) {
       String userType = _isStudent ? "Student" : "Faculty Member";
-      controller.SignUp(_fullNameController.text,
-          _emailController.text, _passwordController.text,_mobileNumberController.text,userType, context);
-
-      // Navigate to Verification Screen
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => VerificationScreen(
-      //       email: _emailController.text,
-      //       userType: userType,
-      //     ),
-      //   ),
-      // );
+      controller.SignUp(
+          _fullNameController.text,
+          _emailController.text,
+          _passwordController.text,
+          _mobileNumberController.text,
+          userType,
+          context);
     } else {
       setState(() {}); // Update UI for error message
     }

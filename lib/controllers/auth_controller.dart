@@ -153,17 +153,24 @@ class AuthController extends GetxController {
 
 // sign in with google
   Future signInWithGoogle(context) async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) {
-      return;
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        return;
+      }
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+    } catch (e) {
+      print(e);
     }
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    Get.to(() => const HomeScreen());
   }
 
 //validation
