@@ -10,7 +10,7 @@ class VerificationScreen extends StatefulWidget {
 
   const VerificationScreen({
     super.key,
-    required this.email,
+    required this.email, required String userType,
   });
 
   @override

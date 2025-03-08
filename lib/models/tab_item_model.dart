@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
 class TabItemModel {
-  String image;
-  String title;
-  Color backgroundColor;
+  final String title;
+  final Color backgroundColor;
 
   TabItemModel({
-    required this.image,
     required this.title,
-    required this.backgroundColor,
+    required this.backgroundColor, // 🔥 Make sure backgroundColor is required
   });
 }
