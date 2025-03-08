@@ -1,16 +1,15 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '2.1.10' // Ensure latest Kotlin version
     repositories {
         google()
         mavenCentral()
+        jcenter() // Note: jcenter() is deprecated but may be needed for some dependencies
     }
-
     dependencies {
-        // START: FlutterFire Configuration
-        classpath 'com.google.gms:google-services:4.3.15'
-        // END: FlutterFire Configuration
-        classpath 'com.android.tools.build:gradle:7.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.android.tools.build:gradle:8.2.2" // Latest AGP version
+        classpath "com.google.gms:google-services:4.4.2" // Firebase services
     }
 }
 
@@ -21,12 +20,12 @@ allprojects {
     }
 }
 
-rootProject.buildDir = '../build'
+rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
-    project.evaluationDependsOn(':app')
+    project.evaluationDependsOn(":app")
 }
 
 tasks.register("clean", Delete) {

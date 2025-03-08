@@ -25,7 +25,7 @@ class AuthController extends GetxController {
               dialogType: DialogType.success,
               animType: AnimType.rightSlide,
               desc:
-                  'ًSign Up Successful , We have sent email verfication to this email ${userEmail}, please check your email   ')
+                  'Sign Up Successful, We have sent an email verification to this email ${userEmail}, please check your email.')
           .show()
           .then((value) {
         Navigator.pushReplacement(
@@ -40,7 +40,6 @@ class AuthController extends GetxController {
         userPhone,
         userQualification,
       );
-      SignOut();
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -51,27 +50,22 @@ class AuthController extends GetxController {
     }
   }
 
-// Sign In Mehtod
-
-  Future SignIn(
-    email,
-    password,
-    context,
-  ) async {
+// Sign In Method
+  Future SignIn(email, password, context) async {
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       if (FirebaseAuth.instance.currentUser!.emailVerified) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => VerificationScreen(
-                    email: email,
+                    email: email, userType: '',
                   )),
         );
       }
@@ -89,11 +83,13 @@ class AuthController extends GetxController {
   Future SignOut() async {
     try {
       GoogleSignIn googleSignIn = GoogleSignIn();
-      googleSignIn.disconnect();
+      if (await googleSignIn.isSignedIn()) {
+        await googleSignIn.signOut();
+      }
       await FirebaseAuth.instance.signOut();
       Get.offAll(() => SignInScreen());
     } catch (e) {
-      print(e);
+      print("SignOut Error: $e");
     }
   }
 
@@ -111,7 +107,7 @@ class AuthController extends GetxController {
               dialogType: DialogType.success,
               animType: AnimType.rightSlide,
               desc:
-                  'ً We have sent email to reset your password , please check your email and login   ')
+                  'We have sent an email to reset your password. Please check your email and login.')
           .show()
           .then((value) {
         Navigator.pushReplacement(
@@ -135,7 +131,6 @@ class AuthController extends GetxController {
       DocumentReference store = FirebaseFirestore.instance
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid);
-      print(userName);
       await store.set({
         'userName': userName, 
         'userEmail': userEmail, 
@@ -163,7 +158,7 @@ class AuthController extends GetxController {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-    Get.to(() => const HomeScreen());
+    Get.to(() => HomeScreen());
   }
 
 //validation
@@ -171,15 +166,11 @@ class AuthController extends GetxController {
     if (value == null || value.isEmpty) {
       return 'Email is required.';
     }
-
-    // Regular expression for email validation
     final emailRegExp = RegExp(
         r'^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$');
-
     if (!emailRegExp.hasMatch(value)) {
       return 'Invalid email address.';
     }
-
     return null;
   }
 
@@ -187,31 +178,21 @@ class AuthController extends GetxController {
     if (value == null || value.isEmpty) {
       return 'Password is required.';
     }
-
-    // Check for minimum password length
     if (value.length < 6) {
       return 'Password must be at least 6 characters long.';
     }
-
-    // Check for uppercase letters
     if (!value.contains(RegExp(r'[A-Z]'))) {
       return 'Password must contain at least one uppercase letter.';
     }
-    // Check for lowercase letters
     if (!value.contains(RegExp(r'[a-z]'))) {
       return 'Password must contain at least one lowercase letter.';
     }
-
-    // Check for numbers
     if (!value.contains(RegExp(r'[0-9]'))) {
       return 'Password must contain at least one number.';
     }
-
-    // Check for special characters
     if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       return 'Password must contain at least one special character.';
     }
-
     return null;
   }
 
@@ -219,14 +200,10 @@ class AuthController extends GetxController {
     if (value == null || value.isEmpty) {
       return 'Phone number is required.';
     }
-
-    // Regular expression for phone number validation (assuming a 10-digit US phone number format)
     final phoneRegExp = RegExp(r'^\d{11}$');
-
     if (!phoneRegExp.hasMatch(value)) {
       return 'Invalid phone number format (11 digits required).';
     }
-
     return null;
   }
 }

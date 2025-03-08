@@ -1,11 +1,12 @@
-
 import 'package:event_booking_app_ui/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import './screens/splash_screen.dart';
+import './screens/signin_screen.dart';
+import './screens/home_screen.dart';
 
 void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -22,8 +23,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreen(), // Start with the SplashScreen
       debugShowCheckedModeBanner: false,
+      initialRoute: '/', // Define the initial screen
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => SignInScreen(),
+        '/home': (context) => HomeScreen(),
+      },
     );
   }
 }

@@ -1,9 +1,8 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'verification_screen.dart'; // Import VerificationScreen
-import 'package:event_booking_app_ui/my_theme.dart'; // Import MyTheme
+import 'verification_screen.dart';
+import 'package:event_booking_app_ui/my_theme.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -15,37 +14,49 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   var controller = Get.put(AuthController());
+
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  final TextEditingController _mobileNumberController =
-      TextEditingController(); // For mobile number
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController();
 
-  String? _gender; // "Male", "Female", or "Other"
-  bool _isStudent = false;
-  bool _isFacultyMember = false;
-  void _signUp() {
-    if (_formKey.currentState!.validate() &&
-        _gender != null &&
-        (_isStudent || _isFacultyMember)) {
-      String userType = _isStudent ? "Student" : "Faculty Member";
-      controller.SignUp(_fullNameController.text,
-          _emailController.text, _passwordController.text,_mobileNumberController.text,userType, context);
+  String? _gender;
+  String? _userType; // "Student" or "Faculty Member"
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
-      // Navigate to Verification Screen
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => VerificationScreen(
-      //       email: _emailController.text,
-      //       userType: userType,
-      //     ),
-      //   ),
-      // );
+  void _signUp() async {
+    if (_formKey.currentState!.validate() && _gender != null && _userType != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await controller.SignUp(
+        _fullNameController.text,
+        _emailController.text,
+        _passwordController.text,
+        _mobileNumberController.text,
+        _userType!,
+        context,
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerificationScreen(
+            email: _emailController.text,
+            userType: _userType!,
+          ),
+        ),
+      );
     } else {
-      setState(() {}); // Update UI for error message
+      setState(() {});
     }
   }
 
@@ -61,98 +72,93 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 50),
-                const Text("Sign Up",
-                    style:
-                        TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
+                const Text("Sign Up", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 20),
 
-                // Full Name
                 TextFormField(
                   controller: _fullNameController,
                   decoration: const InputDecoration(
                     labelText: "Full Name",
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "This field cannot be empty";
-                    return null;
-                  },
+                  validator: (value) => value == null || value.isEmpty ? "This field cannot be empty" : null,
                 ),
                 const SizedBox(height: 10),
 
-                // Email
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) {
-                    return controller.validateEmail(value);
-                  },
+                  validator: (value) => controller.validateEmail(value),
                 ),
                 const SizedBox(height: 10),
 
-                // Mobile Number
                 TextFormField(
                   controller: _mobileNumberController,
                   decoration: const InputDecoration(
                     labelText: "Mobile Number",
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType:
-                      TextInputType.phone, // Set keyboard type to phone
-                  validator: (value) {
-                    return controller.validatePhoneNumber(value);
-                  },
+                  keyboardType: TextInputType.phone,
+                  validator: (value) => controller.validatePhoneNumber(value),
                 ),
                 const SizedBox(height: 10),
 
-                // Password
                 TextFormField(
                   controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
                     labelText: "Password",
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Please enter a password";
-                    if (value.length < 6)
-                      return "Password must be at least 6 characters";
+                    if (value == null || value.isEmpty) return "Please enter a password";
+                    if (value.length < 6) return "Password must be at least 6 characters";
                     return null;
                   },
                 ),
                 const SizedBox(height: 10),
 
-                // Confirm Password
                 TextFormField(
                   controller: _confirmPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
+                  obscureText: _obscureConfirmPassword,
+                  decoration: InputDecoration(
                     labelText: "Confirm Password",
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Please confirm your password";
-                    if (value != _passwordController.text)
-                      return "Passwords do not match";
+                    if (value == null || value.isEmpty) return "Please confirm your password";
+                    if (value != _passwordController.text) return "Passwords do not match";
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
 
-                // Gender Selection (Dropdown)
                 DropdownButtonFormField<String>(
                   value: _gender,
                   decoration: const InputDecoration(
                     labelText: "Gender",
                     border: OutlineInputBorder(),
                   ),
-                  items: ["Male", "Female", "Other"].map((String value) {
+                  items: ["Male", "Female"].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -163,52 +169,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _gender = value;
                     });
                   },
-                  validator: (value) =>
-                      value == null ? "Please select a gender" : null,
+                  validator: (value) => value == null ? "Please select a gender" : null,
                 ),
                 const SizedBox(height: 10),
 
-                // User Role Selection (Checkboxes)
                 const Text("Sign up as:"),
-                CheckboxListTile(
+                RadioListTile<String>(
                   title: const Text("Student"),
-                  value: _isStudent,
-                  onChanged: (bool? value) {
+                  value: "Student",
+                  groupValue: _userType,
+                  onChanged: (value) {
                     setState(() {
-                      _isStudent = value!;
-                      _isFacultyMember = !value;
+                      _userType = value;
                     });
                   },
                 ),
-                CheckboxListTile(
+                RadioListTile<String>(
                   title: const Text("Faculty Member"),
-                  value: _isFacultyMember,
-                  onChanged: (bool? value) {
+                  value: "Faculty Member",
+                  groupValue: _userType,
+                  onChanged: (value) {
                     setState(() {
-                      _isFacultyMember = value!;
-                      _isStudent = !value;
+                      _userType = value;
                     });
                   },
                 ),
                 const SizedBox(height: 20),
 
-                // Sign Up Button
-                GestureDetector(
-                  onTap: _signUp,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: MyTheme.primaryColor,
-                      borderRadius: const BorderRadius.all(Radius.circular(18)),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'SIGN UP',
-                        style: TextStyle(color: MyTheme.white, fontSize: 16),
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : GestureDetector(
+                        onTap: _signUp,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: MyTheme.primaryColor,
+                            borderRadius: const BorderRadius.all(Radius.circular(18)),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'SIGN UP',
+                              style: TextStyle(color: MyTheme.white, fontSize: 16),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
 
                 const SizedBox(height: 20),
               ],
