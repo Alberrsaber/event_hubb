@@ -1,5 +1,4 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'verification_screen.dart';
@@ -19,32 +18,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  final TextEditingController _mobileNumberController =
-      TextEditingController(); // For mobile number
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController();
 
-  String? _gender; // "Male", "Female", or "Other"
-  bool _isStudent = false;
-  bool _isFacultyMember = false;
-  void _signUp() {
-    if (_formKey.currentState!.validate() &&
-        _gender != null &&
-        (_isStudent || _isFacultyMember)) {
-      String userType = _isStudent ? "Student" : "Faculty Member";
-      controller.SignUp(_fullNameController.text,
-          _emailController.text, _passwordController.text,_mobileNumberController.text,userType, context);
+  String? _gender;
+  String? _userType; // "Student" or "Faculty Member"
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
-      // Navigate to Verification Screen
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => VerificationScreen(
-      //       email: _emailController.text,
-      //       userType: userType,
-      //     ),
-      //   ),
-      // );
+  void _signUp() async {
+    if (_formKey.currentState!.validate() && _gender != null && _userType != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await controller.SignUp(
+        _fullNameController.text,
+        _emailController.text,
+        _passwordController.text,
+        _mobileNumberController.text,
+        _userType!,
+        context,
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerificationScreen(
+            email: _emailController.text,
+            userType: _userType!,
+          ),
+        ),
+      );
     } else {
       setState(() {});
     }

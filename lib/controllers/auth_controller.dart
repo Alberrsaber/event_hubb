@@ -80,7 +80,7 @@ class AuthController extends GetxController {
   }
 
 // Sign out Method
-  Future SignOut() async {
+  Future SignOut(BuildContext context) async {
     try {
       GoogleSignIn googleSignIn = GoogleSignIn();
       if (await googleSignIn.isSignedIn()) {
@@ -148,23 +148,9 @@ class AuthController extends GetxController {
 
 // sign in with google
   Future signInWithGoogle(context) async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        return;
-      }
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-    } catch (e) {
-      print(e);
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      return;
     }
     final GoogleSignInAuthentication? googleAuth =
         await googleUser.authentication;

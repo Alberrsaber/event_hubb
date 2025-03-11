@@ -186,11 +186,11 @@ class _SignInScreenState extends State<SignInScreen> {
                           GestureDetector(
                             onTap: () {
                               if (_formKey.currentState!.validate()) {
-                                controller.SignIn(
-                                  _emailController.text,
-                                  _passwordController.text,
-                                  context,
-                                );
+                                  controller.SignIn(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                    context,
+                                  );                                
                               }
                             },
                             child: Container(
