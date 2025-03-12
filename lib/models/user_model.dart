@@ -21,7 +21,6 @@ class UserModel {
     required this.userSpecialty,
   });
 
-  // Convert a User into a Map.
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,

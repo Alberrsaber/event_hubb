@@ -41,12 +41,18 @@ class AuthController extends GetxController {
         userQualification,
       );
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('The account already exists for that email.'),
           backgroundColor: Colors.red,
         ),
       );
+      }else{
+              print(e.code);
+      }
+
+      
     }
   }
 
@@ -65,17 +71,24 @@ class AuthController extends GetxController {
           context,
           MaterialPageRoute(
               builder: (context) => VerificationScreen(
-                    email: email, userType: '',
+                    email: email,
+                    userType: '',
                   )),
         );
       }
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if(e.code == 'invalid-credential'){
+        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid email or password. Please try again.'),
           backgroundColor: Colors.red,
         ),
       );
+      }else{
+        print(e.code);
+      }
+      
+      
     }
   }
 
@@ -132,8 +145,8 @@ class AuthController extends GetxController {
           .collection("Users")
           .doc(FirebaseAuth.instance.currentUser!.uid);
       await store.set({
-        'userName': userName, 
-        'userEmail': userEmail, 
+        'userName': userName,
+        'userEmail': userEmail,
         'userPassword': userPassword,
         'userPhone': userPhone,
         'userQualification': userQualification,

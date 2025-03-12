@@ -46,15 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _isLoading = false;
       });
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerificationScreen(
-            email: _emailController.text,
-            userType: _userType!,
-          ),
-        ),
-      );
+      
     } else {
       setState(() {});
     }

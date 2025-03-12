@@ -1,20 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/controllers/event_controller.dart';
+import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ExploreScreen extends StatelessWidget {
-  final List<Map<String, String>> events = [
-    {
-      "date": "10\nJUNE",
-      "title": "International Band Mu...",
-      "location": "36 Guild Street London, UK",
-      "image": "assets/images/event1.png",
-    },
-    {
-      "date": "10\nJUNE",
-      "title": "Jo Malone London’s...",
-      "location": "Radius Gallery San Francisco",
-      "image": "assets/images/event2.png",
-    },
-  ];
+  var eventController = Get.put(EventController());
 
   final List<Map<String, dynamic>> categories = [
     {"name": "Sports", "color": Colors.red, "icon": Icons.sports_basketball},
@@ -25,51 +16,69 @@ class ExploreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Upcoming Events Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Upcoming Events",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text("See All >"),
-                ),
-              ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+                    SizedBox(height: 15,),
+          SizedBox(
+            height: screenHeight * 0.06,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: categories.map((category) {
+                return CategoryChip(category);
+              }).toList(),
             ),
-            SizedBox(
-              height: 220, // Event card height
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: events.length,
-                itemBuilder: (context, index) {
-                  return EventCard(events[index]);
-                },
+          ),
+          SizedBox(height: 10,),
+          // Upcoming Events Section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Upcoming Events",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-
-            SizedBox(height: 20),
-
-            // Category Filters
-            SizedBox(
-              height: 50,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: categories.map((category) {
-                  return CategoryChip(category);
-                }).toList(),
+              TextButton(
+                onPressed: () {},
+                child: Text("See All >"),
               ),
+            ],
+          ),
+          SizedBox(
+            height: screenHeight * 0.6,
+            width: screenWidth, // Event card height
+            child: StreamBuilder<QuerySnapshot>(
+              stream: eventController.getEvents(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No events found'));
+                } else {
+                  List<EventModel> events = snapshot.data!.docs.map((doc) {
+                    return EventModel.fromMap(
+                        doc.data() as Map<String, dynamic>, doc.id);
+                  }).toList();
+                  return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      EventModel event = events[index];
+                      return EventCard(event);
+                    },
+                  );
+                }
+              },
             ),
-          ],
-        ),
+          ),
+      
+          // Category Filters
+        ],
       ),
     );
   }
@@ -77,14 +86,15 @@ class ExploreScreen extends StatelessWidget {
 
 // Event Card Widget
 class EventCard extends StatelessWidget {
-  final Map<String, String> event;
+  EventModel event;
   EventCard(this.event);
 
   @override
   Widget build(BuildContext context) {
+     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      width: 180,
-      margin: EdgeInsets.only(right: 12),
+      width: screenWidth * 0.9,
+      margin: EdgeInsets.only(right: 6, left: 6,bottom: 20,),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -95,9 +105,9 @@ class EventCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.asset(
-              event["image"]!,
-              height: 120,
+            child: Image.network(
+              event.eventImage,
+              height: screenWidth * 0.5,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -108,12 +118,13 @@ class EventCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event["date"]!,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  event.eventBegDate,
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                 ),
                 SizedBox(height: 5),
                 Text(
-                  event["title"]!,
+                  event.eventName,
                   style: TextStyle(fontWeight: FontWeight.bold),
                   maxLines: 2, // Allows wrapping instead of overflow
                   overflow: TextOverflow.ellipsis,
@@ -123,11 +134,12 @@ class EventCard extends StatelessWidget {
                   children: [
                     Icon(Icons.location_on, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    Expanded( // Prevents text overflow
+                    Expanded(
+                      // Prevents text overflow
                       child: Text(
-                        event["location"]!,
+                        event.eventLocation,
                         style: TextStyle(color: Colors.grey, fontSize: 12),
-                        maxLines: 1, 
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -142,7 +154,6 @@ class EventCard extends StatelessWidget {
   }
 }
 
-
 // Category Chip Widget
 class CategoryChip extends StatelessWidget {
   final Map<String, dynamic> category;
@@ -151,7 +162,7 @@ class CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 8),
+      margin: EdgeInsets.only(right: 4,top: 4,),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: category["color"],

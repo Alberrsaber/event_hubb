@@ -18,7 +18,7 @@ class EventItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              eventModel.title,
+              eventModel.eventName,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -29,7 +29,7 @@ class EventItem extends StatelessWidget {
               children: [
                 const Icon(Icons.location_on, color: MyTheme.grey, size: 16),
                 const SizedBox(width: 5),
-                Text(eventModel.address, style: const TextStyle(color: MyTheme.grey)),
+                Text(eventModel.eventLocation, style: const TextStyle(color: MyTheme.grey)),
               ],
             ),
             const SizedBox(height: 5),
@@ -37,7 +37,7 @@ class EventItem extends StatelessWidget {
               children: [
                 const Icon(Icons.people, color: MyTheme.customBlue, size: 16),
                 const SizedBox(width: 5),
-                Text("${eventModel.going} Attending"),
+                Text("${eventModel.eventBegDate} Attending"),
               ],
             ),
           ],
