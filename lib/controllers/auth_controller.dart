@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
@@ -43,22 +44,21 @@ class AuthController extends GetxController {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('The account already exists for that email.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      }else{
-              print(e.code);
+          const SnackBar(
+            content: Text('The account already exists for that email.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        print(e.code);
       }
-
-      
     }
   }
 
 // Sign In Method
-  Future SignIn(email, password, context) async {
+  Future SignIn(email, password, bool rememberMe, context) async {
     try {
+      await setRememberMe(rememberMe);
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       if (FirebaseAuth.instance.currentUser!.emailVerified) {
@@ -70,25 +70,20 @@ class AuthController extends GetxController {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => VerificationScreen(
-                    email: email,
-                    userType: '',
-                  )),
+              builder: (context) => VerificationScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
-      if(e.code == 'invalid-credential'){
+      if (e.code == 'invalid-credential') {
         ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid email or password. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      }else{
+          const SnackBar(
+            content: Text('Invalid email or password. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
         print(e.code);
       }
-      
-      
     }
   }
 
@@ -100,6 +95,7 @@ class AuthController extends GetxController {
         await googleSignIn.signOut();
       }
       await FirebaseAuth.instance.signOut();
+      await setRememberMe(false);
       Get.offAll(() => SignInScreen());
     } catch (e) {
       print("SignOut Error: $e");
@@ -219,4 +215,25 @@ class AuthController extends GetxController {
     }
     return null;
   }
+// Check if user is remembered
+  Future<bool> isRemembered() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('rememberMe') ?? false;
+  }
+  // Set remember me preference
+Future<void> setRememberMe(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', value);
+  }
+  // Get current user (if any)
+  User? get currentUser => FirebaseAuth.instance.currentUser;
+
+  // Check if user is logged in
+  Future<bool> isLoggedIn() async {
+    if (await isRemembered()) {
+      return  FirebaseAuth.instance.currentUser != null;
+    }
+    return false;
+  }
+
 }

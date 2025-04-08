@@ -1,17 +1,23 @@
+import 'package:event_booking_app_ui/controllers/auth_controller.dart';
+import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:event_booking_app_ui/screens/signin_screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
+var controller = Get.put(AuthController());
+  var isRemembered =  controller.isRemembered();
+  var isLoggedIn =  controller.isLoggedIn();
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+  
 
   @override
   void initState() {
@@ -30,7 +36,21 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         // Navigate to SignInScreen after animation completes
-        if (mounted) {
+        if(isRemembered == true && isLoggedIn == true){
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>   HomeScreen(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            ),
+          );
+          
+        }
+
+        }else{
+          if (mounted) {
             Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>  const SignInScreen(),
@@ -41,9 +61,11 @@ class _SplashScreenState extends State<SplashScreen>
           );
           
         }
+        }
       }
     });
   }
+  
 
   @override
   void dispose() {

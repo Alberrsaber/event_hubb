@@ -24,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 var controller = Get.put(AuthController());
 var usercontroller = Get.put(UserController());
 UserModel? usser;
+String? searchName;
 
 String userEmail = FirebaseAuth.instance.currentUser!.email.toString();
 
@@ -41,13 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchUserDataAndSetState() async {
     UserModel? currentUser = await usercontroller
         .fetchUserData(FirebaseAuth.instance.currentUser!.uid);
-    
-      print(currentUser!.userEmail);
-      print(currentUser.userName);
-      setState(() {
-        usser = currentUser;
-      });
-    
+
+    setState(() {
+      usser = currentUser;
+    });
   }
 
   void checkNotifications() async {
@@ -123,8 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: Color(0xFF4A43EC), // Updated to main app color
                 ),
-                accountName: Text(usser?.userName == null ? "" : usser!.userEmail),
-                accountEmail: Text(usser?.userName == null ? "Please edit your profile" : usser!.userName),
+                accountName:
+                    Text(usser?.userName == null ? "" : usser!.userEmail),
+                accountEmail: Text(usser?.userName == null
+                    ? "Please edit your profile"
+                    : usser!.userName),
                 currentAccountPicture: CircleAvatar(
                   backgroundImage:
                       AssetImage("assets/navigation/profile_pic.png"),
@@ -227,6 +228,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          searchName = value;
+                        });
+                      },
+                      
                       decoration: InputDecoration(
                         hintText: 'Search...',
                         hintStyle: TextStyle(color: Colors.white),
@@ -251,13 +258,13 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: _onItemTapped,
           items: [
             BottomNavigationBarItem(
-              icon:
-                  Image.asset('assets/icons/compass.png', width: 24, height: 24),
+              icon: Image.asset('assets/icons/compass.png',
+                  width: 24, height: 24),
               label: 'Explore',
             ),
             BottomNavigationBarItem(
-              icon:
-                  Image.asset('assets/icons/calendar.png', width: 24, height: 24),
+              icon: Image.asset('assets/icons/calendar.png',
+                  width: 24, height: 24),
               label: 'Calendar',
             ),
             BottomNavigationBarItem(
@@ -266,8 +273,8 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Categories',
             ),
             BottomNavigationBarItem(
-              icon:
-                  Image.asset('assets/icons/profile.png', width: 24, height: 24),
+              icon: Image.asset('assets/icons/profile.png',
+                  width: 24, height: 24),
               label: 'Profile',
             ),
           ],

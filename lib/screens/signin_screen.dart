@@ -1,5 +1,7 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
+import 'package:event_booking_app_ui/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/screens/signup_screen.dart';
 import 'package:event_booking_app_ui/screens/resset_password_screen.dart';
@@ -19,7 +21,19 @@ class _SignInScreenState extends State<SignInScreen> {
   var controller = Get.put(AuthController());
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
-  bool _isPasswordVisible = false; // Toggles password visibility
+  bool _isPasswordVisible = false;
+    @override
+  void initState() {
+    super.initState();
+    _checkRememberedUser();
+  }
+  Future<void> _checkRememberedUser() async {
+    bool remembered = await  controller.isRemembered();
+    if (remembered && await  controller.isLoggedIn()) {
+      // Navigate to home screen if user is remembered and logged in
+      Get.offAll(() => HomeScreen());
+    }
+  } // Toggles password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   controller.SignIn(
                                     _emailController.text,
                                     _passwordController.text,
+                                    _rememberMe,
                                     context,
                                   );                                
                               }
@@ -238,19 +253,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                ElevatedButton.icon(
-                                  onPressed: () {},
-                                  icon: Image.asset('assets/icons/facebook.png',
-                                      width: 24),
-                                  label: const Text('Login with Facebook'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
