@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
+import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -92,63 +93,68 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
      final screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-      width: screenWidth * 0.9,
-      margin: EdgeInsets.only(right: 6, left: 6,bottom: 20,),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              event.eventImage,
-              height: screenWidth * 0.5,
-              width: double.infinity,
-              fit: BoxFit.cover,
+    return InkWell(
+      onTap: (){
+        Get.to(() => EventDetails(event: event,));
+      },
+      child: Container(
+        width: screenWidth * 0.9,
+        margin: EdgeInsets.only(right: 6, left: 6,bottom: 20,),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              child: Image.network(
+                event.eventImage,
+                height: screenWidth * 0.5,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.eventBegDate,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  event.eventName,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  maxLines: 2, // Allows wrapping instead of overflow
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 5),
-                Row(
-                  children: [
-                    Icon(Icons.location_on, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
-                    Expanded(
-                      // Prevents text overflow
-                      child: Text(
-                        event.eventLocation,
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.eventBegDate,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    event.eventName,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 2, // Allows wrapping instead of overflow
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on, size: 14, color: Colors.grey),
+                      SizedBox(width: 4),
+                      Expanded(
+                        // Prevents text overflow
+                        child: Text(
+                          event.eventLocation,
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

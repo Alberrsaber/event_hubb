@@ -7,11 +7,6 @@ class EventController extends GetxController {
   Stream<QuerySnapshot> getEvents() {
     return _firestore.collection('Events').snapshots();
   }
+  
 
-  Stream<QuerySnapshot> getSearchEvents(String searchName) {
-    return _firestore
-        .collection('Events').orderBy('eventName').startAt([searchName]).endAt([searchName + '\uf8ff'])
-        .snapshots();
-        
-  }
 }

@@ -12,6 +12,7 @@ import 'profile_screen.dart';
 import 'bookmark_screen.dart';
 import 'contact_us_screen.dart';
 import 'helps_faqs_screen.dart';
+import 'search_Screen.dart';
 import 'settings_screen.dart';
 import 'signin_screen.dart';
 import 'explore_screen.dart';
@@ -228,12 +229,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextField(
+                      onTap: () {
+                        Get.to(() =>SearchPage());
+                      },
                       onChanged: (value) {
                         setState(() {
                           searchName = value;
                         });
                       },
-                      
                       decoration: InputDecoration(
                         hintText: 'Search...',
                         hintStyle: TextStyle(color: Colors.white),
