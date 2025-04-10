@@ -14,8 +14,10 @@ import 'contact_us_screen.dart';
 import 'helps_faqs_screen.dart';
 import 'search_Screen.dart';
 import 'settings_screen.dart';
-import 'signin_screen.dart';
+import 'profile_screen.dart'; 
 import 'explore_screen.dart';
+import 'notification_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -202,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'assets/icons/notifcations_bell.png',
                                 width: 30,
                                 height: 30),
-                            onPressed: () {},
+                            onPressed: () {Get.to(() => NotificationScreen());},
                           ),
                           if (hasNotifications)
                             Positioned(
