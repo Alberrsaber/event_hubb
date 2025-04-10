@@ -43,7 +43,7 @@ class UserModel {
       userImage: data['userImage'] ?? '',
       userPassword: data['userPassword'] ?? '',
       userPhone: data['userPhone'] ?? '',
-      userQualification: data['userQualification'] ?? '',
+      userQualification: data['userQualification'] ?? 'Student',
       userSpecialty: data['userSpecialty'] ?? '',  
     );
   }
