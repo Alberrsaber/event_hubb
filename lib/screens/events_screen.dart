@@ -4,20 +4,22 @@ import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models/event_model.dart';
-import 'eventDetails_screen.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class EventsPage extends StatefulWidget {
+  final Stream<QuerySnapshot>  getEventStream;
+  const EventsPage({
+    super.key,
+   required this.getEventStream,
+  });
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<EventsPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<EventsPage> {
   final TextEditingController _controller = TextEditingController();
   final eventController = Get.put(EventController());
-  String searchName = '';
 
   @override
   Widget build(BuildContext context) {
@@ -32,33 +34,13 @@ class _SearchPageState extends State<SearchPage> {
             Get.back();
           },
         ),
-        title: const Text('Search'),
+        title: const Text('Events'),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: TextField(
-              controller: _controller,
-              onChanged: (value) {
-                setState(() => searchName = value);
-              },
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
-                hintText: 'Search...',
-                filled: true,
-                fillColor: Colors.grey[100],
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: eventController.getEvents(),
+              stream: widget.getEventStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -72,21 +54,11 @@ class _SearchPageState extends State<SearchPage> {
                         doc.data() as Map<String, dynamic>, doc.id);
                   }).toList();
 
-                  final filteredEvents = events
-                      .where((event) => event.eventName
-                          .toLowerCase()
-                          .contains(searchName.toLowerCase()))
-                      .toList();
-
-                  if (filteredEvents.isEmpty) {
-                    return const Center(child: Text('No matching events'));
-                  }
-
                   return ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: filteredEvents.length,
+                    itemCount: events.length,
                     itemBuilder: (context, index) {
-                      return EventCard(filteredEvents[index]);
+                      return EventCard(events[index]);
                     },
                   );
                 }
@@ -123,8 +95,8 @@ class EventCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
                   event.eventImage,
-                  width: screenWidth *.3,
-                  height: screenHeight* 0.2,
+                  width: screenWidth * .3,
+                  height: screenHeight * 0.2,
                   fit: BoxFit.fill,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
@@ -153,7 +125,7 @@ class EventCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      event.eventBegDate,
+                      DateFormat('MMM dd, yyyy').format(event.eventBegDate),
                       style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.w500,

@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import '../models/category_model.dart';
 
-class CategoryController {
+class CategoryController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 // get category by name
   Future<CategoryModel?> getCategoryByName(String categoryName) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
-          .collection('categories')
+          .collection('Categories')
           .where('name', isEqualTo: categoryName)
           .limit(1)
           .get();
@@ -28,7 +29,8 @@ class CategoryController {
 Future<List<CategoryModel>> getAllCategories() async {
     try {
       QuerySnapshot querySnapshot =
-          await _firestore.collection('categories').get();
+          await _firestore.collection('Categories').get();
+          
 
       return querySnapshot.docs
           .map((doc) => CategoryModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))

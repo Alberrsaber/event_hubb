@@ -4,8 +4,8 @@ class EventModel {
   final String eventId;
   final String eventName;
   final String eventDes;
-  final Timestamp eventBegDate;
-  final Timestamp eventEndDate;
+  final String eventBegDate;
+  final String eventEndDate;
   final String eventImage;
   final String eventSponser;
   final String eventLocation;
@@ -27,14 +27,13 @@ class EventModel {
     required this.eventStatus,
   });
 
-  // Convert an EventModel into a Map.
+  // Convert EventModel to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
-      'eventId': eventId,
       'eventName': eventName,
       'eventDes': eventDes,
-      'eventBegDate': eventBegDate,
-      'eventEndDate': eventEndDate,
+      'eventBegDate': Timestamp.fromDate(eventBegDate), // Convert DateTime to Timestamp
+      'eventEndDate': Timestamp.fromDate(eventEndDate),
       'eventImage': eventImage,
       'eventSponser': eventSponser,
       'eventLocation': eventLocation,
@@ -48,10 +47,10 @@ class EventModel {
   factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
     return EventModel(
       eventId: documentId,
-      eventName: data['eventName'] ?? '',
+      eventName: data['eventName'] ?? '', // Provide default value if null
       eventDes: data['eventDes'] ?? '',
-      eventBegDate: data['eventBegDate'] ?? Timestamp.now(),
-      eventEndDate: data['eventEndDate'] ?? Timestamp.now(),
+      eventBegDate: data['eventBegDate'] ?? '',
+      eventEndDate: data['eventEndDate'] ?? '',
       eventImage: data['eventImage'] ?? '',
       eventSponser: data['eventSponser'] ?? '',
       eventLocation: data['eventLocation'] ?? '',

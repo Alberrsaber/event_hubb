@@ -2,12 +2,13 @@ import 'package:event_booking_app_ui/main.dart';
 import 'package:event_booking_app_ui/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+
+import 'package:event_booking_app_ui/main.dart';
 
 void main() {
-  testWidgets('SplashScreen is displayed first', (WidgetTester tester) async {
-    // Setup ThemeController
-    final themeController = ThemeController();
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
 
     // بناء التطبيق مع ThemeController
     await tester.pumpWidget(MyApp(themeController: themeController));
