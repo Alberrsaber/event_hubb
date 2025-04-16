@@ -13,27 +13,20 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _nameController =
       TextEditingController(text: "Ashfak Sayem");
-  final TextEditingController _bioController =
-      TextEditingController(text: "UI/UX Designer | Photographer");
+
 
   final ImagePicker _picker = ImagePicker();
   File? _profileImage;
 
   final List<Map<String, dynamic>> _allInterests = [
-    {"name": "Sports", "color": Colors.red},
-    {"name": "Music", "color": Colors.orange},
-    {"name": "Tech", "color": Colors.green},
-    {"name": "Art", "color": Colors.blue},
-    {"name": "Travel", "color": Colors.teal},
+    {"name": "Sports", "color": Colors.red, "icon": Icons.sports},
+    {"name": "Music", "color": Colors.orange, "icon": Icons.music_note},
+    {"name": "Tech", "color": Colors.green, "icon": Icons.computer},
+    {"name": "Art", "color": Colors.blue, "icon": Icons.brush},
+    
   ];
 
-  List<Map<String, dynamic>> _interests = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _interests = List<Map<String, dynamic>>.from(_allInterests);
-  }
+  List<Map<String, dynamic>> _selectedInterests = [];
 
   @override
   Widget build(BuildContext context) {
@@ -132,19 +125,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildBioField() {
-    return TextFormField(
-      controller: _bioController,
-      maxLines: 3,
-      style: const TextStyle(fontSize: 15, color: Colors.black87),
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
+Widget _buildBioField() {
+  return TextFormField(
+    maxLines: 3,
+    style: const TextStyle(fontSize: 15, color: Colors.black87),
+    decoration: InputDecoration(
+      hintText: "Tell us something about yourself", // Hint message added here
+      hintStyle: const TextStyle(color: Colors.grey), // Optional: Customize hint style
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.grey),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildLabel(String text) {
     return Align(
@@ -157,90 +152,105 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildInterestsSection() {
-    final availableToAdd = _allInterests.where((item) =>
-      !_interests.any((i) => i["name"] == item["name"])).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: _interests.map((interest) {
-            return Chip(
-              label: Text(
-                interest["name"] as String,
-                style: const TextStyle(color: Colors.white),
-              ),
-              backgroundColor: interest["color"] as Color,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white),
-              onDeleted: () {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: _allInterests.map((interest) {
+            final isSelected = _selectedInterests.contains(interest);
+            return GestureDetector(
+              onTap: () {
                 setState(() {
-                  _interests.remove(interest);
+                  if (isSelected) {
+                    _selectedInterests.remove(interest);
+                  } else {
+                    _selectedInterests.add(interest);
+                  }
                 });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${interest["name"]} removed')),
-                );
               },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                margin: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? interest["color"]
+                      : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isSelected
+                          ? interest["color"]
+                          : Colors.grey.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      interest["icon"],
+                      color: isSelected ? Colors.white : Colors.black,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      interest["name"],
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
           }).toList(),
         ),
-
-        if (availableToAdd.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          const Text(
-            "Add Interests Back",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: availableToAdd.map((interest) {
-              return ActionChip(
-                label: Text(interest["name"]),
-                backgroundColor: interest["color"],
-                labelStyle: const TextStyle(color: Colors.white),
-                onPressed: () {
-                  setState(() {
-                    _interests.add(interest);
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${interest["name"]} added back')),
-                  );
-                },
-              );
-            }).toList(),
-          ),
-        ]
-      ],
+      ),
     );
   }
 
   Widget _buildSaveButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Save logic here
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Changes saved')),
-        );
-        Navigator.pop(context);
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: MyTheme.primaryColor,
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
-        ),
-        child: const Center(
-          child: Text(
-            'SAVE CHANGES',
-            style: TextStyle(
-              color: MyTheme.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: GestureDetector(
+        onTap: () {
+          // Save changes
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Changes saved')),
+          );
+          Navigator.pop(context);
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: MyTheme.primaryColor,
+            borderRadius: const BorderRadius.all(Radius.circular(18)),
+          ),
+          child: const Center(
+            child: Text(
+              'SAVE CHANGES',
+              style: TextStyle(
+                color: MyTheme.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),

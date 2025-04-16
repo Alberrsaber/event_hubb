@@ -9,30 +9,32 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  // Static data for notifications
   final List<NotificationItem> _notifications = [
     NotificationItem(
-      userName: 'David Silbia',
-      action: 'Invite Jo Malone',
-      description: "London's Mother's",
+      sponsorName: 'David Silbia',
+      eventName: 'Concert at Royal Hall',
+      eventDate: DateTime.now().add(const Duration(days: 3)),
+      action: 'invited you to an event',
       time: DateTime.now(),
       hasActions: true,
     ),
-    
     NotificationItem(
-      userName: 'Joan Baker',
-      action: 'Invite A virtual Evening of Smooth Jazz',
+      sponsorName: 'Joan Baker',
+      eventName: 'Jazz Night in London',
+      eventDate: DateTime.now().add(const Duration(days: 5)),
+      action: 'invited you to a virtual evening',
       time: DateTime.now().subtract(const Duration(minutes: 20)),
       hasActions: true,
     ),
-    
-    
     NotificationItem(
-      userName: 'Jennifer Fritz',
-      action: 'Invite you International Kids Safe',
+      sponsorName: 'Jennifer Fritz',
+      eventName: 'International Kids Safe Conference',
+      eventDate: DateTime.now().add(const Duration(days: 1)),
+      action: 'invited you to attend an international conference',
       time: DateTime.now().subtract(const Duration(days: 1, hours: 6, minutes: 50)),
       hasActions: true,
     ),
-    
   ];
 
   @override
@@ -40,7 +42,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Notification',
+          'Notifications',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -72,133 +74,146 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // User Avatar
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  notification.userName.substring(0, 1),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF333333),
+    return GestureDetector(
+      onTap: () {
+        // Handle tap if needed
+      },
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User Avatar with slight animation
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    notification.sponsorName.substring(0, 1),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF333333),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Notification Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF333333),
-                          height: 1.4,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: notification.userName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                const SizedBox(width: 12),
+                // Notification Content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF333333),
+                            height: 1.4,
                           ),
-                          TextSpan(text: ' ${notification.action}'),
-                        ],
+                          children: [
+                            TextSpan(
+                              text: notification.sponsorName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(text: ' ${notification.action}'),
+                          ],
+                        ),
                       ),
-                    ),
-                    if (notification.description != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
-                          notification.description!,
+                          '${notification.eventName} - ${DateFormat('EEE, MMM d, yyyy').format(notification.eventDate)}',
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF333333),
+                            color: Color(0xFF555555),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                // Time with animation
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF999999),
+                  ),
+                  child: Text(
+                    _formatTime(notification.time),
+                  ),
+                ),
+              ],
+            ),
+            // Action Buttons
+            if (notification.hasActions)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, left: 52),
+                child: Row(
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // View event details action
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFFE0E0E0)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30), // Larger radius
+                        ),
+                      ),
+                      icon: const Icon(Icons.event, color: Color(0xFF333333)),
+                      label: const Text(
+                        'View Event',
+                        style: TextStyle(
+                          color: Color(0xFF333333),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Register action
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4A43EC), // Primary color
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30), // Larger radius
+                        ),
+                      ),
+                      icon: const Icon(Icons.check, color: Colors.white),
+                      label: const Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              // Time
-              Text(
-                _formatTime(notification.time),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF999999),
-                ),
-              ),
-            ],
-          ),
-          // Action Buttons
-          if (notification.hasActions)
-            Padding(
-              padding: const EdgeInsets.only(top: 12, left: 52),
-              child: Row(
-                children: [
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFE0E0E0)),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    child: const Text(
-                      'Reject',
-                      style: TextStyle(
-                        color: Color(0xFF333333),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4285F4),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    child: const Text(
-                      'Accept',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -217,17 +232,19 @@ String _formatTime(DateTime time) {
 }
 
 class NotificationItem {
-  final String userName;
+  final String sponsorName;
+  final String eventName;
+  final DateTime eventDate;
   final String action;
   final DateTime time;
-  final String? description;
   final bool hasActions;
 
   NotificationItem({
-    required this.userName,
+    required this.sponsorName,
+    required this.eventName,
+    required this.eventDate,
     required this.action,
     required this.time,
-    this.description,
     this.hasActions = false,
   });
 }

@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
+        
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -88,22 +88,37 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: categories
-                  .map(
-                    (cat) => Chip(
-                      label: Text(
-                        cat["name"],
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: cat["color"],
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                    ),
-                  )
-                  .toList(),
-            ),
+  spacing: 12,
+  runSpacing: 12,
+  children: categories.map((cat) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: cat["color"],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: cat["color"].withOpacity(0.3),
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(cat["icon"], size: 18, color: Colors.white),
+          const SizedBox(width: 8),
+          Text(
+            cat["name"],
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }).toList(),
+),
+
             const SizedBox(height: 40),
           ],
         ),

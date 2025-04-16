@@ -6,33 +6,55 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './screens/splash_screen.dart';
 import './screens/signin_screen.dart';
 import './screens/home_screen.dart';
-import './my_theme.dart'; // Make sure to import MyTheme class
+import './my_theme.dart';
 
-// Define the Theme Controller (Move this to theme_controller.dart if needed)
+// Define the Theme Controller with language and notification toggle
 class ThemeController extends GetxController {
   var isDarkMode = false.obs;
+  var selectedLanguage = 'en'.obs;
+  var isNotificationsEnabled = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadTheme();
+    _loadSettings();
   }
 
   void toggleTheme() {
     isDarkMode.value = !isDarkMode.value;
     Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
-    _saveTheme();
+    _saveBool('isDarkMode', isDarkMode.value);
   }
 
-  void _loadTheme() async {
+  void setLanguage(String langCode) {
+    selectedLanguage.value = langCode;
+    Get.updateLocale(Locale(langCode));
+    _saveString('language', langCode);
+  }
+
+  void toggleNotifications(bool value) {
+    isNotificationsEnabled.value = value;
+    _saveBool('notifications_enabled', value);
+  }
+
+  void _loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isDarkMode.value = prefs.getBool('isDarkMode') ?? false;
+    isNotificationsEnabled.value = prefs.getBool('notifications_enabled') ?? true;
+    selectedLanguage.value = prefs.getString('language') ?? 'en';
+
     Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+    Get.updateLocale(Locale(selectedLanguage.value));
   }
 
-  void _saveTheme() async {
+  Future<void> _saveBool(String key, bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', isDarkMode.value);
+    await prefs.setBool(key, value);
+  }
+
+  Future<void> _saveString(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
   }
 }
 
@@ -42,17 +64,24 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize ThemeController
   final ThemeController themeController = Get.put(ThemeController());
+
+  // ننتظر تحميل الإعدادات قبل تشغيل التطبيق
+  await Future.delayed(Duration(milliseconds: 500));
 
   runApp(MyApp(themeController: themeController));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final ThemeController themeController;
 
   const MyApp({super.key, required this.themeController});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -60,9 +89,12 @@ class MyApp extends StatelessWidget {
         title: 'Event Booking App',
         theme: MyTheme.lightTheme,
         darkTheme: MyTheme.darkTheme,
-        themeMode: themeController.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
+        themeMode: widget.themeController.isDarkMode.value
+            ? ThemeMode.dark
+            : ThemeMode.light,
         debugShowCheckedModeBanner: false,
-        initialRoute: '/', // Define the initial screen
+        locale: Locale(widget.themeController.selectedLanguage.value),
+        initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),
           '/login': (context) => SignInScreen(),

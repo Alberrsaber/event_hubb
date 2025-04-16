@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class EventModel {
   final String eventId;
   final String eventName;
   final String eventDes;
-  final String eventBegDate;
-  final String eventEndDate;
+  final Timestamp eventBegDate;
+  final Timestamp eventEndDate;
   final String eventImage;
   final String eventSponser;
   final String eventLocation;
@@ -46,10 +48,10 @@ class EventModel {
   factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
     return EventModel(
       eventId: documentId,
-      eventName: data['eventName'] ?? '', // Provide default value if null
+      eventName: data['eventName'] ?? '',
       eventDes: data['eventDes'] ?? '',
-      eventBegDate: data['eventBegDate'] ?? '',
-      eventEndDate: data['eventEndDate'] ?? '',
+      eventBegDate: data['eventBegDate'] ?? Timestamp.now(),
+      eventEndDate: data['eventEndDate'] ?? Timestamp.now(),
       eventImage: data['eventImage'] ?? '',
       eventSponser: data['eventSponser'] ?? '',
       eventLocation: data['eventLocation'] ?? '',

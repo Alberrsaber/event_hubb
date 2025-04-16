@@ -3,69 +3,55 @@ import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:event_booking_app_ui/screens/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
-var controller = Get.put(AuthController());
-  var isRemembered =  controller.isRemembered();
-  var isLoggedIn =  controller.isLoggedIn();
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  
+
+  final AuthController controller = Get.put(AuthController());
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize animation controller for fade effect
     _animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _animation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
 
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
-    // Start fade-in animation
     _animationController.forward();
 
-    // Listen for animation completion
-    _animationController.addStatusListener((status) {
+    _animationController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        // Navigate to SignInScreen after animation completes
-        if(isRemembered == true && isLoggedIn == true){
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>   HomeScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            ),
-          );
-          
-        }
+        bool isRemembered = await controller.isRemembered();
+        bool isLoggedIn = await controller.isLoggedIn();
 
-        }else{
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
+        Widget nextScreen =
+            (isRemembered && isLoggedIn) ? HomeScreen() : const SignInScreen();
+
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>  const SignInScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  nextScreen,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
                 return FadeTransition(opacity: animation, child: child);
               },
             ),
           );
-          
-        }
         }
       }
     });
   }
-  
 
   @override
   void dispose() {
@@ -82,7 +68,8 @@ class _SplashScreenState extends State<SplashScreen>
           children: <Widget>[
             Align(
               alignment: Alignment.topRight,
-              child: Image(image: AssetImage('assets/images/top_right_shade.png')),
+              child:
+                  Image(image: AssetImage('assets/images/top_right_shade.png')),
             ),
             Center(
               child: Row(
@@ -96,11 +83,13 @@ class _SplashScreenState extends State<SplashScreen>
             ),
             Align(
               alignment: Alignment.bottomLeft,
-              child: Image(image: AssetImage('assets/images/bottom_left_shade.png')),
+              child: Image(
+                  image: AssetImage('assets/images/bottom_left_shade.png')),
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: Image(image: AssetImage('assets/images/bottom_right_shade.png')),
+              child: Image(
+                  image: AssetImage('assets/images/bottom_right_shade.png')),
             ),
           ],
         ),
