@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
+import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
