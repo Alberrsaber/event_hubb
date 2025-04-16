@@ -9,11 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:event_booking_app_ui/main.dart';
+import 'package:get/get_core/src/get_main.dart' show Get;
+import 'package:get/get_instance/get_instance.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(themeController: Get.put(ThemeController()),));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

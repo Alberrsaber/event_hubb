@@ -1,19 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
+import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../controllers/category_controller.dart';
+import 'events_screen.dart';
 
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends StatefulWidget {
+  @override
+  State<ExploreScreen> createState() => _ExploreScreenState();
+}
+
+class _ExploreScreenState extends State<ExploreScreen> {
   var eventController = Get.put(EventController());
+  var categoryController = Get.put(CategoryController());
+  List<CategoryModel> categoriess = [];
 
-  final List<Map<String, dynamic>> categories = [
-    {"name": "Sports", "color": Colors.red, "icon": Icons.sports_basketball},
-    {"name": "Music", "color": Colors.orange, "icon": Icons.music_note},
-    {"name": "Tech", "color": Colors.green, "icon": Icons.computer},
-    {"name": "Art", "color": Colors.blue, "icon": Icons.brush},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    categoriess = await categoryController.getAllCategories();
+    setState(() {});
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +39,21 @@ class ExploreScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-                    SizedBox(height: 15,),
           SizedBox(
-            height: screenHeight * 0.06,
+            height: 15,
+          ),
+          SizedBox(
+            height: screenHeight * 0.075,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: categories.map((category) {
+              children: categoriess.map((category) {
                 return CategoryChip(category);
               }).toList(),
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           // Upcoming Events Section
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +97,7 @@ class ExploreScreen extends StatelessWidget {
               },
             ),
           ),
-      
+
           // Category Filters
         ],
       ),
@@ -92,14 +112,20 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
-      onTap: (){
-        Get.to(() => EventDetails(event: event,));
+      onTap: () {
+        Get.to(() => EventDetails(
+              event: event,
+            ));
       },
       child: Container(
         width: screenWidth * 0.9,
-        margin: EdgeInsets.only(right: 6, left: 6,bottom: 20,),
+        margin: EdgeInsets.only(
+          right: 6,
+          left: 6,
+          bottom: 20,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -114,7 +140,7 @@ class EventCard extends StatelessWidget {
                 event.eventImage,
                 height: screenWidth * 0.5,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
             Padding(
@@ -123,9 +149,9 @@ class EventCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    event.eventBegDate,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                    DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red),
                   ),
                   SizedBox(height: 5),
                   Text(
@@ -162,27 +188,36 @@ class EventCard extends StatelessWidget {
 
 // Category Chip Widget
 class CategoryChip extends StatelessWidget {
-  final Map<String, dynamic> category;
+  final CategoryModel category;
   CategoryChip(this.category);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: 4,top: 4,),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: category["color"],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Icon(category["icon"], color: Colors.white, size: 16),
-          SizedBox(width: 6),
-          Text(
-            category["name"],
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
+    final eventController = Get.find<EventController>();
+    return InkWell(
+      onTap: () {
+        Get.to(() => EventsPage(getEventStream: eventController.getEventsbyCategory(category.categoryName),));
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+          right: 4,
+          top: 4,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Color(category.categoryColor),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Image.network(category.categoryImage),
+            SizedBox(width: 6),
+            Text(
+              category.categoryName,
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

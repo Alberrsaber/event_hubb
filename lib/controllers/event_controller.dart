@@ -8,13 +8,15 @@ class EventController extends GetxController {
   Stream<QuerySnapshot> getEvents() {
     return _firestore.collection('Events').snapshots();
   }
+
 // get event by id
   Future<EventModel?> getEventbyId(String eventId) async {
     try {
       DocumentSnapshot eventDoc =
           await _firestore.collection('Events').doc(eventId).get();
       if (eventDoc.exists) {
-        return EventModel.fromMap(eventDoc.data() as Map<String, dynamic>, eventDoc.id);
+        return EventModel.fromMap(
+            eventDoc.data() as Map<String, dynamic>, eventDoc.id);
       } else {
         print("No event found with ID: $eventId");
       }
@@ -22,6 +24,11 @@ class EventController extends GetxController {
       print("Error fetching event: $e");
       return null;
     }
+  }
+
+  // get events by category name
+  Stream<QuerySnapshot> getEventsbyCategory(String category) {
+    return _firestore.collection('Events').where('eventCategory', isEqualTo: category).snapshots();
   }
 
 }

@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class EventModel {
   final String eventId;
   final String eventName;
   final String eventDes;
-  final String eventBegDate;
-  final String eventEndDate;
+  final DateTime eventBegDate;
+  final DateTime eventEndDate;
   final String eventImage;
   final String eventSponser;
   final String eventLocation;
@@ -25,14 +27,13 @@ class EventModel {
     required this.eventStatus,
   });
 
-  // Convert an EventModel into a Map.
+  // Convert EventModel to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
-      'eventId': eventId,
       'eventName': eventName,
       'eventDes': eventDes,
-      'eventBegDate': eventBegDate,
-      'eventEndDate': eventEndDate,
+      'eventBegDate': Timestamp.fromDate(eventBegDate), // Convert DateTime to Timestamp
+      'eventEndDate': Timestamp.fromDate(eventEndDate),
       'eventImage': eventImage,
       'eventSponser': eventSponser,
       'eventLocation': eventLocation,
@@ -42,20 +43,31 @@ class EventModel {
     };
   }
 
-  // Extract an EventModel from a Map.
-  factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
-    return EventModel(
-      eventId: documentId,
-      eventName: data['eventName'] ?? '', // Provide default value if null
-      eventDes: data['eventDes'] ?? '',
-      eventBegDate: data['eventBegDate'] ?? '',
-      eventEndDate: data['eventEndDate'] ?? '',
-      eventImage: data['eventImage'] ?? '',
-      eventSponser: data['eventSponser'] ?? '',
-      eventLocation: data['eventLocation'] ?? '',
-      eventMaxAttendees: data['eventMaxAttendees'] ?? '',
-      eventCategory: data['eventCategory'] ?? '',
-      eventStatus: data['eventStatus'] ?? '',
-    );
+  // Create EventModel from Firestore Map
+factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
+  return EventModel(
+    eventId: documentId,
+    eventName: data['eventName'] ?? '',
+    eventDes: data['eventDes'] ?? '',
+    eventBegDate: _convertToDate(data['eventBegDate']),
+    eventEndDate: _convertToDate(data['eventEndDate']),
+    eventImage: data['eventImage'] ?? '',
+    eventSponser: data['eventSponser'] ?? '',
+    eventLocation: data['eventLocation'] ?? '',
+    eventMaxAttendees: data['eventMaxAttendees'] ?? '',
+    eventCategory: data['eventCategory'] ?? '',
+    eventStatus: data['eventStatus'] ?? '',
+  );
+}
+
+ static  DateTime _convertToDate(dynamic value) {
+  if (value is Timestamp) {
+    return value.toDate();
+  } else if (value is String) {
+    return DateTime.tryParse(value) ?? DateTime.now();
+  } else {
+    return DateTime.now();
   }
+}
+
 }
