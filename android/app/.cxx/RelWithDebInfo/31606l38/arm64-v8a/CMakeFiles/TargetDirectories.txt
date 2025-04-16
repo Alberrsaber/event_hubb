@@ -1,0 +1,2 @@
+C:/Users/Albeer/Documents/event_hubb/android/app/.cxx/RelWithDebInfo/31606l38/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Albeer/Documents/event_hubb/android/app/.cxx/RelWithDebInfo/31606l38/arm64-v8a/CMakeFiles/rebuild_cache.dir
