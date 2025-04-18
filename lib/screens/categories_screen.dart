@@ -1,10 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
-import 'package:flutter/material.dart';
-import 'package:event_booking_app_ui/my_theme.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class CategoriesScreen extends StatefulWidget {
   CategoriesScreen({Key? key}) : super(key: key);
@@ -14,21 +12,8 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  final List<Map<String, dynamic>> _categories = [
-    {"name": "Sports", "color": Colors.red, "icon": Icons.sports},
-    {"name": "Music", "color": Colors.orange, "icon": Icons.music_note},
-    {"name": "Tech", "color": Colors.green, "icon": Icons.computer},
-    {"name": "Art", "color": Colors.blue, "icon": Icons.brush},
-  ];
-
-  var categoryController = Get.put(CategoryController());
-
+  final categoryController = Get.put(CategoryController());
   List<CategoryModel> categoriess = [];
-
-  Future<void> fetchCategories() async {
-    categoriess = await categoryController.getAllCategories();
-    setState(() {});
-  }
 
   @override
   void initState() {
@@ -36,15 +21,28 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     fetchCategories();
   }
 
+  Future<void> fetchCategories() async {
+    categoriess = await categoryController.getAllCategories();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisExtent: 150,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
           itemCount: categoriess.length,
           itemBuilder: (context, index) {
-            CategoryModel category = categoriess[index];
+            final category = categoriess[index];
             return _buildCategoryCard(context, category);
           },
         ),
@@ -55,7 +53,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget _buildCategoryCard(BuildContext context, CategoryModel category) {
     return GestureDetector(
       onTap: () {
-        // Navigate to events related to the selected category
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -78,16 +75,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
           children: [
-            // Icon
             AnimatedScale(
               duration: const Duration(milliseconds: 300),
               scale: 1.2,
               child: Image.network(category.categoryImage),
             ),
-            const SizedBox(width: 20),
-            // Text
+            const SizedBox(width: 40),
             Expanded(
               child: Text(
                 category.categoryName,
@@ -106,38 +101,31 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 }
 
 class EventsByCategoryScreen extends StatefulWidget {
-  CategoryModel category;
+  final CategoryModel category;
 
   EventsByCategoryScreen({Key? key, required this.category}) : super(key: key);
 
   @override
-  State<EventsByCategoryScreen> createState() => _EventsByCategoryScreenState();
+  State<EventsByCategoryScreen> createState() =>
+      _EventsByCategoryScreenState();
 }
-
-
 
 class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
-  // This is just a mockup of events for the selected category.
-  final List<Map<String, String>> _events = [
-    {"title": "Football Championship", "location": "Stadium"},
-    {"title": "Tech Conference", "location": "Conference Hall"},
-    {"title": "Art Exhibition", "location": "Gallery"},
-    {"title": "Rock Concert", "location": "Arena"},
-  ];
   List<EventModel> eventss = [];
+
   @override
-void initState() {
-  super.initState();
-  fetchCategories();
-}
-  Future<void> fetchCategories() async {
-   eventss =
-      await CategoryController().getEventByCategory(widget.category.categoryName);
+  void initState() {
+    super.initState();
+    fetchEvents();
+  }
+
+  Future<void> fetchEvents() async {
+    eventss = await CategoryController()
+        .getEventByCategory(widget.category.categoryName);
+    if (mounted) {
       setState(() {});
-}
-
-
-
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,13 +136,15 @@ void initState() {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: eventss.length,
-          itemBuilder: (context, index) {
-            EventModel event = eventss[index];
-            return _buildEventCard(event, context);
-          },
-        ),
+        child: eventss.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: eventss.length,
+                itemBuilder: (context, index) {
+                  final event = eventss[index];
+                  return _buildEventCard(event, context);
+                },
+              ),
       ),
     );
   }
@@ -173,7 +163,6 @@ void initState() {
         title: Text(event.eventName),
         subtitle: Text(event.eventLocation),
         onTap: () {
-          // Handle event detail view
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Event: ${event.eventName}')),
           );
