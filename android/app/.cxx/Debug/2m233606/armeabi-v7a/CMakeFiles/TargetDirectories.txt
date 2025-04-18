@@ -1,0 +1,2 @@
+C:/Users/Mohamad/Documents/GitHub/event_hubb/android/app/.cxx/Debug/2m233606/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Mohamad/Documents/GitHub/event_hubb/android/app/.cxx/Debug/2m233606/armeabi-v7a/CMakeFiles/rebuild_cache.dir

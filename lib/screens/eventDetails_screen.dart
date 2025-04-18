@@ -1,5 +1,6 @@
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventDetails extends StatelessWidget {
   final EventModel event;
@@ -82,11 +83,14 @@ class EventDetails extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(event.eventBegDate,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600)),
-                          const Text("Tuesday, 4:00PM - 9:00PM",
-                              style: TextStyle(color: Colors.grey)),
+                          Text(
+                            DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            '${DateFormat('EEEE, h:mm a').format(event.eventBegDate)} - ${DateFormat('h:mm a').format(event.eventEndDate)}',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
                         ],
                       ),
                     ],

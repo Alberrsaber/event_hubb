@@ -1,3 +1,4 @@
+import 'package:event_booking_app_ui/controllers/notifications_controller.dart';
 import 'package:event_booking_app_ui/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationsController().initialize();
 
   final ThemeController themeController = Get.put(ThemeController());
 

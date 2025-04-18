@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:get/get.dart';
 import '../models/category_model.dart';
 
@@ -40,4 +41,26 @@ Future<List<CategoryModel>> getAllCategories() async {
       return [];
     }
   }
+   // get event by name
+  Future<List<EventModel>> getEventByCategory(String categoryName) async {
+  try {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('Events')
+        .where('eventCategory', isEqualTo: categoryName)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.map((doc) {
+        return EventModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    } else {
+      print("No category found with name: $categoryName");
+      return [];
+    }
+  } catch (e) {
+    print("Error fetching category: $e");
+    return [];
+  }
+}
+
 }

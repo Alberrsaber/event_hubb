@@ -7,6 +7,7 @@ import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class ExploreScreen extends StatefulWidget {
   @override
@@ -147,10 +148,10 @@ class EventCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    event.eventBegDate,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                Text(
+                    DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red),
                   ),
                   SizedBox(height: 5),
                   Text(

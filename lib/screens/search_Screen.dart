@@ -4,6 +4,7 @@ import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../models/event_model.dart';
 import 'eventDetails_screen.dart';
 
@@ -153,7 +154,7 @@ class EventCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      event.eventBegDate,
+                    DateFormat('MMM dd, yyyy').format(event.eventBegDate),
                       style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.w500,
