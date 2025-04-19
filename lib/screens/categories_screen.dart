@@ -1,13 +1,15 @@
-import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
+// File: categories_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
-import 'package:intl/intl.dart';
+import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
-  CategoriesScreen({Key? key}) : super(key: key);
+  const CategoriesScreen({Key? key}) : super(key: key);
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -15,7 +17,8 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   final categoryController = Get.put(CategoryController());
-  List<CategoryModel> categoriess = [];
+  List<CategoryModel> categories = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -24,10 +27,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   Future<void> fetchCategories() async {
-    categoriess = await categoryController.getAllCategories();
-    if (mounted) {
-      setState(() {});
-    }
+    categories = await categoryController.getAllCategories();
+    setState(() => isLoading = false);
   }
 
   @override
@@ -35,31 +36,61 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 150,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemCount: categoriess.length,
-          itemBuilder: (context, index) {
-            final category = categoriess[index];
-            return _buildCategoryCard(context, category);
-          },
-        ),
+        child: isLoading
+            ? GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                children: List.generate(4, (_) => shimmerCard()),
+              )
+            : GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisExtent: 150,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return CategoryCard(
+                    category: category,
+                    onTap: () => Get.to(() => EventsByCategoryScreen(category: category)),
+                  );
+                },
+              ),
       ),
     );
   }
 
-  Widget _buildCategoryCard(BuildContext context, CategoryModel category) {
+  Widget shimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+}
+
+class CategoryCard extends StatelessWidget {
+  final CategoryModel category;
+  final VoidCallback onTap;
+
+  const CategoryCard({super.key, required this.category, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
-      onTap: () {
-        Get.to(() => EventsByCategoryScreen(category: category));
-      },
+      onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Color(category.categoryColor),
@@ -67,29 +98,28 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           boxShadow: [
             BoxShadow(
               color: Color(category.categoryColor).withOpacity(0.3),
-              spreadRadius: 1,
               blurRadius: 10,
+              spreadRadius: 1,
             ),
           ],
         ),
         child: Column(
           children: [
-            AnimatedScale(
-              duration: const Duration(milliseconds: 300),
-              scale: 1.2,
-              child: Image.network(category.categoryImage),
-            ),
-            const SizedBox(height: 10),
             Expanded(
-              child: Text(
-                category.categoryName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Image.network(
+                category.categoryImage,
+                fit: BoxFit.contain,
               ),
             ),
+            const SizedBox(height: 10),
+            Text(
+              category.categoryName,
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            )
           ],
         ),
       ),
@@ -100,15 +130,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 class EventsByCategoryScreen extends StatefulWidget {
   final CategoryModel category;
 
-  EventsByCategoryScreen({Key? key, required this.category}) : super(key: key);
+  const EventsByCategoryScreen({Key? key, required this.category}) : super(key: key);
 
   @override
-  State<EventsByCategoryScreen> createState() =>
-      _EventsByCategoryScreenState();
+  State<EventsByCategoryScreen> createState() => _EventsByCategoryScreenState();
 }
 
 class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
-  List<EventModel> eventss = [];
+  List<EventModel> events = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -117,15 +147,14 @@ class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
   }
 
   Future<void> fetchEvents() async {
-    eventss = await CategoryController()
-        .getEventByCategory(widget.category.categoryName);
-    if (mounted) {
-      setState(() {});
-    }
+    events = await CategoryController().getEventByCategory(widget.category.categoryName);
+    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.category.categoryName} Events'),
@@ -133,93 +162,121 @@ class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: eventss.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: eventss.length,
+        child: isLoading
+            ? ListView.separated(
+                itemCount: 4,
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                itemBuilder: (_, __) => shimmerCard(),
+              )
+            : ListView.separated(
+                itemCount: events.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
-                  final event = eventss[index];
-                  return _buildEventCard(event, context);
+                  final event = events[index];
+                  return EventCard(
+                    event: event,
+                    onTap: () => Get.to(() => EventDetails(event: event)),
+                  );
                 },
               ),
       ),
     );
   }
 
-  Widget _buildEventCard(EventModel event, BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  return InkWell(
-      onTap: () {
-        Get.to(() => EventDetails(
-              event: event,
-            ));
-      },
+  Widget shimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
       child: Container(
-        width: screenWidth ,
-        margin: EdgeInsets.only(
-          right: 0,
-          left: 0,
-          bottom: 20,
-        ),
+        height: 130,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+    );
+  }
+}
+
+class EventCard extends StatelessWidget {
+  final EventModel event;
+  final VoidCallback onTap;
+
+  const EventCard({super.key, required this.event, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
               child: Image.network(
                 event.eventImage,
-                height: screenWidth * 0.5,
-                width: double.infinity,
+                width: size.width * 0.3,
+                height: 130,
                 fit: BoxFit.fill,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                Text(
-                    DateFormat('MMM dd, yyyy').format(event.eventBegDate),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.red),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    event.eventName,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                    maxLines: 2, // Allows wrapping instead of overflow
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, size: 14, color: Colors.grey),
-                      SizedBox(width: 4),
-                      Expanded(
-                        // Prevents text overflow
-                        child: Text(
-                          event.eventLocation,
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                      style: TextStyle(
+                        color: theme.primaryColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      event.eventName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            event.eventLocation,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
+            )
           ],
         ),
       ),
     );
-}
-
+  }
 }
