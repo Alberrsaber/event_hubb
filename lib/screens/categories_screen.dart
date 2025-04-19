@@ -1,8 +1,10 @@
+import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
+import 'package:intl/intl.dart';
 
 class CategoriesScreen extends StatefulWidget {
   CategoriesScreen({Key? key}) : super(key: key);
@@ -53,12 +55,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget _buildCategoryCard(BuildContext context, CategoryModel category) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EventsByCategoryScreen(category: category),
-          ),
-        );
+        Get.to(() => EventsByCategoryScreen(category: category));
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
@@ -82,7 +79,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               scale: 1.2,
               child: Image.network(category.categoryImage),
             ),
-            const SizedBox(width: 40),
+            const SizedBox(height: 10),
             Expanded(
               child: Text(
                 category.categoryName,
@@ -150,24 +147,79 @@ class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
   }
 
   Widget _buildEventCard(EventModel event, BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey[200],
-      ),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        title: Text(event.eventName),
-        subtitle: Text(event.eventLocation),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Event: ${event.eventName}')),
-          );
-        },
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
+  return InkWell(
+      onTap: () {
+        Get.to(() => EventDetails(
+              event: event,
+            ));
+      },
+      child: Container(
+        width: screenWidth ,
+        margin: EdgeInsets.only(
+          right: 0,
+          left: 0,
+          bottom: 20,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              child: Image.network(
+                event.eventImage,
+                height: screenWidth * 0.5,
+                width: double.infinity,
+                fit: BoxFit.fill,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text(
+                    DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    event.eventName,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 2, // Allows wrapping instead of overflow
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on, size: 14, color: Colors.grey),
+                      SizedBox(width: 4),
+                      Expanded(
+                        // Prevents text overflow
+                        child: Text(
+                          event.eventLocation,
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
-  }
+}
+
 }

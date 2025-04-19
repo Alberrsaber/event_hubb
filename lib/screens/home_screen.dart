@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:get/get.dart';
@@ -14,10 +16,9 @@ import 'contact_us_screen.dart';
 import 'helps_faqs_screen.dart';
 import 'search_Screen.dart';
 import 'settings_screen.dart';
-import 'profile_screen.dart'; 
+import 'profile_screen.dart';
 import 'explore_screen.dart';
 import 'notification_screen.dart';
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 var controller = Get.put(AuthController());
 var usercontroller = Get.put(UserController());
+var eventcontroller = Get.put(EventController());
 UserModel? usser;
 String? searchName;
 
@@ -138,7 +140,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: Image.asset("assets/navigation/bookmark_n.png",
                     width: 24, height: 24),
                 title: Text("Bookmarks"),
-                onTap: () => _navigateToDrawerScreen(BookmarkScreen()),
+                onTap: () {
+                  Get.to(() => EventsPage(
+                        getEventStream: eventcontroller.getBookmarks(),
+                      ));
+                },
               ),
               ListTile(
                 leading: Image.asset("assets/navigation/mail_n.png",
@@ -204,7 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'assets/icons/notifcations_bell.png',
                                 width: 30,
                                 height: 30),
-                            onPressed: () {Get.to(() => NotificationScreen());},
+                            onPressed: () {
+                              Get.to(() => NotificationScreen());
+                            },
                           ),
                           if (hasNotifications)
                             Positioned(
@@ -232,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: TextField(
                       onTap: () {
-                        Get.to(() =>SearchPage());
+                        Get.to(() => SearchPage());
                       },
                       onChanged: (value) {
                         setState(() {
