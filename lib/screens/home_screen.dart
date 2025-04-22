@@ -3,6 +3,7 @@ import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/events_screen.dart';
+import 'package:event_booking_app_ui/screens/faculty_courses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:get/get.dart';
@@ -68,8 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     ExploreScreen(),
     CalendarScreen(),
+    FacultyCoursesScreen(),
     CategoriesScreen(),
     ProfileScreen(),
+    
   ];
 
   void _onItemTapped(int index) {
@@ -280,6 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 24, height: 24),
               label: 'Calendar',
             ),
+             BottomNavigationBarItem(  
+              icon: Icon(Icons.school),  
+              label: 'Faculty',  
+            ),
             BottomNavigationBarItem(
               icon: Image.asset('assets/icons/categories_icon.png',
                   width: 24, height: 24),
@@ -290,6 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 24, height: 24),
               label: 'Profile',
             ),
+            
           ],
         ),
       ),

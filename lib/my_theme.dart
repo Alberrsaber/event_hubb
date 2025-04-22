@@ -10,6 +10,7 @@ class MyTheme {
   static const Color customYellow = Color(0xFFF5A623);
   static const Color customLightBlue = Color(0xFFADD8E6);
 
+  // ثيم الوضع الفاتح
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: primaryColor,
@@ -23,16 +24,17 @@ class MyTheme {
       textColor: Colors.black87,
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: WidgetStatePropertyAll(primaryColor),
+      thumbColor: WidgetStateProperty.all(primaryColor),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return primaryColor.withValues(alpha: (0.5 * 255).toDouble());
         }
-        return Colors.grey.shade300;
+        return Colors.grey.shade300; // اللون الافتراضي للتبديل
       }),
     ),
   );
 
+  // ثيم الوضع المظلم
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: primaryColor,
@@ -46,12 +48,12 @@ class MyTheme {
       textColor: Colors.white,
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: WidgetStatePropertyAll(primaryColor),
+      thumbColor: WidgetStateProperty.all(primaryColor),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return primaryColor.withValues(alpha: (0.6 * 255).toDouble());
         }
-        return Colors.grey.shade700;
+        return Colors.grey.shade700; // اللون الافتراضي للتبديل
       }),
     ),
   );
