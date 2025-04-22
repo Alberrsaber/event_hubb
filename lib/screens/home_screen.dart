@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchUserDataAndSetState() async {
     UserModel? currentUser = await usercontroller
-        .fetchUserData(FirebaseAuth.instance.currentUser!.uid);
+        .fetchUserData();
 
     setState(() {
       usser = currentUser;

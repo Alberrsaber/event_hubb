@@ -1,3 +1,7 @@
+import 'package:event_booking_app_ui/controllers/category_controller.dart';
+import 'package:event_booking_app_ui/controllers/user_controller.dart';
+import 'package:event_booking_app_ui/models/category_model.dart';
+import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
@@ -5,13 +9,34 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 
-class ProfileScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> categories = [
-    {"name": "Sports", "color": Colors.red, "icon": Icons.sports_basketball},
-    {"name": "Music", "color": Colors.orange, "icon": Icons.music_note},
-    {"name": "Tech", "color": Colors.green, "icon": Icons.computer},
-    {"name": "Art", "color": Colors.blue, "icon": Icons.brush},
-  ];
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  
+  var usercontroller = Get.put(UserController());
+  var categorycontroller = Get.put(CategoryController());
+  List<CategoryModel> categories = [];
+  UserModel? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFavCategories();
+    fetchUserData();
+  }
+
+  Future<void> fetchFavCategories() async {
+    categories = await categorycontroller.getCategoriesFav();
+    setState(() {});
+  }
+
+  Future<void> fetchUserData() async {
+    currentUser = await usercontroller.fetchUserData();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +61,9 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Ashfak Sayem",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            Text(
+              currentUser?.userName == null ? "" : currentUser!.userName,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 20),
 
@@ -94,11 +119,11 @@ class ProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: cat["color"],
+        color: Color(cat.categoryColor),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: cat["color"].withOpacity(0.3),
+            color: Color(cat.categoryColor).withOpacity(0.3),
             blurRadius: 6,
             offset: Offset(0, 3),
           ),
@@ -107,10 +132,10 @@ class ProfileScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(cat["icon"], size: 18, color: Colors.white),
+          Image.network(cat.categoryImage),
           const SizedBox(width: 8),
           Text(
-            cat["name"],
+            cat.categoryName,
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
           ),
         ],

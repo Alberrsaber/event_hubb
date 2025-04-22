@@ -21,14 +21,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _mobileNumberController = TextEditingController();
 
-  String? _gender;
+  String? userSpecialty;
   String? _userType; // "Student" or "Faculty Member"
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
   void _signUp() async {
-    if (_formKey.currentState!.validate() && _gender != null && _userType != null) {
+    if (_formKey.currentState!.validate() && userSpecialty != null && _userType != null) {
       setState(() {
         _isLoading = true;
       });
@@ -39,6 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _passwordController.text,
         _mobileNumberController.text,
         _userType!,
+        userSpecialty,
         context,
       );
 
@@ -145,12 +146,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 20),
 
                 DropdownButtonFormField<String>(
-                  value: _gender,
+                  value: userSpecialty,
                   decoration: const InputDecoration(
-                    labelText: "Gender",
+                    labelText: "Faculty of",
                     border: OutlineInputBorder(),
                   ),
-                  items: ["Male", "Female"].map((String value) {
+                  items: ["Pharmacy","Medicine","Engineering","Sciences","Computers and Information","Education","Commerce","Nursing","Arts","Law"].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -158,10 +159,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
-                      _gender = value;
+                      userSpecialty = value;
                     });
                   },
-                  validator: (value) => value == null ? "Please select a gender" : null,
+                  validator: (value) => value == null ? "Please select a Faculty" : null,
                 ),
                 const SizedBox(height: 10),
 

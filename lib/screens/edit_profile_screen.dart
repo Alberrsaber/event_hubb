@@ -1,5 +1,10 @@
 import 'dart:io';
+import 'package:event_booking_app_ui/controllers/category_controller.dart';
+import 'package:event_booking_app_ui/controllers/user_controller.dart';
+import 'package:event_booking_app_ui/models/category_model.dart';
+import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 
@@ -11,48 +16,64 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController _nameController =
-      TextEditingController(text: "Ashfak Sayem");
-
-
   final ImagePicker _picker = ImagePicker();
   File? _profileImage;
 
-  final List<Map<String, dynamic>> _allInterests = [
-    {"name": "Sports", "color": Colors.red, "icon": Icons.sports},
-    {"name": "Music", "color": Colors.orange, "icon": Icons.music_note},
-    {"name": "Tech", "color": Colors.green, "icon": Icons.computer},
-    {"name": "Art", "color": Colors.blue, "icon": Icons.brush},
-    
-  ];
+  final _nameController = TextEditingController();
+  final _bioController = TextEditingController();
 
-  List<Map<String, dynamic>> _selectedInterests = [];
+  List<CategoryModel> _selectedInterests = [];
+  List<CategoryModel> _allInterests = [];
+
+  final userController = Get.put(UserController());
+  final categoryController = Get.put(CategoryController());
+
+  UserModel? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    loadInitialData();
+  }
+
+  Future<void> loadInitialData() async {
+    _allInterests = await categoryController.getCategoriesFav();
+    currentUser = await userController.fetchUserData();
+
+    if (currentUser != null) {
+      _nameController.text = currentUser!.userName;
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildProfileAvatar(),
-            const SizedBox(height: 30),
-            _buildNameField(),
-            const SizedBox(height: 30),
-            _buildLabel("About Me"),
-            const SizedBox(height: 8),
-            _buildBioField(),
-            const SizedBox(height: 30),
-            _buildLabel("Interests"),
-            const SizedBox(height: 12),
-            _buildInterestsSection(),
-            const SizedBox(height: 80),
-            _buildSaveButton(context),
-          ],
-        ),
-      ),
+      body: currentUser == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildProfileAvatar(),
+                  const SizedBox(height: 30),
+                  _buildNameField(),
+                  const SizedBox(height: 30),
+                  _buildLabel("About Me"),
+                  const SizedBox(height: 8),
+                  _buildBioField(),
+                  const SizedBox(height: 30),
+                  _buildLabel("Interests"),
+                  const SizedBox(height: 12),
+                  _buildInterestsSection(),
+                  const SizedBox(height: 80),
+                  _buildSaveButton(context),
+                ],
+              ),
+            ),
     );
   }
 
@@ -80,8 +101,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           radius: 50,
           backgroundImage: _profileImage != null
               ? FileImage(_profileImage!)
-              : const NetworkImage("https://i.imgur.com/BoN9kdC.png")
-                  as ImageProvider,
+              : (currentUser?.userImage != null
+                  ? NetworkImage(currentUser!.userImage!)
+                  : const NetworkImage("https://i.imgur.com/BoN9kdC.png"))
+              as ImageProvider,
         ),
         GestureDetector(
           onTap: _pickImage,
@@ -125,21 +148,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-Widget _buildBioField() {
-  return TextFormField(
-    maxLines: 3,
-    style: const TextStyle(fontSize: 15, color: Colors.black87),
-    decoration: InputDecoration(
-      hintText: "Tell us something about yourself", // Hint message added here
-      hintStyle: const TextStyle(color: Colors.grey), // Optional: Customize hint style
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.grey),
+  Widget _buildBioField() {
+    return TextFormField(
+      controller: _bioController,
+      maxLines: 3,
+      style: const TextStyle(fontSize: 15, color: Colors.black87),
+      decoration: InputDecoration(
+        hintText: "Tell us something about yourself",
+        hintStyle: const TextStyle(color: Colors.grey),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildLabel(String text) {
     return Align(
@@ -187,13 +210,13 @@ Widget _buildBioField() {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? interest["color"]
+                      ? Color(interest.categoryColor)
                       : Colors.grey[100],
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: isSelected
-                          ? interest["color"]
+                          ? Color(interest.categoryColor)
                           : Colors.grey.withOpacity(0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
@@ -202,14 +225,14 @@ Widget _buildBioField() {
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      interest["icon"],
+                    Image.network(
+                      interest.categoryImage,
+                      height: 40,
                       color: isSelected ? Colors.white : Colors.black,
-                      size: 40,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      interest["name"],
+                      interest.categoryName,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w600,
@@ -229,8 +252,12 @@ Widget _buildBioField() {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: GestureDetector(
-        onTap: () {
-          // Save changes
+        onTap: () async {
+          await userController.updateUserData(
+            userName: _nameController.text.trim(),
+            bio: _bioController.text.trim(),
+                      );
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Changes saved')),
           );

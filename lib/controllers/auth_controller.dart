@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:event_booking_app_ui/screens/signin_screen.dart';
 import 'package:event_booking_app_ui/screens/verification_screen.dart';
@@ -13,6 +14,7 @@ class AuthController extends GetxController {
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
   // Sign up Method
   Future SignUp(userName, userEmail, userPassword, userPhone, userQualification,
+  userSpecialty,
       context) async {
     try {
       final credential =
@@ -40,6 +42,7 @@ class AuthController extends GetxController {
         userPassword,
         userPhone,
         userQualification,
+        userSpecialty,
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -135,6 +138,7 @@ class AuthController extends GetxController {
     String userPassword,
     String userPhone,
     String userQualification,
+    userSpecialty,
   ) async {
     try {
       DocumentReference store = FirebaseFirestore.instance
@@ -149,26 +153,42 @@ class AuthController extends GetxController {
         'userImage': "",
         'userSpecialty': "",
         'userId': FirebaseAuth.instance.currentUser!.uid,
+        'userSpecialty':userSpecialty,
       });
+      UserController().addCategoryFav(userSpecialty, FirebaseAuth.instance.currentUser!.uid);
     } catch (e) {
       print(e);
     }
   }
 
 // sign in with google
-  Future signInWithGoogle(context) async {
+  Future<void> signInWithGoogle(BuildContext context) async {
+  try {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) {
+      // User canceled the sign-in
       return;
     }
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser.authentication;
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
+
+    // Sign in to Firebase with the Google credentials
+    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // Navigate to HomeScreen on successful sign-in
     Get.to(() => HomeScreen());
+  } catch (e) {
+    // Handle error
+    print("Google Sign-In Error: $e");
+    // Optionally show a dialog/snackbar here
   }
+}
+
 
 //validation
   String? validateEmail(String? value) {

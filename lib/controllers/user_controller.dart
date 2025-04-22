@@ -5,10 +5,11 @@ import 'package:get/get.dart';
 
 class UserController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+   final currentUser = FirebaseAuth.instance.currentUser;
 
-  Future<UserModel?> fetchUserData(String userId) async {
+  Future<UserModel?> fetchUserData() async {
     try {
-      DocumentSnapshot doc = await _firestore.collection('Users').doc(userId).get();
+      DocumentSnapshot doc = await _firestore.collection('Users').doc(currentUser?.uid).get();
 
       if (doc.exists) {
         return UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
@@ -21,4 +22,26 @@ class UserController extends GetxController {
       return null;
     }
   }
+// add to faviort category
+  Future<void> addCategoryFav(String userSpecialty, String userId) async {
+  final querySnapshot = await _firestore
+      .collection('Categories')
+      .where('categoryFaculties', arrayContains: userSpecialty)
+      .get();
+
+  for (var doc in querySnapshot.docs) {
+    await doc.reference.set({
+      'categoryFav': FieldValue.arrayUnion([userId])
+    }, SetOptions(merge: true));
+  }
+} 
+
+Future<void> updateUserData({
+  required String userName,
+  required String bio,
+}) async {
+  // Upload image if needed
+  // Update Firestore user document
+}
+
 }

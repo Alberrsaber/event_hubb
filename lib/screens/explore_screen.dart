@@ -22,11 +22,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   void initState() {
     super.initState();
-    fetchCategories();
+    fetchFavCategories();
   }
 
-  Future<void> fetchCategories() async {
-    categoriess = await categoryController.getAllCategories();
+  Future<void> fetchFavCategories() async {
+    categoriess = await categoryController.getCategoriesFav();
     setState(() {});
   }
 
