@@ -2,7 +2,7 @@
     package="com.example.event_booking_app_ui">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
    <application
-        android:label="event_booking_app_ui"
+        android:label="Event Hub"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
