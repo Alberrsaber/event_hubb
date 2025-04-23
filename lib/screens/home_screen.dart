@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
@@ -7,17 +6,14 @@ import 'package:event_booking_app_ui/screens/faculty_courses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../controllers/auth_controller.dart';
 import 'calendar_screen.dart';
 import 'categories_screen.dart';
 import 'profile_screen.dart';
-import 'bookmark_screen.dart';
 import 'contact_us_screen.dart';
 import 'helps_faqs_screen.dart';
 import 'search_Screen.dart';
 import 'settings_screen.dart';
-import 'profile_screen.dart';
 import 'explore_screen.dart';
 import 'notification_screen.dart';
 
@@ -28,8 +24,6 @@ class HomeScreen extends StatefulWidget {
 UserModel? usser;
 String? searchName;
 
-String userEmail = FirebaseAuth.instance.currentUser!.email.toString();
-
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool hasNotifications = false;
@@ -37,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    checkNotifications();
     fetchUserDataAndSetState();
   }
 
@@ -50,17 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void checkNotifications() async {
-    // Example: Fetch notifications from Firebase Firestore
-    var notifications = await FirebaseFirestore.instance
-        .collection('notifications')
-        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-        .get();
-
-    setState(() {
-      hasNotifications = notifications.docs.isNotEmpty;
-    });
-  }
+  
 
   final List<Widget> FacultyMemberScreens = [
     ExploreScreen(),
@@ -123,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+  final bool isStudent = usser!.userQualification == 'Student';
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
@@ -287,6 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 24, height: 24),
               label: 'Calendar',
             ),
+            if (!isStudent)
              BottomNavigationBarItem(  
               icon: Icon(Icons.school),  
               label: 'Faculty',  
