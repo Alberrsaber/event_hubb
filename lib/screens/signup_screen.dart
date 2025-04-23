@@ -13,7 +13,6 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  var controller = Get.put(AuthController());
 
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -33,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _isLoading = true;
       });
 
-      await controller.SignUp(
+      await AuthController().SignUp(
         _fullNameController.text,
         _emailController.text,
         _passwordController.text,
@@ -84,7 +83,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) => controller.validateEmail(value),
+                  validator: (value) => AuthController().validateEmail(value),
                 ),
                 const SizedBox(height: 10),
 
@@ -95,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.phone,
-                  validator: (value) => controller.validatePhoneNumber(value),
+                  validator: (value) => AuthController().validatePhoneNumber(value),
                 ),
                 const SizedBox(height: 10),
 

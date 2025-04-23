@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthController extends GetxController {
+class AuthController {
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
   // Sign up Method
   Future SignUp(userName, userEmail, userPassword, userPhone, userQualification,
@@ -91,19 +91,38 @@ class AuthController extends GetxController {
   }
 
 // Sign out Method
-  Future SignOut(BuildContext context) async {
-    try {
-      GoogleSignIn googleSignIn = GoogleSignIn();
-      if (await googleSignIn.isSignedIn()) {
-        await googleSignIn.signOut();
-      }
-      await FirebaseAuth.instance.signOut();
-      await setRememberMe(false);
-      Get.offAll(() => SignInScreen());
-    } catch (e) {
-      print("SignOut Error: $e");
+  Future<void> signOut(BuildContext context) async {
+  try {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    GoogleSignIn googleSignIn = GoogleSignIn();
+
+    // Disconnect Google account to ensure fresh login
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.disconnect(); // <--- Important!
+      await googleSignIn.signOut();
     }
+
+    await FirebaseAuth.instance.signOut();
+    await setRememberMe(false);
+
+    Navigator.of(context).pop();
+    Get.offAll(() => SignInScreen());
+  } catch (e) {
+    Navigator.of(context).pop();
+    print("SignOut Error: $e");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Sign out failed. Please try again.')),
+    );
   }
+}
+
 
   // email verification
   Future SendEmailVerfication() async {

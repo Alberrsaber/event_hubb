@@ -15,7 +15,6 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  var controller = Get.put(AuthController());
 
   bool _validateEmail(String email) {
     return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
@@ -24,7 +23,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   void _sendResetLink() {
     if (_formKey.currentState!.validate()) {
-      controller.resetPassword(_emailController.text,context);
+      AuthController().resetPassword(_emailController.text,context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -113,7 +112,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                             ),
                             validator: (value) {
-                              return controller.validateEmail(value);
+                              return AuthController().validateEmail(value);
                             },
                           ),
 

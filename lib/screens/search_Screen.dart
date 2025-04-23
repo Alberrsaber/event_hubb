@@ -17,7 +17,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
-  final eventController = Get.put(EventController());
   String searchName = '';
 
   @override
@@ -59,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: eventController.getEvents(),
+              stream: EventController().getEvents(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

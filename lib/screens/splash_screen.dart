@@ -16,7 +16,6 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _animationController;
   late Animation<double> _animation;
 
-  final AuthController controller = Get.put(AuthController());
 
   @override
   void initState() {
@@ -31,8 +30,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animationController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        bool isRemembered = await controller.isRemembered();
-        bool isLoggedIn = await controller.isLoggedIn();
+        bool isRemembered = await AuthController().isRemembered();
+        bool isLoggedIn = await AuthController().isLoggedIn();
 
         Widget nextScreen =
             (isRemembered && isLoggedIn) ? HomeScreen() : const SignInScreen();

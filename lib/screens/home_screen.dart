@@ -25,10 +25,6 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
-var controller = Get.put(AuthController());
-var usercontroller = Get.put(UserController());
-var eventcontroller = Get.put(EventController());
 UserModel? usser;
 String? searchName;
 
@@ -46,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchUserDataAndSetState() async {
-    UserModel? currentUser = await usercontroller
+    UserModel? currentUser = await UserController()
         .fetchUserData();
 
     setState(() {
@@ -66,10 +62,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final List<Widget> _screens = [
+  final List<Widget> FacultyMemberScreens = [
     ExploreScreen(),
     CalendarScreen(),
     FacultyCoursesScreen(),
+    CategoriesScreen(),
+    ProfileScreen(),
+    
+  ];
+  final List<Widget> studentScreens = [
+    ExploreScreen(),
+    CalendarScreen(),
     CategoriesScreen(),
     ProfileScreen(),
     
@@ -102,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
           TextButton(
             onPressed: () async {
               try {
-                controller.SignOut(context);
+                AuthController().signOut(context);
                 // Redirect to login screen
               } catch (e) {
                 print("Sign out error: $e"); // Debugging
@@ -145,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text("Bookmarks"),
                 onTap: () {
                   Get.to(() => EventsPage(
-                        getEventStream: eventcontroller.getBookmarks(),
+                        getEventStream: EventController().getBookmarks(),
                       ));
                 },
               ),
@@ -263,7 +266,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Expanded(
-              child: _screens[_selectedIndex], // Display selected screen
+              child: usser?.userQualification == 'Student' ?studentScreens[_selectedIndex] : FacultyMemberScreens[_selectedIndex] 
+               , // Display selected screen
             ),
           ],
         ),

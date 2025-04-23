@@ -16,7 +16,6 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> {
   final TextEditingController _controller = TextEditingController();
-  final eventController = Get.put(EventController());
 
   @override
   Widget build(BuildContext context) {

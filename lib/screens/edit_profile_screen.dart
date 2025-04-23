@@ -25,8 +25,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   List<CategoryModel> _selectedInterests = [];
   List<CategoryModel> _allInterests = [];
 
-  final userController = Get.put(UserController());
-  final categoryController = Get.put(CategoryController());
+  
 
   UserModel? currentUser;
 
@@ -37,8 +36,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> loadInitialData() async {
-    _allInterests = await categoryController.getCategoriesFav();
-    currentUser = await userController.fetchUserData();
+    _allInterests = await CategoryController().getCategoriesFav();
+    currentUser = await UserController().fetchUserData();
 
     if (currentUser != null) {
       _nameController.text = currentUser!.userName;
@@ -253,7 +252,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       padding: const EdgeInsets.only(top: 8),
       child: GestureDetector(
         onTap: () async {
-          await userController.updateUserData(
+          await UserController().updateUserData(
             userName: _nameController.text.trim(),
             bio: _bioController.text.trim(),
                       );

@@ -18,7 +18,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
   late Timer _timer;
   bool _isResendEnabled = false;
   final email = FirebaseAuth.instance.currentUser!.email;
-  final controller = Get.put(AuthController());
 
   @override
   void initState() {
@@ -48,7 +47,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void _resendCode() {
     if (_isResendEnabled) {
       _startTimer();
-      controller.SendEmailVerfication();
+      AuthController().SendEmailVerfication();
     }
   }
 

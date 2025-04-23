@@ -16,8 +16,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   
-  var usercontroller = Get.put(UserController());
-  var categorycontroller = Get.put(CategoryController());
+  
   List<CategoryModel> categories = [];
   UserModel? currentUser;
 
@@ -29,12 +28,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchFavCategories() async {
-    categories = await categorycontroller.getCategoriesFav();
+    categories = await CategoryController().getCategoriesFav();
     setState(() {});
   }
 
   Future<void> fetchUserData() async {
-    currentUser = await usercontroller.fetchUserData();
+    currentUser = await UserController().fetchUserData();
     setState(() {});
   }
 

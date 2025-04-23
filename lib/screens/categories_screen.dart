@@ -16,7 +16,6 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  final categoryController = Get.put(CategoryController());
   List<CategoryModel> categories = [];
   bool isLoading = true;
 
@@ -27,7 +26,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   Future<void> fetchCategories() async {
-    categories = await categoryController.getAllCategories();
+    categories = await CategoryController().getAllCategories();
     setState(() => isLoading = false);
   }
 

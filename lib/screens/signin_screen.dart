@@ -18,7 +18,6 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  var controller = Get.put(AuthController());
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
   bool _isPasswordVisible = false;
@@ -28,8 +27,8 @@ class _SignInScreenState extends State<SignInScreen> {
     _checkRememberedUser();
   }
   Future<void> _checkRememberedUser() async {
-    bool remembered = await  controller.isRemembered();
-    if (remembered && await  controller.isLoggedIn()) {
+    bool remembered = await  AuthController().isRemembered();
+    if (remembered && await  AuthController().isLoggedIn()) {
       // Navigate to home screen if user is remembered and logged in
       Get.offAll(() => HomeScreen());
     }
@@ -200,7 +199,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           GestureDetector(
                             onTap: () {
                               if (_formKey.currentState!.validate()) {
-                                  controller.SignIn(
+                                  AuthController().SignIn(
                                     _emailController.text,
                                     _passwordController.text,
                                     _rememberMe,
@@ -239,7 +238,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               children: [
                                 ElevatedButton.icon(
                                   onPressed: () {
-                                    controller.signInWithGoogle(context);
+                                    AuthController().signInWithGoogle(context);
                                   },
                                   icon: Image.asset('assets/icons/google.png',
                                       width: 24),

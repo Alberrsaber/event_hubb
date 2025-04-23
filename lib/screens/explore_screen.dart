@@ -15,8 +15,7 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  var eventController = Get.put(EventController());
-  var categoryController = Get.put(CategoryController());
+
   List<CategoryModel> categoriess = [];
 
   @override
@@ -26,7 +25,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   Future<void> fetchFavCategories() async {
-    categoriess = await categoryController.getCategoriesFav();
+    categoriess = await CategoryController().getCategoriesFav();
     setState(() {});
   }
 
@@ -72,7 +71,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             height: screenHeight * 0.6,
             width: screenWidth, // Event card height
             child: StreamBuilder<QuerySnapshot>(
-              stream: eventController.getEvents(),
+              stream: EventController().getEvents(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());

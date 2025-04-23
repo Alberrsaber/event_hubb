@@ -16,7 +16,7 @@ class EventDetails extends StatefulWidget {
 class _EventDetailsState extends State<EventDetails> {
   late bool isBookmarked;
   final currentUser = FirebaseAuth.instance.currentUser;
-  final eventController = Get.put(EventController());
+
 
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _EventDetailsState extends State<EventDetails> {
   }
 
   void _toggleBookmark() async {
-    await eventController.toggleBookmark(widget.event.eventId);
+    await EventController().toggleBookmark(widget.event.eventId);
     setState(() {
       isBookmarked = !isBookmarked;
     });
