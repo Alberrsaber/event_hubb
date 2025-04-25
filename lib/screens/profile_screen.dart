@@ -3,11 +3,9 @@ import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -15,135 +13,198 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  
-  
   List<CategoryModel> categories = [];
   UserModel? currentUser;
 
   @override
   void initState() {
     super.initState();
-    fetchFavCategories();
-    fetchUserData();
+    fetchData();
   }
 
-  Future<void> fetchFavCategories() async {
-    categories = await CategoryController().getCategoriesFav();
-    setState(() {});
-  }
-
-  Future<void> fetchUserData() async {
+  Future<void> fetchData() async {
     currentUser = await UserController().fetchUserData();
+    categories = await CategoryController().getCategoriesFav();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: theme.scaffoldBackgroundColor,
+        foregroundColor: theme.textTheme.bodyLarge?.color,
         elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'My Profile',
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  "https://i.imgur.com/BoN9kdC.png", // Replace with real image
+      body: currentUser == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildProfileHeader(theme),
+                  const SizedBox(height: 30),
+                  _buildEditButton(),
+                  const SizedBox(height: 30),
+                  _buildOptionsList(),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _buildProfileHeader(ThemeData theme) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: 50,
+            backgroundImage: NetworkImage(
+               "https://i.imgur.com/BoN9kdC.png",
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                currentUser!.userName,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              currentUser?.userName == null ? "" : currentUser!.userName,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 20),
-
-            // Edit Profile button
-            OutlinedButton.icon(
-              onPressed: () {Get.to(() =>EditProfileScreen());},
-              icon: const Icon(Icons.edit, color: MyTheme.primaryColor),
-              label: const Text(
-                'Edit Profile',
-                style: TextStyle(
-                    color: MyTheme.primaryColor, fontWeight: FontWeight.w500),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: MyTheme.primaryColor, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+              const SizedBox(height: 8),
+              Text(
+                currentUser!.userEmail ?? '',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey,
                 ),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 14),
               ),
-            ),
-
-            const SizedBox(height: 30),
-
-            // About Me section
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "About Me",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Enjoy your favorite dish and a lovely your friends and family and have a great time. Food from local food trucks will be available for purchase.",
-              style: TextStyle(fontSize: 15, color: Colors.black87),
-            ),
-            const SizedBox(height: 30),
-
-            // Interests Section
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Interests",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-  spacing: 12,
-  runSpacing: 12,
-  children: categories.map((cat) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Color(cat.categoryColor),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Color(cat.categoryColor).withOpacity(0.3),
-            blurRadius: 6,
-            offset: Offset(0, 3),
+            ],
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.network(cat.categoryImage),
-          const SizedBox(width: 8),
-          Text(
-            cat.categoryName,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditButton() {
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: () => Get.to(() => EditProfileScreen()),
+        icon: const Icon(Icons.edit, size: 18),
+        label: const Text("Edit Profile"),
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          foregroundColor: MyTheme.primaryColor,
+          backgroundColor: MyTheme.primaryColor.withOpacity(0.1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
           ),
-        ],
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
       ),
     );
-  }).toList(),
-),
+  }
 
-            const SizedBox(height: 40),
+  Widget _buildOptionsList() {
+    return Column(
+      children: [
+        ProfileOptionTile(
+          title: "My Tickets",
+          onTap: () {
+            // TODO: Navigate to My Tickets
+          },
+        ),
+        const SizedBox(height: 20),
+        ProfileOptionTile(
+          title: "Bookmarks",
+          onTap: () {
+            // TODO: Navigate to Bookmarks
+          },
+        ),
+        const SizedBox(height: 20),
+        ProfileOptionTile(
+          title: "Interests",
+          onTap: () {
+            // TODO: Navigate to Interests
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class ProfileOptionTile extends StatelessWidget {
+  final String title;
+  final VoidCallback? onTap;
+  final IconData trailingIcon;
+
+  const ProfileOptionTile({
+    Key? key,
+    required this.title,
+    this.onTap,
+    this.trailingIcon = Icons.arrow_forward_ios_rounded,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+        decoration: BoxDecoration(
+          color: isDark ? theme.cardColor : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Icon(
+              trailingIcon,
+              size: 18,
+              color: MyTheme.primaryColor,
+            ),
           ],
         ),
       ),

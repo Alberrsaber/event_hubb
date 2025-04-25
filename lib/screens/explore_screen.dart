@@ -192,10 +192,9 @@ class CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eventController = Get.find<EventController>();
     return InkWell(
       onTap: () {
-        Get.to(() => EventsPage(getEventStream: eventController.getEventsbyCategory(category.categoryName),));
+        Get.to(() => EventsPage(getEventStream: EventController().getEventsbyCategory(category.categoryName),));
       },
       child: Container(
         margin: EdgeInsets.only(

@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-  final bool isStudent = usser!.userQualification == 'Student';
+  final bool isStudent = usser?.userQualification == 'Student';
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
