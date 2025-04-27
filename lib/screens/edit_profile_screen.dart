@@ -20,14 +20,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   File? _profileImage;
 
   final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _qualificationController = TextEditingController();
+  final _specialityController = TextEditingController();
   final _bioController = TextEditingController();
 
-  List<CategoryModel> _selectedInterests = [];
   List<CategoryModel> _allInterests = [];
+  List<CategoryModel> _allCategories = [];
 
-  
+
 
   UserModel? currentUser;
+
+  final List<String> _qualifications = [
+    "Faculty Member",
+    "Student",
+  ];
+
+  final List<String> _specialities = [
+    "Pharmacy","Medicine","Engineering","Sciences","Computers and Information","Education","Commerce","Nursing","Arts","Law"
+  ];
 
   @override
   void initState() {
@@ -38,9 +50,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> loadInitialData() async {
     _allInterests = await CategoryController().getCategoriesFav();
     currentUser = await UserController().fetchUserData();
+    _allCategories = await CategoryController().getAllCategories();
 
     if (currentUser != null) {
       _nameController.text = currentUser!.userName;
+      _phoneController.text = currentUser!.userPhone;
+      _qualificationController.text = currentUser!.userQualification ?? "";
+      _specialityController.text = currentUser!.userSpecialty ?? "";
     }
 
     setState(() {});
@@ -49,46 +65,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(),
       body: currentUser == null
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildProfileAvatar(),
-                  const SizedBox(height: 30),
-                  _buildNameField(),
-                  const SizedBox(height: 30),
-                  _buildLabel("About Me"),
-                  const SizedBox(height: 8),
-                  _buildBioField(),
-                  const SizedBox(height: 30),
-                  _buildLabel("Interests"),
-                  const SizedBox(height: 12),
-                  _buildInterestsSection(),
-                  const SizedBox(height: 80),
-                  _buildSaveButton(context),
+                  const SizedBox(height: 24),
+                  _buildEditableField("User Name", _nameController),
+                  const SizedBox(height: 16),
+                  _buildStaticField("Email Address", currentUser!.userEmail),
+                  const SizedBox(height: 16),
+                  _buildEditableField("Mobile Number", _phoneController),
+                  const SizedBox(height: 16),
+                  _buildDropdownField(
+                    label: "Qualification",
+                    value: _qualificationController.text,
+                    items: _qualifications,
+                    onChanged: (val) {
+                      _qualificationController.text = val ?? '';
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDropdownField(
+                    label: "Speciality",
+                    value: _specialityController.text,
+                    items: _specialities,
+                    onChanged: (val) {
+                      _specialityController.text = val ?? '';
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  _buildSectionLabel("Interests"),
+                  _buildInterestsDropdown(),
+                  _buildSelectedInterestsChips(),                  
+                  const SizedBox(height: 32),
+                  _buildSaveButton(),
                 ],
               ),
             ),
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar() {
     return AppBar(
-      title: const Text(
-        "Edit Profile",
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
+      title: const Text("Edit Profile", style: TextStyle(fontWeight: FontWeight.bold)),
       backgroundColor: MyTheme.primaryColor,
       foregroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.pop(context),
-      ),
+      centerTitle: true,
     );
   }
 
@@ -97,24 +125,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       alignment: Alignment.bottomRight,
       children: [
         CircleAvatar(
-          radius: 50,
+          radius: 60,
           backgroundImage: _profileImage != null
               ? FileImage(_profileImage!)
               : (currentUser?.userImage != null
                   ? NetworkImage(currentUser!.userImage!)
-                  : const NetworkImage("https://i.imgur.com/BoN9kdC.png"))
-              as ImageProvider,
+                  : const NetworkImage("https://i.imgur.com/BoN9kdC.png")) as ImageProvider,
         ),
-        GestureDetector(
-          onTap: _pickImage,
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: MyTheme.primaryColor,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
+        Positioned(
+          bottom: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: _pickImage,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: MyTheme.primaryColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: const Icon(Icons.edit, size: 18, color: Colors.white),
             ),
-            child: const Icon(Icons.edit, color: Colors.white, size: 20),
           ),
         ),
       ],
@@ -122,7 +153,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? picked = await _picker.pickImage(source: ImageSource.gallery);
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() {
         _profileImage = File(picked.path);
@@ -130,156 +161,162 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  Widget _buildNameField() {
-    return TextFormField(
-      controller: _nameController,
-      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-      textAlign: TextAlign.center,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10),
-        filled: true,
-        fillColor: Colors.grey[100],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBioField() {
-    return TextFormField(
-      controller: _bioController,
-      maxLines: 3,
-      style: const TextStyle(fontSize: 15, color: Colors.black87),
-      decoration: InputDecoration(
-        hintText: "Tell us something about yourself",
-        hintStyle: const TextStyle(color: Colors.grey),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabel(String text) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
-  Widget _buildInterestsSection() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: _allInterests.map((interest) {
-            final isSelected = _selectedInterests.contains(interest);
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (isSelected) {
-                    _selectedInterests.remove(interest);
-                  } else {
-                    _selectedInterests.add(interest);
-                  }
-                });
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? Color(interest.categoryColor)
-                      : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: isSelected
-                          ? Color(interest.categoryColor)
-                          : Colors.grey.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Image.network(
-                      interest.categoryImage,
-                      height: 40,
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      interest.categoryName,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: GestureDetector(
-        onTap: () async {
-          await UserController().updateUserData(
-            userName: _nameController.text.trim(),
-            bio: _bioController.text.trim(),
-                      );
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Changes saved')),
-          );
-          Navigator.pop(context);
-        },
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: MyTheme.primaryColor,
-            borderRadius: const BorderRadius.all(Radius.circular(18)),
-          ),
-          child: const Center(
-            child: Text(
-              'SAVE CHANGES',
-              style: TextStyle(
-                color: MyTheme.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+  Widget _buildEditableField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionLabel(label),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: "Enter $label",
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownField({
+    required String label,
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionLabel(label),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: value.isNotEmpty ? value : null,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          hint: Text("Select $label"),
+          items: items.map((item) {
+            return DropdownMenuItem(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStaticField(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionLabel(label),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionLabel(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    );
+  }
+
+
+  Widget _buildInterestsDropdown() {
+    return DropdownButtonFormField<CategoryModel>(
+      value: null,
+      hint: const Text("Select a category"),
+      isExpanded: true,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      items: _allCategories.map((category) {
+        return DropdownMenuItem<CategoryModel>(
+          value: category,
+          child: Text(category.categoryName),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value != null && !_allInterests.contains(value)) {
+          setState(() {
+            _allInterests.add(value);
+          });
+        }
+      },
+    );
+  }
+   Widget _buildSelectedInterestsChips() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: _allInterests.map((interest) {
+        return Chip(
+          label: Text(interest.categoryName),
+          onDeleted: () {
+            setState(() {
+              _allInterests.remove(interest);
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: MyTheme.primaryColor,
+        minimumSize: const Size.fromHeight(50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+      ),
+      onPressed: () async {
+        await UserController().updateUserData(
+          userName: _nameController.text.trim(),
+          bio: _bioController.text.trim(),
+          
+          // Add more fields if needed
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!')),
+        );
+        Navigator.pop(context);
+      },
+      child: const Text(
+        'Save Changes',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
       ),
     );
   }
