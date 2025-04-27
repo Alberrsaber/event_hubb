@@ -1,7 +1,6 @@
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 

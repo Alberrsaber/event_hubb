@@ -1,7 +1,5 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'verification_screen.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 
 class SignUpScreen extends StatefulWidget {

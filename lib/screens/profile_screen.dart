@@ -1,10 +1,12 @@
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
+import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/Settings_Screen.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
-import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
+import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -142,13 +144,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ProfileOptionTile(
           title: "Bookmarks",
           onTap: () {
-            // TODO: Navigate to Bookmarks
+            Get.to(() => EventsPage(
+                        getEventStream: EventController().getBookmarks(),
+                      ));
           },
         ),
         const SizedBox(height: 20),
         ProfileOptionTile(
-          title: "Interests",
+          title: "Settings",
           onTap: () {
+            Get.to(() => SettingsScreen());
+          
             // TODO: Navigate to Interests
           },
         ),

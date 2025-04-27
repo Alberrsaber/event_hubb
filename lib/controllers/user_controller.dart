@@ -35,12 +35,6 @@ class UserController  {
   }
 } 
 
-Future<void> updateUserData({
-  required String userName,
-  required String bio,
-}) async {
-  // Upload image if needed
-  // Update Firestore user document
-}
+
 
 }

@@ -4,7 +4,6 @@ import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 
@@ -23,7 +22,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _phoneController = TextEditingController();
   final _qualificationController = TextEditingController();
   final _specialityController = TextEditingController();
-  final _bioController = TextEditingController();
 
   List<CategoryModel> _allInterests = [];
   List<CategoryModel> _allCategories = [];
@@ -77,8 +75,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 24),
                   _buildEditableField("User Name", _nameController),
                   const SizedBox(height: 16),
-                  _buildStaticField("Email Address", currentUser!.userEmail),
-                  const SizedBox(height: 16),
                   _buildEditableField("Mobile Number", _phoneController),
                   const SizedBox(height: 16),
                   _buildDropdownField(
@@ -129,7 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           backgroundImage: _profileImage != null
               ? FileImage(_profileImage!)
               : (currentUser?.userImage != null
-                  ? NetworkImage(currentUser!.userImage!)
+                  ? NetworkImage(currentUser!.userImage)
                   : const NetworkImage("https://i.imgur.com/BoN9kdC.png")) as ImageProvider,
         ),
         Positioned(
@@ -242,6 +238,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _buildSectionLabel(String text) {
     return Text(
       text,
+      textAlign: TextAlign.start,
       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     );
   }
@@ -301,14 +298,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           borderRadius: BorderRadius.circular(18),
         ),
       ),
-      onPressed: () async {
-        await UserController().updateUserData(
-          userName: _nameController.text.trim(),
-          bio: _bioController.text.trim(),
-          
-          // Add more fields if needed
-        );
-
+      onPressed: ()  {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!')),
         );

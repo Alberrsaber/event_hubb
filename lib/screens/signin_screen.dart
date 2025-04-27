@@ -1,7 +1,6 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/screens/signup_screen.dart';
 import 'package:event_booking_app_ui/screens/resset_password_screen.dart';
