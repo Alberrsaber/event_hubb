@@ -1,4 +1,6 @@
 // File: categories_screen.dart
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -85,6 +87,13 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+     final random = Random();
+    final color = Color.fromARGB(
+      255, // fully opaque
+      random.nextInt(256),
+      random.nextInt(256),
+      random.nextInt(256),
+    );
 
     return GestureDetector(
       onTap: onTap,
@@ -92,7 +101,7 @@ class CategoryCard extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Color(category.categoryColor),
+          color: color,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -207,6 +216,7 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
+     
 
     return InkWell(
       onTap: onTap,

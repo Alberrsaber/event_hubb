@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserController  {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -33,7 +36,50 @@ class UserController  {
       'categoryFav': FieldValue.arrayUnion([userId])
     }, SetOptions(merge: true));
   }
-} 
+
+
+}
+//add favortie category 
+Future<void> addinterest(String categoryId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final categoryRef = _firestore.collection('Categories').doc(categoryId);
+    final categoryRefDoc = await categoryRef.get();
+    final data = categoryRefDoc.data();
+
+    if (data == null) return;
+
+    List<dynamic> categoryFav = data['categoryFav'] ?? [];
+
+    if (!categoryFav.contains(user.uid)) {
+            categoryFav.add(user.uid);
+    } else {
+    }
+
+    await categoryRef.update({'categoryFav': categoryFav});
+  }
+// update user data
+ Future<void> updateUserData(UserModel updatedUser) async {
+  try {
+    await _firestore.collection('Users').doc(updatedUser.userId).update(updatedUser.toMap());
+    print("User updated successfully");
+  } catch (e) {
+    print("Error updating user: $e");
+  }
+}
+// upload profile photo
+Future<String?> uploadProfileImage(File imageFile, String userId) async {
+  try {
+    final ref = FirebaseStorage.instance.ref().child('profile_images').child('$userId.jpg');
+    await ref.putFile(imageFile);
+    return await ref.getDownloadURL();
+  } catch (e) {
+    print("Image upload error: $e");
+    return null;
+  }
+}
+
 
 
 

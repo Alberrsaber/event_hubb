@@ -26,8 +26,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   List<CategoryModel> _allInterests = [];
   List<CategoryModel> _allCategories = [];
 
-
-
   UserModel? currentUser;
 
   final List<String> _qualifications = [
@@ -36,7 +34,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   ];
 
   final List<String> _specialities = [
-    "Pharmacy","Medicine","Engineering","Sciences","Computers and Information","Education","Commerce","Nursing","Arts","Law"
+    "Pharmacy",
+    "Medicine",
+    "Engineering",
+    "Sciences",
+    "Computers and Information",
+    "Education",
+    "Commerce",
+    "Nursing",
+    "Arts",
+    "Law"
   ];
 
   @override
@@ -50,12 +57,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     currentUser = await UserController().fetchUserData();
     _allCategories = await CategoryController().getAllCategories();
 
-    if (currentUser != null) {
+    if (mounted &&currentUser != null) {
       _nameController.text = currentUser!.userName;
       _phoneController.text = currentUser!.userPhone;
       _qualificationController.text = currentUser!.userQualification ?? "";
       _specialityController.text = currentUser!.userSpecialty ?? "";
     }
+     if (mounted) {
+    setState(() {});
+  }
 
     setState(() {});
   }
@@ -97,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 24),
                   _buildSectionLabel("Interests"),
                   _buildInterestsDropdown(),
-                  _buildSelectedInterestsChips(),                  
+                  _buildSelectedInterestsChips(),
                   const SizedBox(height: 32),
                   _buildSaveButton(),
                 ],
@@ -108,7 +118,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: const Text("Edit Profile", style: TextStyle(fontWeight: FontWeight.bold)),
+      title: const Text("Edit Profile",
+          style: TextStyle(fontWeight: FontWeight.bold)),
       backgroundColor: MyTheme.primaryColor,
       foregroundColor: Colors.white,
       elevation: 0,
@@ -125,8 +136,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           backgroundImage: _profileImage != null
               ? FileImage(_profileImage!)
               : (currentUser?.userImage != null
-                  ? NetworkImage(currentUser!.userImage)
-                  : const NetworkImage("https://i.imgur.com/BoN9kdC.png")) as ImageProvider,
+                      ? NetworkImage(currentUser!.userImage)
+                      : const NetworkImage("https://i.imgur.com/BoN9kdC.png"))
+                  as ImageProvider,
         ),
         Positioned(
           bottom: 4,
@@ -191,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _buildSectionLabel(label),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: value.isNotEmpty ? value : null,
+          value: items.contains(value) ? value : null,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey[100],
@@ -243,7 +255,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-
   Widget _buildInterestsDropdown() {
     return DropdownButtonFormField<CategoryModel>(
       value: null,
@@ -272,7 +283,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
     );
   }
-   Widget _buildSelectedInterestsChips() {
+
+  Widget _buildSelectedInterestsChips() {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -298,7 +310,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           borderRadius: BorderRadius.circular(18),
         ),
       ),
-      onPressed: ()  {
+      onPressed: () async {
+        if (currentUser == null) return;
+
+        String imageUrl = currentUser!.userImage;
+        if (_profileImage != null) {
+          final uploadedUrl = await UserController()
+              .uploadProfileImage(_profileImage!, currentUser!.userId);
+          if (uploadedUrl != null) {
+            imageUrl = uploadedUrl;
+          }
+        }
+
+        final updatedUser = UserModel(
+          userId: currentUser!.userId,
+          userName: _nameController.text,
+          userEmail: currentUser!.userEmail,
+          userPassword: currentUser!.userPassword, // keep existing password
+          userPhone: _phoneController.text,
+          userQualification: _qualificationController.text,
+          userSpecialty: _specialityController.text,
+          userImage: imageUrl,
+        );
+
+        await UserController().updateUserData(updatedUser);
+        for (var interest in _allInterests) {
+          await UserController().addinterest(interest.categoryId);
+        }
+        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!')),
         );
@@ -306,7 +346,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
       child: const Text(
         'Save Changes',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
       ),
     );
   }

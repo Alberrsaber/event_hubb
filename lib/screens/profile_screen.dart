@@ -28,7 +28,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> fetchData() async {
     currentUser = await UserController().fetchUserData();
     categories = await CategoryController().getCategoriesFav();
+
+     if (mounted) {
     setState(() {});
+  }
   }
 
   @override
@@ -83,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: CircleAvatar(
             radius: 50,
             backgroundImage: NetworkImage(
-               "https://i.imgur.com/BoN9kdC.png",
+               currentUser!.userImage,
             ),
           ),
         ),

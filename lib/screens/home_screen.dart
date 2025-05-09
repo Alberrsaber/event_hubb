@@ -12,7 +12,7 @@ import 'categories_screen.dart';
 import 'profile_screen.dart';
 import 'contact_us_screen.dart';
 import 'helps_faqs_screen.dart';
-import 'search_Screen.dart';
+import 'search_screen.dart'; // Make sure it's named correctly
 import 'settings_screen.dart';
 import 'explore_screen.dart';
 import 'notification_screen.dart';
@@ -21,8 +21,8 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+
 UserModel? usser;
-String? searchName;
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
@@ -35,15 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchUserDataAndSetState() async {
-    UserModel? currentUser = await UserController()
-        .fetchUserData();
-
+    UserModel? currentUser = await UserController().fetchUserData();
     setState(() {
       usser = currentUser;
     });
   }
-
-  
 
   final List<Widget> FacultyMemberScreens = [
     ExploreScreen(),
@@ -51,14 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
     FacultyCoursesScreen(),
     CategoriesScreen(),
     ProfileScreen(),
-    
   ];
   final List<Widget> studentScreens = [
     ExploreScreen(),
     CalendarScreen(),
     CategoriesScreen(),
     ProfileScreen(),
-    
   ];
 
   void _onItemTapped(int index) {
@@ -89,9 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () async {
               try {
                 AuthController().signOut(context);
-                // Redirect to login screen
               } catch (e) {
-                print("Sign out error: $e"); // Debugging
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Error signing out: $e")),
                 );
@@ -106,57 +98,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-  final bool isStudent = usser?.userQualification == 'Student';
+    final bool isStudent = usser?.userQualification == 'Student';
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
           child: Column(
             children: [
               UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color(0xFF4A43EC), // Updated to main app color
-                ),
-                accountName:
-                    Text(usser?.userName == null ? "" : usser!.userEmail),
-                accountEmail: Text(usser?.userName == null
-                    ? "Please edit your profile"
-                    : usser!.userName),
+                decoration: BoxDecoration(color: Color(0xFF4A43EC)),
+                accountName: Text(usser?.userEmail ?? ""),
+                accountEmail: Text(usser?.userName ?? "Please edit your profile"),
                 currentAccountPicture: CircleAvatar(
-                  backgroundImage:
-                      AssetImage("assets/navigation/profile_pic.png"),
+                  backgroundImage: NetworkImage(usser?.userImage ??
+                      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
                 ),
               ),
               ListTile(
-                leading: Image.asset("assets/navigation/bookmark_n.png",
-                    width: 24, height: 24),
+                leading: Image.asset("assets/navigation/bookmark_n.png", width: 24, height: 24),
                 title: Text("Bookmarks"),
                 onTap: () {
-                  Get.to(() => EventsPage(
-                        getEventStream: EventController().getBookmarks(),
-                      ));
+                  Get.to(() => EventsPage(getEventStream: EventController().getBookmarks()));
                 },
               ),
               ListTile(
-                leading: Image.asset("assets/navigation/mail_n.png",
-                    width: 24, height: 24),
+                leading: Image.asset("assets/navigation/mail_n.png", width: 24, height: 24),
                 title: Text("Contact Us"),
                 onTap: () => _navigateToDrawerScreen(ContactScreen()),
               ),
               ListTile(
-                leading: Image.asset("assets/navigation/settings_n.png",
-                    width: 24, height: 24),
+                leading: Image.asset("assets/navigation/settings_n.png", width: 24, height: 24),
                 title: Text("Settings"),
                 onTap: () => _navigateToDrawerScreen(SettingsScreen()),
               ),
               ListTile(
-                leading: Image.asset("assets/navigation/helps_n.png",
-                    width: 24, height: 24),
+                leading: Image.asset("assets/navigation/helps_n.png", width: 24, height: 24),
                 title: Text("Helps & FAQs"),
                 onTap: () => _navigateToDrawerScreen(HelpsScreen()),
               ),
               ListTile(
-                leading: Image.asset("assets/navigation/signout_n.png",
-                    width: 24, height: 24),
+                leading: Image.asset("assets/navigation/signout_n.png", width: 24, height: 24),
                 title: Text("Sign Out"),
                 onTap: () => _signOut(context),
               ),
@@ -181,28 +161,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Builder(
                         builder: (context) => IconButton(
-                          icon: Image.asset('assets/icons/navigation_icon.png',
-                              width: 30, height: 30),
+                          icon: Image.asset('assets/icons/navigation_icon.png', width: 30, height: 30),
                           onPressed: () {
                             Scaffold.of(context).openDrawer();
                           },
                         ),
                       ),
-                      SizedBox(
-                        height: 50,
-                        child: Image.asset('assets/images/white_logo.png',
-                            fit: BoxFit.contain),
-                      ),
+                      Image.asset('assets/images/white_logo.png', height: 50),
                       Stack(
                         children: [
                           IconButton(
-                            icon: Image.asset(
-                                'assets/icons/notifcations_bell.png',
-                                width: 30,
-                                height: 30),
-                            onPressed: () {
-                              Get.to(() => NotificationScreen());
-                            },
+                            icon: Image.asset('assets/icons/notifcations_bell.png', width: 30, height: 30),
+                            onPressed: () => Get.to(() => NotificationScreen()),
                           ),
                           if (hasNotifications)
                             Positioned(
@@ -222,27 +192,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF5669FF), // Search background color
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: TextField(
-                      onTap: () {
-                        Get.to(() => SearchPage());
-                      },
-                      onChanged: (value) {
-                        setState(() {
-                          searchName = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        hintStyle: TextStyle(color: Colors.white),
-                        prefixIcon: Image.asset('assets/icons/search_icon.png',
-                            width: 20, height: 20),
-                        border: InputBorder.none,
+                  InkWell(
+                    onTap: () {
+                      Get.to(() => SearchPage()); // Navigate to one shared SearchPage
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF5669FF),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset('assets/icons/search_icon.png', width: 20, height: 20),
+                          SizedBox(width: 12),
+                          Text(
+                            'Search...',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -250,43 +218,39 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Expanded(
-              child: usser?.userQualification == 'Student' ?studentScreens[_selectedIndex] : FacultyMemberScreens[_selectedIndex] 
-               , // Display selected screen
+              child: isStudent
+                  ? studentScreens[_selectedIndex]
+                  : FacultyMemberScreens[_selectedIndex],
             ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
-          selectedItemColor: Color(0xFF4A43EC), // Updated to main app color
+          selectedItemColor: Color(0xFF4A43EC),
           unselectedItemColor: Colors.grey,
           onTap: _onItemTapped,
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/compass.png',
-                  width: 24, height: 24),
+              icon: Image.asset('assets/icons/compass.png', width: 24, height: 24),
               label: 'Explore',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/calendar.png',
-                  width: 24, height: 24),
+              icon: Image.asset('assets/icons/calendar.png', width: 24, height: 24),
               label: 'Calendar',
             ),
             if (!isStudent)
-             BottomNavigationBarItem(  
-              icon: Icon(Icons.school),  
-              label: 'Faculty',  
-            ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.school),
+                label: 'Faculty',
+              ),
             BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/categories_icon.png',
-                  width: 24, height: 24),
+              icon: Image.asset('assets/icons/categories_icon.png', width: 24, height: 24),
               label: 'Categories',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/profile.png',
-                  width: 24, height: 24),
+              icon: Image.asset('assets/icons/profile.png', width: 24, height: 24),
               label: 'Profile',
             ),
-            
           ],
         ),
       ),

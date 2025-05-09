@@ -5,8 +5,6 @@ import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../models/event_model.dart';
-import 'eventDetails_screen.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -27,12 +25,10 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.back();
-          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Get.back(),
         ),
-        title: const Text('Search'),
+        title: const Text('Search', style: TextStyle(color: Colors.black)),
       ),
       body: Column(
         children: [
@@ -40,12 +36,10 @@ class _SearchPageState extends State<SearchPage> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _controller,
-              onChanged: (value) {
-                setState(() => searchName = value);
-              },
+              onChanged: (value) => setState(() => searchName = value),
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
-                hintText: 'Search...',
+                hintText: 'Search events...',
                 filled: true,
                 fillColor: Colors.grey[100],
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -66,30 +60,27 @@ class _SearchPageState extends State<SearchPage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No events found'));
-                } else {
-                  List<EventModel> events = snapshot.data!.docs.map((doc) {
-                    return EventModel.fromMap(
-                        doc.data() as Map<String, dynamic>, doc.id);
-                  }).toList();
-
-                  final filteredEvents = events
-                      .where((event) => event.eventName
-                          .toLowerCase()
-                          .contains(searchName.toLowerCase()))
-                      .toList();
-
-                  if (filteredEvents.isEmpty) {
-                    return const Center(child: Text('No matching events'));
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: filteredEvents.length,
-                    itemBuilder: (context, index) {
-                      return EventCard(filteredEvents[index]);
-                    },
-                  );
                 }
+
+                List<EventModel> events = snapshot.data!.docs.map((doc) {
+                  return EventModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+                }).toList();
+
+                final filteredEvents = events
+                    .where((event) => event.eventName.toLowerCase().contains(searchName.toLowerCase()))
+                    .toList();
+
+                if (filteredEvents.isEmpty) {
+                  return const Center(child: Text('No matching events'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: filteredEvents.length,
+                  itemBuilder: (context, index) {
+                    return EventCard(filteredEvents[index]);
+                  },
+                );
               },
             ),
           ),
@@ -134,25 +125,15 @@ class EventCard extends StatelessWidget {
                 width: screenWidth * 0.32,
                 height: 140,
                 fit: BoxFit.fill,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    width: screenWidth * 0.32,
-                    height: 140,
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator(strokeWidth: 2),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: screenWidth * 0.32,
-                    height: 140,
-                    color: Colors.grey[200],
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.broken_image,
-                        size: 32, color: Colors.grey),
-                  );
-                },
+                loadingBuilder: (context, child, progress) =>
+                    progress == null ? child : const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                errorBuilder: (context, error, _) => Container(
+                  width: screenWidth * 0.32,
+                  height: 140,
+                  color: Colors.grey[200],
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.broken_image, size: 32, color: Colors.grey),
+                ),
               ),
             ),
             Expanded(
@@ -174,24 +155,19 @@ class EventCard extends StatelessWidget {
                       event.eventName,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.location_on_outlined,
-                            size: 16, color: Colors.grey),
+                        const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             event.eventLocation,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style:
-                                const TextStyle(color: Colors.grey, fontSize: 13.5),
+                            style: const TextStyle(color: Colors.grey, fontSize: 13.5),
                           ),
                         ),
                       ],

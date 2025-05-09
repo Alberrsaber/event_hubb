@@ -1,15 +1,53 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class EventController  {
+class EventController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  // Get all events
-  Stream<QuerySnapshot> getEvents() {
+  // Get all Events
+  Stream<QuerySnapshot> getAllEvents() {
     return _firestore.collection('Events').snapshots();
   }
+
+  // Get Upcoming Events
+
+  Stream<QuerySnapshot> getEvents() {
+    return _firestore
+        .collection('Events')
+        .where('eventBegDate', isGreaterThanOrEqualTo: Timestamp.now())
+        .orderBy('eventBegDate')
+        .snapshots();
+  }
+
+  // Get Past Events
+  Stream<QuerySnapshot> getpastEvents() {
+    return _firestore
+        .collection('Events')
+        .where('eventBegDate', isLessThanOrEqualTo: Timestamp.now())
+        .orderBy('eventBegDate')
+        .snapshots();
+  }
+
+  // Get for you Events
+  Stream<QuerySnapshot> getForYouEvents(List<CategoryModel> categories) {
+  List<String> categoryNames =
+      categories.map((category) => category.categoryName).toList();
+
+  if (categoryNames.isEmpty) {
+    // Return an empty stream or handle accordingly
+    return const Stream.empty();
+  }
+
+  return _firestore
+      .collection('Events')
+      .where('eventCategory', whereIn: categoryNames)
+      .where('eventBegDate', isGreaterThanOrEqualTo: Timestamp.now())
+      .snapshots();
+}
+
 
   // Get event by ID
   Future<EventModel?> getEventbyId(String eventId) async {
