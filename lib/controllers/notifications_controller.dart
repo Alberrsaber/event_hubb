@@ -12,6 +12,8 @@ static  final currentUser = FirebaseAuth.instance.currentUser;
       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
+        FirebaseMessaging.instance.subscribeToTopic('all_users');
+
     // Request permission
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,

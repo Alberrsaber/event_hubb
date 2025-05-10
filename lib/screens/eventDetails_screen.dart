@@ -1,7 +1,12 @@
+import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
+import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/ticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 
 class EventDetails extends StatefulWidget {
@@ -15,11 +20,12 @@ class EventDetails extends StatefulWidget {
 class _EventDetailsState extends State<EventDetails> {
   late bool isBookmarked;
   final currentUser = FirebaseAuth.instance.currentUser;
-
+   
 
   @override
   void initState() {
     super.initState();
+    
     isBookmarked = widget.event.eventBookmarks.contains(currentUser?.uid);
   }
 
@@ -29,6 +35,8 @@ class _EventDetailsState extends State<EventDetails> {
       isBookmarked = !isBookmarked;
     });
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +70,8 @@ class _EventDetailsState extends State<EventDetails> {
                       },
                       errorBuilder: (context, error, stackTrace) {
                         return const Center(
-                          child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                          child: Icon(Icons.broken_image,
+                              size: 40, color: Colors.grey),
                         );
                       },
                     ),
@@ -71,7 +80,8 @@ class _EventDetailsState extends State<EventDetails> {
               ),
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -107,7 +117,8 @@ class _EventDetailsState extends State<EventDetails> {
                   const SizedBox(height: 20),
                   _infoRow(
                     icon: Icons.calendar_month_rounded,
-                    title: DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    title:
+                        DateFormat('MMM dd, yyyy').format(event.eventBegDate),
                     subtitle:
                         '${DateFormat('EEEE, h:mm a').format(event.eventBegDate)} - ${DateFormat('h:mm a').format(event.eventEndDate)}',
                   ),
@@ -115,7 +126,7 @@ class _EventDetailsState extends State<EventDetails> {
                   _infoRow(
                     icon: Icons.location_on_rounded,
                     title: event.eventLocation,
-                    subtitle: "36 Guild Street, London, UK",
+                    subtitle: "Location",
                   ),
                   const SizedBox(height: 16),
                   _infoRow(
@@ -154,12 +165,16 @@ class _EventDetailsState extends State<EventDetails> {
         ),
         child: ElevatedButton(
           onPressed: () {
-            // TODO: implement ticket booking
+            Get.to(() => TicketScreen(
+                  event: event,
+                  
+                ));
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF5568FE),
             padding: const EdgeInsets.symmetric(vertical: 18),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
           child: const Text(
             'BOOK TICKET',
@@ -174,7 +189,8 @@ class _EventDetailsState extends State<EventDetails> {
     );
   }
 
-  Widget _circleIconButton(BuildContext context, IconData icon, VoidCallback onPressed) {
+  Widget _circleIconButton(
+      BuildContext context, IconData icon, VoidCallback onPressed) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(30),

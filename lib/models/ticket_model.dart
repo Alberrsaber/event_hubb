@@ -1,35 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TicketModel {
-  final String ticketNumber;
-  final String ticketSeat;
-  final String eventId;
+  final String ticketId;
   final String userId;
-  final String ticketBarcode;
+  final String eventId;
+  final String eventName;
+  final String eventImage;
+  final DateTime eventBegDate;
+  final String eventLocation;
+  final String orderId;
+  final String seat;
 
   TicketModel({
-    required this.ticketNumber,
-    required this.ticketSeat,
-    required this.eventId,
+    required this.ticketId,
     required this.userId,
-    required this.ticketBarcode,
+    required this.eventId,
+    required this.eventName,
+    required this.eventImage,
+    required this.eventBegDate,
+    required this.eventLocation,
+    required this.orderId,
+    required this.seat,
   });
+
   Map<String, dynamic> toMap() {
     return {
-      'ticketNumber': ticketNumber,
-      'ticketSeat': ticketSeat,
-      'eventId': eventId,
+      'ticketId': ticketId,
       'userId': userId,
-      'ticketBarcode': ticketBarcode,
+      'eventId': eventId,
+      'eventName': eventName,
+      'eventImage': eventImage,
+      'eventBegDate': eventBegDate,
+      'eventLocation': eventLocation,
+      'orderId': orderId,
+      'seat': seat,
+      'createdAt': FieldValue.serverTimestamp(),
     };
-  }
-
-  factory TicketModel.fromMap(Map<String, dynamic> data, String documentId) {
-    return TicketModel(
-    ticketNumber: data['ticketNumber'] ?? '',
-    ticketSeat: data['ticketSeat'] ?? '',
-    eventId: data['eventId'] ?? '',
-    userId: data['userId'] ?? '',
-    ticketBarcode: data['ticketBarcode'] ?? '',
-    );
-
   }
 }
