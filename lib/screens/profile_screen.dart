@@ -1,9 +1,11 @@
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
+import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/Settings_Screen.dart';
+import 'package:event_booking_app_ui/screens/allmytickets_Screen.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:event_booking_app_ui/screens/events_screen.dart';
@@ -29,9 +31,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     currentUser = await UserController().fetchUserData();
     categories = await CategoryController().getCategoriesFav();
 
-     if (mounted) {
-    setState(() {});
-  }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -86,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: CircleAvatar(
             radius: 50,
             backgroundImage: NetworkImage(
-               currentUser!.userImage,
+              currentUser!.userImage,
             ),
           ),
         ),
@@ -140,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ProfileOptionTile(
           title: "My Tickets",
           onTap: () {
-            // TODO: Navigate to My Tickets
+            Get.to(() => AllMyTicketsPage());
           },
         ),
         const SizedBox(height: 20),
@@ -148,8 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: "Bookmarks",
           onTap: () {
             Get.to(() => EventsPage(
-                        getEventStream: EventController().getBookmarks(),
-                      ));
+                  getEventStream: EventController().getBookmarks(),
+                ));
           },
         ),
         const SizedBox(height: 20),
@@ -157,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: "Settings",
           onTap: () {
             Get.to(() => SettingsScreen());
-          
+
             // TODO: Navigate to Interests
           },
         ),

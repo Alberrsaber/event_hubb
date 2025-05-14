@@ -2,26 +2,25 @@ import 'dart:ui';
 import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
+import 'package:event_booking_app_ui/models/ticket_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
-class TicketScreen extends StatefulWidget {
-  final EventModel event;
+class MyticketScreen extends StatefulWidget {
+  final TicketModel ticket;
   static final GlobalKey _ticketKey = GlobalKey();
 
-  const TicketScreen({super.key, required this.event});
+  const MyticketScreen({super.key, required this.ticket});
 
   @override
-  State<TicketScreen> createState() => _TicketScreenState();
+  State<MyticketScreen> createState() => _TicketScreenState();
 }
 
-class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMixin {
+class _TicketScreenState extends State<MyticketScreen> with TickerProviderStateMixin {
   UserModel? user;
-  String seat = '';
-  final String orderNo = TicketController().generateOrderId();
 
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
@@ -30,7 +29,7 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
   void initState() {
     super.initState();
     _fetchUserData();
-    _loadSeatNumber();
+    
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -52,12 +51,7 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
     });
   }
 
-  Future<void> _loadSeatNumber() async {
-    String seatNumber = await TicketController().generateSeatNumber(widget.event.eventId);
-    setState(() {
-      seat = seatNumber;
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -83,13 +77,13 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
               child: SingleChildScrollView(
                 child: Center(
                   child: RepaintBoundary(
-                    key: TicketScreen._ticketKey,
+                    key: MyticketScreen._ticketKey,
                     child: _buildGlassTicketCard(context),
                   ),
                 ),
               ),
             ),
-            // _buildBottomActionBar(context),
+             _buildBottomActionBar(context),
           ],
         ),
       ),
@@ -121,7 +115,7 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
                 _buildEventImage(),
                 const SizedBox(height: 20),
                 Text(
-                  widget.event.eventName,
+                  widget.ticket.eventName,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -131,35 +125,20 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "${DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)} | ${widget.event.eventLocation}",
+                  "${DateFormat('MMM dd, yyyy').format(widget.ticket.eventBegDate)} | ${widget.ticket.eventLocation}",
                   style: TextStyle(color: Colors.grey[700], fontSize: 14),
                 ),
                 const Divider(height: 30, color: Colors.grey),
                 _buildTicketDetails(),
                 const Divider(height: 30, color: Colors.grey),
-                QrImageView(data: orderNo, version: QrVersions.auto, size: 180),
+                QrImageView(data: widget.ticket.orderId, version: QrVersions.auto, size: 180),
                 const SizedBox(height: 16),
                 Text(
                   "Present this QR code at the gate.",
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    TicketController().saveTicket(widget.event, orderNo, seat);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Ticket confirmed and saved")),
-                    );
-                  },
-                  icon: const Icon(Icons.check_circle_outline),
-                  label: const Text("Confirm Ticket"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                ),
+                
               ],
             ),
           ),
@@ -172,7 +151,7 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.network(
-        widget.event.eventImage,
+        widget.ticket.eventImage,
         fit: BoxFit.fill,
         height: 180,
         width: double.infinity,
@@ -190,11 +169,11 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
       children: [
         _buildTicketRow("Name", user?.userName ?? "Loading..."),
         const SizedBox(height: 12),
-        _buildTicketRow("Order No.", orderNo),
+        _buildTicketRow("Order No.", widget.ticket.orderId),
         const SizedBox(height: 12),
-        _buildTicketRow("Date", DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)),
+        _buildTicketRow("Date", DateFormat('MMM dd, yyyy').format(widget.ticket.eventBegDate)),
         const SizedBox(height: 12),
-        _buildTicketRow("Seat", seat),
+        _buildTicketRow("Seat", widget.ticket.seat),
       ],
     );
   }
@@ -221,10 +200,10 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _iconAction(Icons.download, "Save", () {
-            TicketController().saveTicketPhoto(TicketScreen._ticketKey, context);
+            TicketController().saveTicketPhoto(MyticketScreen._ticketKey, context);
           }),
           _iconAction(Icons.share_outlined, "Share", () async {
-            String? path = await TicketController().shareTicketPhoto(TicketScreen._ticketKey, context);
+            String? path = await TicketController().shareTicketPhoto(MyticketScreen._ticketKey, context);
             if (path != null) {
               Share.shareXFiles([XFile(path)], text: "Here's my ticket 🎟️");
             }

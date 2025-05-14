@@ -23,6 +23,7 @@ class TicketModel {
     required this.seat,
   });
 
+  /// Convert to Firestore map
   Map<String, dynamic> toMap() {
     return {
       'ticketId': ticketId,
@@ -36,5 +37,26 @@ class TicketModel {
       'seat': seat,
       'createdAt': FieldValue.serverTimestamp(),
     };
+  }
+
+  /// Create from Firestore map
+  factory TicketModel.fromMap(Map<String, dynamic> map, String documentId) {
+    return TicketModel(
+      ticketId: documentId,
+      userId: map['userId'] ?? '',
+      eventId: map['eventId'] ?? '',
+      eventName: map['eventName'] ?? '',
+      eventImage: map['eventImage'] ?? '',
+      eventBegDate: (map['eventBegDate'] as Timestamp).toDate(),
+      eventLocation: map['eventLocation'] ?? '',
+      orderId: map['orderId'] ?? '',
+      seat: map['seat'] ?? '',
+    );
+  }
+
+  /// Create from Firestore DocumentSnapshot
+  factory TicketModel.fromDocumentSnapshot(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return TicketModel.fromMap(data, doc.id);
   }
 }

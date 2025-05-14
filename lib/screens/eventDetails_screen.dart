@@ -1,7 +1,5 @@
-import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
-import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/ticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';

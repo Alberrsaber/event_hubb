@@ -10,6 +10,7 @@ class EventModel {
   final String eventSponser;
   final String eventLocation;
   final String eventMaxAttendees;
+    final int eventAttendees;
   final String eventCategory;
   final String eventStatus;
   final List<String> eventBookmarks ;
@@ -27,6 +28,7 @@ class EventModel {
     required this.eventCategory,
     required this.eventStatus,
     required this.eventBookmarks,
+    required this.eventAttendees,
   });
 
   // Convert EventModel to Map for Firestore
@@ -43,6 +45,7 @@ class EventModel {
       'eventCategory': eventCategory,
       'eventStatus': eventStatus,
       'eventBookmarks': eventBookmarks,
+      'eventAttendees': eventAttendees,
     };
   }
 
@@ -60,6 +63,7 @@ factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
     eventMaxAttendees: data['eventMaxAttendees'] ?? '',
     eventCategory: data['eventCategory'] ?? '',
     eventStatus: data['eventStatus'] ?? '',
+    eventAttendees: data['eventAttendees'] ?? 0,
     eventBookmarks: List<String>.from(data['eventBookmarks'] ?? []),
   );
 }
