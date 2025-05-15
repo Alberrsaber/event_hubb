@@ -6,7 +6,6 @@ import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 
 class TicketScreen extends StatefulWidget {
   final EventModel event;
@@ -18,7 +17,8 @@ class TicketScreen extends StatefulWidget {
   State<TicketScreen> createState() => _TicketScreenState();
 }
 
-class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMixin {
+class _TicketScreenState extends State<TicketScreen>
+    with TickerProviderStateMixin {
   UserModel? user;
   String seat = '';
   final String orderNo = TicketController().generateOrderId();
@@ -53,7 +53,8 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
   }
 
   Future<void> _loadSeatNumber() async {
-    String seatNumber = await TicketController().generateSeatNumber(widget.event.eventId);
+    String seatNumber =
+        await TicketController().generateSeatNumber(widget.event.eventId);
     setState(() {
       seat = seatNumber;
     });
@@ -68,7 +69,8 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
       appBar: AppBar(
         backgroundColor: theme.primaryColor,
         elevation: 0,
-        title: const Text('My Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('My Ticket',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -100,7 +102,7 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
     final size = MediaQuery.of(context).size;
 
     return Container(
-      width: size.width ,
+      width: size.width,
       margin: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
@@ -148,7 +150,8 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
                   onPressed: () {
                     TicketController().saveTicket(widget.event, orderNo, seat);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Ticket confirmed and saved")),
+                      const SnackBar(
+                          content: Text("Ticket confirmed and saved")),
                     );
                   },
                   icon: const Icon(Icons.check_circle_outline),
@@ -156,8 +159,10 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.indigo,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
               ],
@@ -192,7 +197,8 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
         const SizedBox(height: 12),
         _buildTicketRow("Order No.", orderNo),
         const SizedBox(height: 12),
-        _buildTicketRow("Date", DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)),
+        _buildTicketRow("Date",
+            DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)),
         const SizedBox(height: 12),
         _buildTicketRow("Seat", seat),
       ],
@@ -204,55 +210,9 @@ class _TicketScreenState extends State<TicketScreen> with TickerProviderStateMix
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: const TextStyle(color: Colors.grey, fontSize: 14)),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+        Text(value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
       ],
-    );
-  }
-
-  Widget _buildBottomActionBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _iconAction(Icons.download, "Save", () {
-            TicketController().saveTicketPhoto(TicketScreen._ticketKey, context);
-          }),
-          _iconAction(Icons.share_outlined, "Share", () async {
-            String? path = await TicketController().shareTicketPhoto(TicketScreen._ticketKey, context);
-            if (path != null) {
-              Share.shareXFiles([XFile(path)], text: "Here's my ticket 🎟️");
-            }
-          }),
-          _iconAction(Icons.copy, "Copy", () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Link copied to clipboard")),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _iconAction(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.blueAccent.withOpacity(0.1),
-            child: Icon(icon, color: Colors.blueAccent),
-          ),
-          const SizedBox(height: 6),
-          Text(label, style: const TextStyle(fontSize: 12, color: Colors.blueAccent)),
-        ],
-      ),
     );
   }
 }

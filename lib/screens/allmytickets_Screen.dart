@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
-import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/models/ticket_model.dart';
-import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:event_booking_app_ui/screens/myticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,7 +41,7 @@ class _EventsPageState extends State<AllMyTicketsPage> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No events found'));
+                  return const Center(child: Text('No Tickets Founds'));
                 } else {
                   List<TicketModel> Tickets = snapshot.data!.docs.map((doc) {
                     return TicketModel.fromMap(

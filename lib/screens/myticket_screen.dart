@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
-import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/models/ticket_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -208,11 +207,7 @@ class _TicketScreenState extends State<MyticketScreen> with TickerProviderStateM
               Share.shareXFiles([XFile(path)], text: "Here's my ticket 🎟️");
             }
           }),
-          _iconAction(Icons.copy, "Copy", () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Link copied to clipboard")),
-            );
-          }),
+          
         ],
       ),
     );
