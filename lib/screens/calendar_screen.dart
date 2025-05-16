@@ -82,91 +82,120 @@ class _CalendarContentState extends State<CalendarContent> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+Widget build(BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final events = _selectedDay != null
+      ? _getEventsForDay(_selectedDay!)
+      : [];
 
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
+  return Padding(
+    padding: const EdgeInsets.all(12.0),
+    child: SingleChildScrollView(
       child: Column(
         children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            focusedDay: _focusedDay,
-            eventLoader: _getEventsForDay,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            calendarStyle: const CalendarStyle(
-              markerDecoration: BoxDecoration(
-                color: Color(0xFF74B3CE),
-                shape: BoxShape.circle,
-              ),
-              markerSize: 5,
-              selectedDecoration: BoxDecoration(
-                color: Color(0xFF5669FF),
-                shape: BoxShape.circle,
-              ),
-              todayDecoration: BoxDecoration(
-                color:Color(0xFF73C2FB),
-                shape: BoxShape.circle,
-              ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-            headerStyle: HeaderStyle(
-              titleTextStyle: TextStyle(color: Color(0xFF5669FF)),
-              leftChevronIcon: Icon(Icons.chevron_left, color: Color(0xFF5669FF)),
-              rightChevronIcon: Icon(Icons.chevron_right, color: Color(0xFF5669FF)),
-              formatButtonVisible: false,
-              headerPadding: EdgeInsets.only(bottom: 8),
-            ),
-            daysOfWeekStyle: DaysOfWeekStyle(
-              weekdayStyle: TextStyle(color: Color(0xFF5669FF)),
-              weekendStyle: TextStyle(color: Color(0xFF5669FF)),
-            ),
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                final events = _getEventsForDay(day);
-                final hasEvents = events.isNotEmpty;
-                if (!hasEvents) return null;
-
-                final now = DateTime.now();
-                final isPast = day.isBefore(DateTime(now.year, now.month, now.day));
-
-                return Container(
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isPast
-                        ? Colors.red.withOpacity(0.15)
-                        
-                        : Colors.green.withOpacity(0.15)
-                        ,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${day.day}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isPast ? Colors.red : Colors.green,
-                      ),
+            child: Column(
+              children: [
+                TableCalendar(
+                  firstDay: DateTime.utc(2020, 1, 1),
+                  lastDay: DateTime.utc(2030, 12, 31),
+                  focusedDay: _focusedDay,
+                  eventLoader: _getEventsForDay,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                  },
+                  calendarStyle: const CalendarStyle(
+                    markerDecoration: BoxDecoration(
+                      color: Color(0xFF74B3CE),
+                      shape: BoxShape.circle,
+                    ),
+                    markerSize: 5,
+                    selectedDecoration: BoxDecoration(
+                      color: Color(0xFF5669FF),
+                      shape: BoxShape.circle,
+                    ),
+                    todayDecoration: BoxDecoration(
+                      color: Color(0xFF73C2FB),
+                      shape: BoxShape.circle,
                     ),
                   ),
-                );
-              },
+                  headerStyle: const HeaderStyle(
+                    titleTextStyle: TextStyle(color: Color(0xFF5669FF)),
+                    leftChevronIcon: Icon(Icons.chevron_left, color: Color(0xFF5669FF)),
+                    rightChevronIcon: Icon(Icons.chevron_right, color: Color(0xFF5669FF)),
+                    formatButtonVisible: false,
+                    headerPadding: EdgeInsets.only(bottom: 8),
+                  ),
+                  daysOfWeekStyle: const DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(color: Color(0xFF5669FF)),
+                    weekendStyle: TextStyle(color: Color(0xFF5669FF)),
+                  ),
+                  calendarBuilders: CalendarBuilders(
+                    defaultBuilder: (context, day, focusedDay) {
+                      final events = _getEventsForDay(day);
+                      final hasEvents = events.isNotEmpty;
+                      if (!hasEvents) return null;
+
+                      final now = DateTime.now();
+                      final isPast = day.isBefore(DateTime(now.year, now.month, now.day));
+
+                      return Container(
+                        margin: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isPast
+                              ? Colors.red.withOpacity(0.15)
+                              : Colors.green.withOpacity(0.15),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${day.day}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isPast ? Colors.red : Colors.green,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (events.isNotEmpty)
+                  SizedBox(
+                    height: 300, // Or use MediaQuery to make this dynamic
+                    child: _buildEventList(screenWidth),
+                  )
+                else
+                  const Text(
+                    'No events for this day',
+                    style: TextStyle(fontSize: 14),
+                  ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: _buildEventList(screenWidth),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildEventList(double screenWidth) {
     final events = _selectedDay != null

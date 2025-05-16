@@ -173,4 +173,19 @@ class TicketController {
     'eventAttendees': FieldValue.increment(1),
   });
 }
+
+// check if user booked event
+Future<bool> hasUserBookedEvent(String eventId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return false;
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection('Tickets')
+      .where('userId', isEqualTo: user.uid)
+      .where('eventId', isEqualTo: eventId)
+      .limit(1)
+      .get();
+
+  return snapshot.docs.isNotEmpty;
+}
 }

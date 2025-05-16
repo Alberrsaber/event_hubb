@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './screens/splash_screen.dart';
-import './screens/signin_screen.dart';
+import 'screens/Auth/signin_screen.dart';
 import './screens/home_screen.dart';
 import './my_theme.dart';
 

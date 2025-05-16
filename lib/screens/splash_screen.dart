@@ -1,6 +1,6 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
-import 'package:event_booking_app_ui/screens/signin_screen.dart';
+import 'package:event_booking_app_ui/screens/Auth/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

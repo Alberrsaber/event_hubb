@@ -1,8 +1,8 @@
 import 'package:event_booking_app_ui/main.dart';
+import 'package:event_booking_app_ui/screens/Auth/resset_password_screen.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';  
-import 'resset_password_screen.dart';
 
 
 class SettingsScreen extends StatelessWidget {

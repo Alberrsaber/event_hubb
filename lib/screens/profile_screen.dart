@@ -3,6 +3,7 @@ import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/Auth/changepassword_screen.dart';
 import 'package:event_booking_app_ui/screens/Settings_Screen.dart';
 import 'package:event_booking_app_ui/screens/allmytickets_Screen.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
@@ -139,6 +140,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         ProfileOptionTile(
+          title: "Change Password",
+          onTap: () {
+            Get.to(() => ChangePasswordScreen());
+
+            // TODO: Navigate to Interests
+          },
+        ),
+        const SizedBox(height: 20),
+        ProfileOptionTile(
           title: "My Tickets",
           onTap: () {
             Get.to(() => AllMyTicketsPage());
@@ -149,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: "Bookmarks",
           onTap: () {
             Get.to(() => EventsPage(
-                  getEventStream:  EventController().getBookmarks(),
+                  getEventStream: EventController().getBookmarks(),
                 ));
           },
         ),

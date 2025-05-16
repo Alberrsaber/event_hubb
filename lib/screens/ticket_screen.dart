@@ -3,7 +3,9 @@ import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -22,6 +24,7 @@ class _TicketScreenState extends State<TicketScreen>
   UserModel? user;
   String seat = '';
   final String orderNo = TicketController().generateOrderId();
+  bool hasBooked = false;
 
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
@@ -31,6 +34,7 @@ class _TicketScreenState extends State<TicketScreen>
     super.initState();
     _fetchUserData();
     _loadSeatNumber();
+    _checkIfUserBooked();
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -49,6 +53,14 @@ class _TicketScreenState extends State<TicketScreen>
     UserModel? fetchedUser = await UserController().fetchUserData();
     setState(() {
       user = fetchedUser;
+    });
+  }
+
+  Future<void> _checkIfUserBooked() async {
+    final result =
+        await TicketController().hasUserBookedEvent(widget.event.eventId);
+    setState(() {
+      hasBooked = result;
     });
   }
 
@@ -147,22 +159,33 @@ class _TicketScreenState extends State<TicketScreen>
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    TicketController().saveTicket(widget.event, orderNo, seat);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Ticket confirmed and saved")),
-                    );
-                  },
-                  icon: const Icon(Icons.check_circle_outline),
-                  label: const Text("Confirm Ticket"),
+                  onPressed: hasBooked
+                      ? null
+                      : () {
+                          TicketController()
+                              .saveTicket(widget.event, orderNo, seat)
+                              .then((value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Ticket confirmed and saved")),
+                            );
+                            Get.offAll(() => HomeScreen());
+                          });
+                        },
+                  icon: Icon(
+                    hasBooked ? Icons.check_circle : Icons.check_circle_outline,
+                  ),
+                  label: Text(
+                    hasBooked ? "YOU HAVE BOOKED" : "CONFIRM TICKET",
+                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
+                    backgroundColor: hasBooked ? Colors.grey : Colors.indigo,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                 ),
               ],

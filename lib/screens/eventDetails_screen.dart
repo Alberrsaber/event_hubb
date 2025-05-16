@@ -18,12 +18,11 @@ class EventDetails extends StatefulWidget {
 class _EventDetailsState extends State<EventDetails> {
   late bool isBookmarked;
   final currentUser = FirebaseAuth.instance.currentUser;
-   
 
   @override
   void initState() {
     super.initState();
-    
+
     isBookmarked = widget.event.eventBookmarks.contains(currentUser?.uid);
   }
 
@@ -33,8 +32,6 @@ class _EventDetailsState extends State<EventDetails> {
       isBookmarked = !isBookmarked;
     });
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -162,21 +159,24 @@ class _EventDetailsState extends State<EventDetails> {
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
         ),
         child: ElevatedButton(
-          onPressed: () {
-            Get.to(() => TicketScreen(
-                  event: event,
-                  
-                ));
-          },
+          onPressed: event.eventEndDate.isBefore(DateTime.now())
+              ? null // disables the button
+              : () {
+                  Get.to(() => TicketScreen(event: event));
+                },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF5568FE),
+            backgroundColor: event.eventEndDate.isBefore(DateTime.now())
+                ? Colors.grey // disabled color
+                : const Color(0xFF5568FE),
             padding: const EdgeInsets.symmetric(vertical: 18),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
-          child: const Text(
-            'BOOK TICKET',
-            style: TextStyle(
+          child: Text(
+            event.eventEndDate.isBefore(DateTime.now())
+                ? 'EVENT ENDED'
+                : 'BOOK TICKET',
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.white,

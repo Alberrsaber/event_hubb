@@ -1,9 +1,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
+import 'package:event_booking_app_ui/screens/Auth/completeProfileScreen.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
-import 'package:event_booking_app_ui/screens/signin_screen.dart';
-import 'package:event_booking_app_ui/screens/verification_screen.dart';
+import 'package:event_booking_app_ui/screens/Auth/signin_screen.dart';
+import 'package:event_booking_app_ui/screens/Auth/verification_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,8 +15,7 @@ class AuthController {
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
   // Sign up Method
   Future SignUp(userName, userEmail, userPassword, userPhone, userQualification,
-  userSpecialty,
-      context) async {
+      userSpecialty, context) async {
     try {
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -72,57 +72,52 @@ class AuthController {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => VerificationScreen()),
+          MaterialPageRoute(builder: (context) => VerificationScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-credential') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Invalid email or password. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
-      } else {
-        print(e.code);
-      }
+      
     }
   }
 
 // Sign out Method
   Future<void> signOut(BuildContext context) async {
-  try {
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
 
-    GoogleSignIn googleSignIn = GoogleSignIn();
+      GoogleSignIn googleSignIn = GoogleSignIn();
 
-    // Disconnect Google account to ensure fresh login
-    if (await googleSignIn.isSignedIn()) {
-      await googleSignIn.disconnect(); // <--- Important!
-      await googleSignIn.signOut();
+      // Disconnect Google account to ensure fresh login
+      if (await googleSignIn.isSignedIn()) {
+        await googleSignIn.disconnect(); // <--- Important!
+        await googleSignIn.signOut();
+      }
+
+      await FirebaseAuth.instance.signOut();
+      await setRememberMe(false);
+
+      Navigator.of(context).pop();
+      Get.offAll(() => SignInScreen());
+    } catch (e) {
+      Navigator.of(context).pop();
+      print("SignOut Error: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign out failed. Please try again.')),
+      );
     }
-
-    await FirebaseAuth.instance.signOut();
-    await setRememberMe(false);
-
-    Navigator.of(context).pop();
-    Get.offAll(() => SignInScreen());
-  } catch (e) {
-    Navigator.of(context).pop();
-    print("SignOut Error: $e");
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Sign out failed. Please try again.')),
-    );
   }
-}
-
 
   // email verification
   Future SendEmailVerfication() async {
@@ -172,42 +167,89 @@ class AuthController {
         'userImage': "",
         'userSpecialty': "",
         'userId': FirebaseAuth.instance.currentUser!.uid,
-        'userSpecialty':userSpecialty,
+        'userSpecialty': userSpecialty,
       });
-      UserController().addCategoryFav(userSpecialty, FirebaseAuth.instance.currentUser!.uid);
+      UserController().addCategoryFav(
+          userSpecialty, FirebaseAuth.instance.currentUser!.uid);
     } catch (e) {
       print(e);
     }
   }
 
+  Future<void> saveUserData(
+    String userName,
+    String userPhone,
+    String userQualification,
+    String userSpecialty,
+  ) async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final userEmail = FirebaseAuth.instance.currentUser!.email;
+    ;
+    await FirebaseFirestore.instance.collection("Users").doc(userId).set({
+      'userName': userName,
+        'userEmail': userEmail,
+        'userPhone': userPhone,
+        'userQualification': userQualification,
+        'userImage': "",
+        'userId': userId,
+        'userSpecialty': userSpecialty,
+    });
+    UserController().addCategoryFav(
+          userSpecialty, FirebaseAuth.instance.currentUser!.uid);
+  }
+
 // sign in with google
   Future<void> signInWithGoogle(BuildContext context) async {
-  try {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) {
-      // User canceled the sign-in
-      return;
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credentials
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Get the current user
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // Check if user exists in Firestore
+        final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .get();
+
+        if (userDoc.exists) {
+          // User has data, navigate to home screen
+          Get.offAll(() => HomeScreen());
+        } else {
+          // User doesn't have data, navigate to complete profile screen
+          Get.offAll(() => CompleteProfileScreen(
+                user: user,
+                googleUser: googleUser,
+              ));
+        }
+      }
+    } catch (e) {
+      // Handle error
+      print("Google Sign-In Error: $e");
+      Get.snackbar(
+        'Error',
+        'Failed to sign in with Google: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
-
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the Google credentials
-    await FirebaseAuth.instance.signInWithCredential(credential);
-
-    // Navigate to HomeScreen on successful sign-in
-    Get.to(() => HomeScreen());
-  } catch (e) {
-    // Handle error
-    print("Google Sign-In Error: $e");
-    // Optionally show a dialog/snackbar here
   }
-}
-
 
 //validation
   String? validateEmail(String? value) {
@@ -254,25 +296,27 @@ class AuthController {
     }
     return null;
   }
+
 // Check if user is remembered
   Future<bool> isRemembered() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool('rememberMe') ?? false;
   }
+
   // Set remember me preference
-Future<void> setRememberMe(bool value) async {
+  Future<void> setRememberMe(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('rememberMe', value);
   }
+
   // Get current user (if any)
   User? get currentUser => FirebaseAuth.instance.currentUser;
 
   // Check if user is logged in
   Future<bool> isLoggedIn() async {
     if (await isRemembered()) {
-      return  FirebaseAuth.instance.currentUser != null;
+      return FirebaseAuth.instance.currentUser != null;
     }
     return false;
   }
-
 }

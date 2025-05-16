@@ -1,9 +1,7 @@
 import 'package:event_booking_app_ui/controllers/auth_controller.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
-import 'package:event_booking_app_ui/screens/signin_screen.dart';
+import 'package:event_booking_app_ui/screens/Auth/signin_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'verification_screen.dart'; // Import the VerificationScreen
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -16,10 +14,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _validateEmail(String email) {
-    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-        .hasMatch(email);
-  }
+  
 
   void _sendResetLink() {
     if (_formKey.currentState!.validate()) {
