@@ -10,7 +10,7 @@ class EventModel {
   final String eventSponser;
   final String eventLocation;
   final String eventMaxAttendees;
-    final int eventAttendees;
+  final int eventAttendees;
   final String eventCategory;
   final String eventStatus;
   final List<String> eventBookmarks ;

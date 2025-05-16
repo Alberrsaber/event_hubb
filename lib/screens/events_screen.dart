@@ -5,15 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class EventsPage extends StatefulWidget {
+class EventsPage extends StatelessWidget {
   final Stream<QuerySnapshot> getEventStream;
   const EventsPage({super.key, required this.getEventStream});
-
-  @override
-  State<EventsPage> createState() => _EventsPageState();
-}
-
-class _EventsPageState extends State<EventsPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +27,12 @@ class _EventsPageState extends State<EventsPage> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: widget.getEventStream,
+              
+              stream: getEventStream,
               builder: (context, snapshot) {
+                 print('ConnectionState: ${snapshot.connectionState}');
+          print('HasData: ${snapshot.hasData}');
+          print('Error: ${snapshot.error}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {

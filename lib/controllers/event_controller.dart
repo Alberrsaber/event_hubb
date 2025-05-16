@@ -7,10 +7,10 @@ class EventController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  // Get all Events
-  Stream<QuerySnapshot> getAllEvents() {
-    return _firestore.collection('Events').snapshots();
-  }
+    // Get all Events
+    Stream<QuerySnapshot> getAllEvents() {
+      return _firestore.collection('Events').snapshots().asBroadcastStream();
+    }
 
   // Get Upcoming Events
 

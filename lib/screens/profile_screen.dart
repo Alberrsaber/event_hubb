@@ -1,6 +1,5 @@
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
-import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
@@ -150,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: "Bookmarks",
           onTap: () {
             Get.to(() => EventsPage(
-                  getEventStream: EventController().getBookmarks(),
+                  getEventStream:  EventController().getBookmarks(),
                 ));
           },
         ),

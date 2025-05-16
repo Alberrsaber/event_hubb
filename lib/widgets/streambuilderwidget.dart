@@ -1,15 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
+import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class Streambuilderwidget extends StatelessWidget {
   final String title;
-    final Stream<QuerySnapshot> getEventStream;
+  final Stream<QuerySnapshot> getEventStream;
+    final Stream<QuerySnapshot> getAllEventStream;
 
-  const Streambuilderwidget({super.key, required this.title, required this.getEventStream});
+
+  const Streambuilderwidget(
+      {super.key, required this.title, required this.getEventStream, required this.getAllEventStream});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,9 @@ class Streambuilderwidget extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(() => EventsPage(getEventStream: getAllEventStream));
+              },
               child: Text("See All >"),
             ),
           ],
@@ -49,7 +56,7 @@ class Streambuilderwidget extends StatelessWidget {
                 }).toList();
                 return ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: events.length,
+                  itemCount: events.length > 3 ? 3 : events.length,
                   itemBuilder: (context, index) {
                     EventModel event = events[index];
                     return EventCard(event);
@@ -63,6 +70,7 @@ class Streambuilderwidget extends StatelessWidget {
     );
   }
 }
+
 class EventCard extends StatelessWidget {
   EventModel event;
   EventCard(this.event);
@@ -83,7 +91,6 @@ class EventCard extends StatelessWidget {
         margin: EdgeInsets.only(
           right: 6,
           left: 6,
-        
         ),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -107,7 +114,7 @@ class EventCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text(
+                  Text(
                     DateFormat('MMM dd, yyyy').format(event.eventBegDate),
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.red),
@@ -144,4 +151,3 @@ class EventCard extends StatelessWidget {
     );
   }
 }
-

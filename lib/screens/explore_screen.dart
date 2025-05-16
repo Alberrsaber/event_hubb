@@ -49,7 +49,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           SizedBox(
             height: 10,
           ),
-          Streambuilderwidget(getEventStream: EventController().getAllEvents(),title: "Top Topic",),
+          Streambuilderwidget(getEventStream:  EventController().getAllEvents(), getAllEventStream: EventController().getAllEvents(), title: "Top Topic",),
           SizedBox(
             height: 10,
           ),
@@ -57,6 +57,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           Streambuilderwidget(
             title: "Upcoming events",
             getEventStream: EventController().getEvents(),
+            getAllEventStream: EventController().getEvents(),
           ),
           SizedBox(
             height: 10,
@@ -67,10 +68,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
           Streambuilderwidget(
             title: "For You ",
             getEventStream: EventController().getForYouEvents(categoriess),
+            getAllEventStream: EventController().getForYouEvents(categoriess),
+
           ),
           Streambuilderwidget(
             title: "Past events",
             getEventStream: EventController().getpastEvents(),
+            getAllEventStream: EventController().getpastEvents(),
+
           ),
         
 
