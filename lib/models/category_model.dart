@@ -14,6 +14,7 @@ class CategoryModel {
     required this.categoryFaculties,
     required this.categoryFav,
   });
+
   Map<String, dynamic> toMap() {
     return {
       'categoryId': categoryId,
@@ -30,9 +31,21 @@ class CategoryModel {
       categoryId: data['categoryId'] ?? '',
       categoryName: data['categoryName'] ?? '',
       categoryImage: data['categoryImage'] ?? '',
-      categoryColor: data['categoryColor'] ?? '',
+      categoryColor: data['categoryColor'] ?? 0,
       categoryFaculties: List<String>.from(data['categoryFaculties'] ?? []),
       categoryFav: List<String>.from(data['categoryFav'] ?? []),
     );
   }
+
+  // ✅ Override equality operator based on categoryId
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CategoryModel &&
+          runtimeType == other.runtimeType &&
+          categoryId == other.categoryId;
+
+  // ✅ Override hashCode based on categoryId
+  @override
+  int get hashCode => categoryId.hashCode;
 }

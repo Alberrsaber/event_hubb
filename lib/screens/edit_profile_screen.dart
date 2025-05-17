@@ -3,7 +3,11 @@ import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/home_screen.dart';
+import 'package:event_booking_app_ui/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 
@@ -57,15 +61,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     currentUser = await UserController().fetchUserData();
     _allCategories = await CategoryController().getAllCategories();
 
-    if (mounted &&currentUser != null) {
+    if (mounted && currentUser != null) {
       _nameController.text = currentUser!.userName;
       _phoneController.text = currentUser!.userPhone;
       _qualificationController.text = currentUser!.userQualification ?? "";
       _specialityController.text = currentUser!.userSpecialty ?? "";
     }
-     if (mounted) {
-    setState(() {});
-  }
+    if (mounted) {
+      setState(() {});
+    }
 
     setState(() {});
   }
@@ -337,12 +341,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         for (var interest in _allInterests) {
           await UserController().addinterest(interest.categoryId);
         }
-        
-
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
+          const SnackBar(content: Text('Profile updated successfully!'))
         );
-        Navigator.pop(context);
+                    Get.to(() => HomeScreen());
+          
       },
       child: const Text(
         'Save Changes',

@@ -165,7 +165,6 @@ class AuthController {
         'userPhone': userPhone,
         'userQualification': userQualification,
         'userImage': "",
-        'userSpecialty': "",
         'userId': FirebaseAuth.instance.currentUser!.uid,
         'userSpecialty': userSpecialty,
       });

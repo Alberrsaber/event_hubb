@@ -23,6 +23,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   Future<void> fetchFavCategories() async {
     categoriess = await CategoryController().getCategoriesFav();
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -34,9 +35,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 15,
-          ),
+          SizedBox(height: 15),
           SizedBox(
             height: screenHeight * 0.075,
             child: ListView(
@@ -46,47 +45,34 @@ class _ExploreScreenState extends State<ExploreScreen> {
               }).toList(),
             ),
           ),
-          SizedBox(
-            height: 10,
+          SizedBox(height: 10),
+          Streambuilderwidget(
+            getEventStream: EventController().getAllEvents(),
+            getAllEventStream: EventController().getAllEvents(),
+            title: "Top Topic",
           ),
-          Streambuilderwidget(getEventStream:  EventController().getAllEvents(), getAllEventStream: EventController().getAllEvents(), title: "Top Topic",),
-          SizedBox(
-            height: 10,
-          ),
-          // Upcoming Events Section
+          SizedBox(height: 10),
           Streambuilderwidget(
             title: "Upcoming events",
             getEventStream: EventController().getEvents(),
             getAllEventStream: EventController().getEvents(),
           ),
-          SizedBox(
-            height: 10,
-          ),
-            SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Streambuilderwidget(
             title: "For You ",
             getEventStream: EventController().getForYouEvents(categoriess),
             getAllEventStream: EventController().getForYouEvents(categoriess),
-
           ),
           Streambuilderwidget(
             title: "Past events",
             getEventStream: EventController().getpastEvents(),
             getAllEventStream: EventController().getpastEvents(),
-
           ),
-        
-
-          // Category Filters
         ],
       ),
     );
   }
 }
-
-
 
 // Category Chip Widget
 class CategoryChip extends StatelessWidget {
@@ -97,7 +83,7 @@ class CategoryChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final random = Random();
     final color = Color.fromARGB(
-      255, // fully opaque
+      255,
       random.nextInt(256),
       random.nextInt(256),
       random.nextInt(256),
@@ -110,10 +96,7 @@ class CategoryChip extends StatelessWidget {
             ));
       },
       child: Container(
-        margin: EdgeInsets.only(
-          right: 4,
-          top: 4,
-        ),
+        margin: EdgeInsets.only(right: 4, top: 4),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: color,

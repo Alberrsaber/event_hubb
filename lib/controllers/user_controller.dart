@@ -5,13 +5,15 @@ import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class UserController  {
+class UserController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-   final currentUser = FirebaseAuth.instance.currentUser;
+  final currentUser = FirebaseAuth.instance.currentUser;
 
+//function to fetch user data once
   Future<UserModel?> fetchUserData() async {
     try {
-      DocumentSnapshot doc = await _firestore.collection('Users').doc(currentUser?.uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('Users').doc(currentUser?.uid).get();
 
       if (doc.exists) {
         return UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
@@ -24,23 +26,39 @@ class UserController  {
       return null;
     }
   }
-// add to faviort category
-  Future<void> addCategoryFav(String userSpecialty, String userId) async {
-  final querySnapshot = await _firestore
-      .collection('Categories')
-      .where('categoryFaculties', arrayContains: userSpecialty)
-      .get();
 
-  for (var doc in querySnapshot.docs) {
-    await doc.reference.set({
-      'categoryFav': FieldValue.arrayUnion([userId])
-    }, SetOptions(merge: true));
+//function to provide a Stream of user data updates
+  Stream<UserModel?> get userStream {
+    return _firestore
+        .collection('Users')
+        .doc(currentUser?.uid)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists && snapshot.data() != null) {
+        return UserModel.fromMap(
+            snapshot.data() as Map<String, dynamic>, snapshot.id);
+      } else {
+        return null;
+      }
+    });
   }
 
+// add to faviort category
+  Future<void> addCategoryFav(String userSpecialty, String userId) async {
+    final querySnapshot = await _firestore
+        .collection('Categories')
+        .where('categoryFaculties', arrayContains: userSpecialty)
+        .get();
 
-}
-//add favortie category 
-Future<void> addinterest(String categoryId) async {
+    for (var doc in querySnapshot.docs) {
+      await doc.reference.set({
+        'categoryFav': FieldValue.arrayUnion([userId])
+      }, SetOptions(merge: true));
+    }
+  }
+
+//add favortie category
+  Future<void> addinterest(String categoryId) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
@@ -53,34 +71,38 @@ Future<void> addinterest(String categoryId) async {
     List<dynamic> categoryFav = data['categoryFav'] ?? [];
 
     if (!categoryFav.contains(user.uid)) {
-            categoryFav.add(user.uid);
-    } else {
-    }
+      categoryFav.add(user.uid);
+    } else {}
 
     await categoryRef.update({'categoryFav': categoryFav});
   }
+
 // update user data
- Future<void> updateUserData(UserModel updatedUser) async {
-  try {
-    await _firestore.collection('Users').doc(updatedUser.userId).update(updatedUser.toMap());
-    print("User updated successfully");
-  } catch (e) {
-    print("Error updating user: $e");
+  Future<void> updateUserData(UserModel updatedUser) async {
+    try {
+      await _firestore
+          .collection('Users')
+          .doc(updatedUser.userId)
+          .update(updatedUser.toMap());
+      print("User updated successfully");
+    } catch (e) {
+      print("Error updating user: $e");
+    }
   }
-}
+
 // upload profile photo
-Future<String?> uploadProfileImage(File imageFile, String userId) async {
-  try {
-    final ref = FirebaseStorage.instance.ref().child('profile_images').child('$userId.jpg');
-    await ref.putFile(imageFile);
-    return await ref.getDownloadURL();
-  } catch (e) {
-    print("Image upload error: $e");
-    return null;
+  Future<String?> uploadProfileImage(File imageFile, String userId) async {
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('$userId.jpg');
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      print("Image upload error: $e");
+      return null;
+    }
   }
-}
-
-
-
-
+  
 }
