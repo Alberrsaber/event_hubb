@@ -114,6 +114,9 @@ await store.add({
         .where('userId', isEqualTo: currentUser!.uid)
         .snapshots();
   }
+  Future<void> deleteNotification(String notificationId) async {
+    await _firestore.collection('Notifications').doc(notificationId).delete();
+  }
 
 }
 

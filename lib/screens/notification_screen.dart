@@ -113,7 +113,7 @@ class _NotificationTile extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text:  "${notification.NotificationsTitle} : ",
+                            text: "${notification.NotificationsTitle} : ",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(text: notification.NotificationsBody),
@@ -139,12 +139,14 @@ class _NotificationTile extends StatelessWidget {
           ),
           if (true)
             Padding(
-              padding: const EdgeInsets.only(top: 12, left: 52),
+              padding: const EdgeInsets.only(top: 3, left: 52),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton.icon(
                     onPressed: () {
-                      // View event action
+                      NotificationsController()
+                          .deleteNotification(notification.NotificationsId);
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Color(0xFFE0E0E0)),
@@ -154,29 +156,10 @@ class _NotificationTile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    icon: const Icon(Icons.event, color: Color(0xFF333333)),
+                    icon: const Icon(Icons.delete, color: Color(0xFF333333)),
                     label: const Text(
-                      'View Event',
+                      'Delete',
                       style: TextStyle(fontSize: 14, color: Color(0xFF333333)),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Register action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4A43EC),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    icon: const Icon(Icons.check, color: Colors.white),
-                    label: const Text(
-                      'Register',
-                      style: TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   ),
                 ],

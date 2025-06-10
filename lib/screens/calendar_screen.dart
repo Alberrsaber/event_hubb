@@ -16,7 +16,7 @@ class CalendarScreen extends StatelessWidget {
 
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: eventController.getEvents(),
+        stream: eventController.getAllEvents(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
