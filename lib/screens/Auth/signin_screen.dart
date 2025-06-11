@@ -5,7 +5,7 @@ import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/screens/Auth/signup_screen.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -15,26 +15,29 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _rememberMe = false;
   bool _isPasswordVisible = false;
-    @override
+
+  @override
   void initState() {
     super.initState();
     _checkRememberedUser();
   }
+
   Future<void> _checkRememberedUser() async {
-    bool remembered = await  AuthController().isRemembered();
-    if (remembered && await  AuthController().isLoggedIn()) {
-      // Navigate to home screen if user is remembered and logged in
-      Get.offAll(() => HomeScreen());
+    bool remembered = await AuthController().isRemembered();
+    if (remembered && await AuthController().isLoggedIn()) {
+      Get.offAll(() => const HomeScreen());
     }
-  } // Toggles password visibility
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -42,38 +45,39 @@ class _SignInScreenState extends State<SignInScreen> {
           const Align(
             alignment: Alignment.topLeft,
             child: Image(
-                image: AssetImage('assets/backgrounds/signin_top_left.png')),
+              image: AssetImage('assets/backgrounds/signin_top_left.png'),
+            ),
           ),
           const Align(
             alignment: Alignment.topRight,
             child: Image(
-                image: AssetImage('assets/backgrounds/signin_top_right.png')),
+              image: AssetImage('assets/backgrounds/signin_top_right.png'),
+            ),
           ),
           const Align(
             alignment: Alignment.centerRight,
             child: Image(
-                image:
-                    AssetImage('assets/backgrounds/signin_center_right.png')),
+              image: AssetImage('assets/backgrounds/signin_center_right.png'),
+            ),
           ),
           const Align(
             alignment: Alignment.bottomLeft,
             child: Image(
-                image: AssetImage('assets/backgrounds/signin_bottom_left.png')),
+              image: AssetImage('assets/backgrounds/signin_bottom_left.png'),
+            ),
           ),
           const Align(
             alignment: Alignment.bottomRight,
             child: Image(
-                image:
-                    AssetImage('assets/backgrounds/signin_bottom_right.png')),
+              image: AssetImage('assets/backgrounds/signin_bottom_right.png'),
+            ),
           ),
 
           LayoutBuilder(
-            builder:
-                (BuildContext context, BoxConstraints viewportConstraints) {
+            builder: (BuildContext context, BoxConstraints viewportConstraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints:
-                      BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                  constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Form(
@@ -83,50 +87,51 @@ class _SignInScreenState extends State<SignInScreen> {
                         children: [
                           const SizedBox(height: 54),
                           const Center(
-                              child: Image(
-                                  image: AssetImage('assets/images/logo.png'))),
+                            child: Image(
+                              image: AssetImage('assets/images/logo.png'),
+                            ),
+                          ),
                           const SizedBox(height: 12),
-                          const Center(
+                          Center(
                             child: Text(
-                              'EventHub',
-                              style: TextStyle(
+                              l10n.app_name,
+                              style: const TextStyle(
                                   fontSize: 28, fontWeight: FontWeight.w500),
                             ),
                           ),
                           const SizedBox(height: 12),
-                          const Text(
-                            'Sign In',
-                            style: TextStyle(
+                          Text(
+                            l10n.sign_in,
+                            style: const TextStyle(
                                 fontSize: 28, fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(height: 12),
 
                           // Email Field
                           TextFormField(
-                              controller: _emailController,
-                              decoration: const InputDecoration(
-                                prefixIcon: Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Image(
-                                      image:
-                                          AssetImage('assets/icons/mail.png')),
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Image(
+                                  image: AssetImage('assets/icons/mail.png'),
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                ),
-                                hintText: 'abc@gmail.com',
                               ),
-                              validator: (value) {
-                                if (_emailController.text.isEmpty) {
-                                  return "Email is required ";
-                                } else {
-                                  return null;
-                                }
-                              }),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                              ),
+                              hintText: l10n.email_hint,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return l10n.email_required;
+                              }
+                              return null;
+                            },
+                          ),
                           const SizedBox(height: 10),
 
-                          // Password Field with Toggle Visibility
+                          // Password Field
                           TextFormField(
                             controller: _passwordController,
                             obscureText: !_isPasswordVisible,
@@ -134,8 +139,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               prefixIcon: const Padding(
                                 padding: EdgeInsets.all(12),
                                 child: Image(
-                                    image:
-                                        AssetImage('assets/icons/locked.png')),
+                                  image: AssetImage('assets/icons/locked.png'),
+                                ),
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -151,17 +156,15 @@ class _SignInScreenState extends State<SignInScreen> {
                                 },
                               ),
                               border: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12)),
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
                               ),
-                              hintText: 'Your Password',
+                              hintText: l10n.password_hint,
                             ),
                             validator: (value) {
-                              if (_passwordController.text.isEmpty) {
-                                return "Password is required";
-                              } else {
-                                return null;
+                              if (value == null || value.isEmpty) {
+                                return l10n.password_required;
                               }
+                              return null;
                             },
                           ),
                           const SizedBox(height: 8),
@@ -177,18 +180,18 @@ class _SignInScreenState extends State<SignInScreen> {
                                   });
                                 },
                               ),
-                              const Text('Remember Me'),
+                              Text(l10n.remember_me),
                               const Spacer(),
                               TextButton(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ResetPasswordScreen()),
+                                      builder: (context) => const ResetPasswordScreen(),
+                                    ),
                                   );
                                 },
-                                child: const Text('Forgot Password?'),
+                                child: Text(l10n.forgot_password),
                               ),
                             ],
                           ),
@@ -198,24 +201,23 @@ class _SignInScreenState extends State<SignInScreen> {
                           GestureDetector(
                             onTap: () {
                               if (_formKey.currentState!.validate()) {
-                                  AuthController().SignIn(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                    _rememberMe,
-                                    context,
-                                  );                                
+                                AuthController().SignIn(
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  _rememberMe,
+                                  context,
+                                );
                               }
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               decoration: BoxDecoration(
                                 color: MyTheme.primaryColor,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(18)),
+                                borderRadius: BorderRadius.circular(18),
                               ),
                               child: Center(
                                 child: Text(
-                                  'SIGN IN',
+                                  l10n.sign_in.toUpperCase(),
                                   style: TextStyle(
                                       color: MyTheme.white, fontSize: 16),
                                 ),
@@ -226,9 +228,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
                           // OR Divider
                           Center(
-                              child: Text('OR',
-                                  style: TextStyle(
-                                      fontSize: 18, color: MyTheme.grey))),
+                            child: Text(
+                              l10n.or,
+                              style: TextStyle(fontSize: 18, color: MyTheme.grey),
+                            ),
+                          ),
                           const SizedBox(height: 8),
 
                           // Social Login Buttons
@@ -239,9 +243,11 @@ class _SignInScreenState extends State<SignInScreen> {
                                   onPressed: () {
                                     AuthController().signInWithGoogle(context);
                                   },
-                                  icon: Image.asset('assets/icons/google.png',
-                                      width: 24),
-                                  label: const Text('Login with Google'),
+                                  icon: Image.asset(
+                                    'assets/icons/google.png',
+                                    width: 24,
+                                  ),
+                                  label: Text(l10n.login_with_google),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
@@ -261,19 +267,21 @@ class _SignInScreenState extends State<SignInScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Don't have an account?",
-                                    style: TextStyle(fontSize: 16)),
+                                Text(
+                                  l10n.no_account,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SignUpScreen()),
+                                        builder: (context) => const SignUpScreen(),
+                                      ),
                                     );
                                   },
                                   child: Text(
-                                    "Sign up",
+                                    l10n.sign_up,
                                     style: TextStyle(
                                         color: MyTheme.primaryColor,
                                         fontSize: 16,

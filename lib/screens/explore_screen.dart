@@ -6,6 +6,7 @@ import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:event_booking_app_ui/widgets/streambuilderwidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class ExploreScreen extends StatefulWidget {
   @override
@@ -29,13 +30,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           SizedBox(
             height: screenHeight * 0.075,
             child: ListView(
@@ -45,26 +48,26 @@ class _ExploreScreenState extends State<ExploreScreen> {
               }).toList(),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Streambuilderwidget(
             getEventStream: EventController().getAllEvents(),
             getAllEventStream: EventController().getAllEvents(),
-            title: "Top Topic",
+            title: l10n.top_topics,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Streambuilderwidget(
-            title: "Upcoming events",
+            title: l10n.upcoming_events,
             getEventStream: EventController().getEvents(),
             getAllEventStream: EventController().getEvents(),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Streambuilderwidget(
-            title: "For You ",
+            title: l10n.for_you,
             getEventStream: EventController().getForYouEvents(categoriess),
             getAllEventStream: EventController().getForYouEvents(categoriess),
           ),
           Streambuilderwidget(
-            title: "Past events",
+            title: l10n.past_events,
             getEventStream: EventController().getpastEvents(),
             getAllEventStream: EventController().getpastEvents(),
           ),
@@ -74,7 +77,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 }
 
-// Category Chip Widget
 class CategoryChip extends StatelessWidget {
   final CategoryModel category;
   CategoryChip(this.category);
@@ -96,8 +98,8 @@ class CategoryChip extends StatelessWidget {
             ));
       },
       child: Container(
-        margin: EdgeInsets.only(right: 4, top: 4),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: const EdgeInsets.only(right: 4, top: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(20),
@@ -105,10 +107,10 @@ class CategoryChip extends StatelessWidget {
         child: Row(
           children: [
             Image.network(category.categoryImage),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             Text(
               category.categoryName,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         ),

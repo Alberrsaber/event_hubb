@@ -3,11 +3,11 @@ import 'package:event_booking_app_ui/models/course_model.dart';
 import 'package:event_booking_app_ui/screens/course_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class FacultyCoursesScreen extends StatefulWidget {
-  FacultyCoursesScreen({super.key});
+  const FacultyCoursesScreen({super.key});
 
   @override
   _FacultyCoursesScreenState createState() => _FacultyCoursesScreenState();
@@ -20,22 +20,22 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
   DateTime selectedMonth = DateTime.now();
   bool isSortedAscending = true;
 
-  List<String> months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
+  static const List<String> englishMonths = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
   ];
 
-  String selectedMonthString = DateFormat('MMMM').format(DateTime.now());
+  List<String> localizedMonths = [];
 
   @override
   void initState() {
@@ -54,49 +54,72 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
   }
 
   void _sortCourses(List<CourseModel> coursesList) {
-    setState(() {
-      if (isSortedAscending) {
-        coursesList.sort((a, b) => a.courseDate.compareTo(b.courseDate));
-      } else {
-        coursesList.sort((a, b) => b.courseDate.compareTo(a.courseDate));
-      }
-    });
+    if (isSortedAscending) {
+      coursesList.sort((a, b) => a.courseDate.compareTo(b.courseDate));
+    } else {
+      coursesList.sort((a, b) => b.courseDate.compareTo(a.courseDate));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final l10n = S.of(context); // Moved inside build method
+    localizedMonths = [
+      l10n.january,
+      l10n.february,
+      l10n.march,
+      l10n.april,
+      l10n.may,
+      l10n.june,
+      l10n.july,
+      l10n.august,
+      l10n.september,
+      l10n.october,
+      l10n.november,
+      l10n.december,
+    ];
 
-    // Filter courses by selected month
-    List<CourseModel> filteredCourses = courses.where((course) {
-      return course.courseDate == selectedMonthString;
-    }).toList();
+    // Get English month name for filtering
+    final englishMonth = englishMonths[selectedMonth.month - 1];
 
-    // Sort the filtered courses
+    // Filter and sort only once
+    List<CourseModel> filteredCourses = courses
+        .where((course) => course.courseDate == englishMonth)
+        .toList();
+
     _sortCourses(filteredCourses);
+
+    final currentLocalizedMonth = localizedMonths[selectedMonth.month - 1];
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        title: const Text(
-          'Faculty Courses',
-          style: TextStyle(color: Colors.black),
+        title: Text(
+          l10n.faculty_courses,
+          style: const TextStyle(color: Colors.black),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: DropdownButton<String>(
-              value: selectedMonthString,
-              onChanged: (String? newMonth) {
-                setState(() {
-                  selectedMonthString = newMonth!;
-                  selectedMonth = DateTime(DateTime.now().year,
-                      months.indexOf(selectedMonthString) + 1, 1);
-                });
+              value: currentLocalizedMonth,
+              onChanged: (String? newLocalizedMonth) {
+                if (newLocalizedMonth != null) {
+                  final monthIndex = localizedMonths.indexOf(newLocalizedMonth);
+                  if (monthIndex != -1) {
+                    setState(() {
+                      selectedMonth = DateTime(
+                        DateTime.now().year,
+                        monthIndex + 1,
+                        1,
+                      );
+                    });
+                  }
+                }
               },
-              items: months.map<DropdownMenuItem<String>>((String month) {
+              items: localizedMonths.map<DropdownMenuItem<String>>((String month) {
                 return DropdownMenuItem<String>(
                   value: month,
                   child: Text(month),
@@ -112,88 +135,75 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
             onPressed: () {
               setState(() {
                 isSortedAscending = !isSortedAscending;
-                _sortCourses(filteredCourses);
               });
             },
           ),
         ],
       ),
       body: filteredCourses.isEmpty
-          ? Center(child: Text('No courses available for this month.'))
+          ? Center(child: Text(l10n.no_courses_available))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: filteredCourses.length,
               itemBuilder: (context, index) {
                 final course = filteredCourses[index];
-
-                return InkWell(
-                  onTap: () {
-                    Get.to(() => CourseDetailsScreen(course: course,));
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 6),
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Text(
-                                    course.courseName,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.topRight,
-                                        child: Text(
-                                          course
-                                              .courseDes, // Using description as location
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 92, 91, 91),
-                                              fontSize: 15),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                return _buildCourseCard(course);
               },
             ),
+    );
+  }
+
+  Widget _buildCourseCard(CourseModel course) {
+    return InkWell(
+      onTap: () => Get.to(() => CourseDetailsScreen(course: course)),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 6),
+              Align(
+                alignment: Alignment.topRight,
+                child: Text(
+                  course.courseName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.topRight,
+                child: Text(
+                  course.courseDes,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 92, 91, 91),
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

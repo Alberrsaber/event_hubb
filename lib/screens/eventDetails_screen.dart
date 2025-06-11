@@ -4,8 +4,8 @@ import 'package:event_booking_app_ui/screens/ticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class EventDetails extends StatefulWidget {
   final EventModel event;
@@ -18,11 +18,11 @@ class EventDetails extends StatefulWidget {
 class _EventDetailsState extends State<EventDetails> {
   late bool isBookmarked;
   final currentUser = FirebaseAuth.instance.currentUser;
+  final l10n = S.of(Get.context!);
 
   @override
   void initState() {
     super.initState();
-
     isBookmarked = widget.event.eventBookmarks.contains(currentUser?.uid);
   }
 
@@ -112,8 +112,7 @@ class _EventDetailsState extends State<EventDetails> {
                   const SizedBox(height: 20),
                   _infoRow(
                     icon: Icons.calendar_month_rounded,
-                    title:
-                        DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    title: DateFormat('MMM dd, yyyy').format(event.eventBegDate),
                     subtitle:
                         '${DateFormat('EEEE, h:mm a').format(event.eventBegDate)} - ${DateFormat('h:mm a').format(event.eventEndDate)}',
                   ),
@@ -121,17 +120,17 @@ class _EventDetailsState extends State<EventDetails> {
                   _infoRow(
                     icon: Icons.location_on_rounded,
                     title: event.eventLocation,
-                    subtitle: "Location",
+                    subtitle: l10n.location,
                   ),
                   const SizedBox(height: 16),
                   _infoRow(
                     icon: Icons.account_circle_rounded,
                     title: event.eventSponser,
-                    subtitle: "Organizer",
+                    subtitle: l10n.organizer,
                   ),
                   const SizedBox(height: 30),
-                  const Text("About",
-                      style: TextStyle(
+                  Text(l10n.about,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       )),
@@ -174,8 +173,8 @@ class _EventDetailsState extends State<EventDetails> {
           ),
           child: Text(
             event.eventEndDate.isBefore(DateTime.now())
-                ? 'EVENT ENDED'
-                : 'BOOK TICKET',
+                ? l10n.event_ended.toUpperCase()
+                : l10n.book_ticket.toUpperCase(),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

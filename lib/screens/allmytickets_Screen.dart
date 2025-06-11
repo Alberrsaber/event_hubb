@@ -5,19 +5,20 @@ import 'package:event_booking_app_ui/screens/myticket_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class AllMyTicketsPage extends StatefulWidget {
-  
-  const AllMyTicketsPage({super.key, });
+  const AllMyTicketsPage({super.key});
 
   @override
   State<AllMyTicketsPage> createState() => _EventsPageState();
 }
 
 class _EventsPageState extends State<AllMyTicketsPage> {
-
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
+    
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -27,8 +28,7 @@ class _EventsPageState extends State<AllMyTicketsPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        title: const Text('My Tickets', style: TextStyle(color: Colors.black)),
-        
+        title: Text(l10n.my_tickets, style: const TextStyle(color: Colors.black)),
       ),
       body: Column(
         children: [
@@ -39,20 +39,20 @@ class _EventsPageState extends State<AllMyTicketsPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(l10n.error_loading_tickets));
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No Tickets Founds'));
+                  return Center(child: Text(l10n.no_tickets_found));
                 } else {
-                  List<TicketModel> Tickets = snapshot.data!.docs.map((doc) {
+                  List<TicketModel> tickets = snapshot.data!.docs.map((doc) {
                     return TicketModel.fromMap(
                         doc.data() as Map<String, dynamic>, doc.id);
                   }).toList();
 
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: Tickets.length,
+                    itemCount: tickets.length,
                     itemBuilder: (context, index) {
-                      return TicketCard(Tickets[index]);
+                      return TicketCard(tickets[index]);
                     },
                   );
                 }
@@ -83,7 +83,7 @@ class TicketCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black12,
               blurRadius: 6,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -156,8 +156,7 @@ class TicketCard extends StatelessWidget {
                             ticket.eventLocation,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style:
-                                const TextStyle(color: Colors.grey, fontSize: 13.5),
+                            style: const TextStyle(color: Colors.grey, fontSize: 13.5),
                           ),
                         ),
                       ],

@@ -11,6 +11,7 @@ import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   List<CategoryModel> categories = [];
   UserModel? currentUser;
+  final l10n = S.of(Get.context!);
 
   @override
   void initState() {
@@ -47,9 +49,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         foregroundColor: theme.textTheme.bodyLarge?.color,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          'My Profile',
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+        title: Text(
+          l10n.my_profile,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
         ),
       ),
       body: currentUser == null
@@ -122,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: ElevatedButton.icon(
         onPressed: () => Get.to(() => EditProfileScreen()),
         icon: const Icon(Icons.edit, size: 18),
-        label: const Text("Edit Profile"),
+        label: Text(l10n.edit_profile),
         style: ElevatedButton.styleFrom(
           elevation: 0,
           foregroundColor: MyTheme.primaryColor,
@@ -140,23 +142,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         ProfileOptionTile(
-          title: "Change Password",
+          title: l10n.change_password,
           onTap: () {
             Get.to(() => ChangePasswordScreen());
-
-            // TODO: Navigate to Interests
           },
         ),
         const SizedBox(height: 20),
         ProfileOptionTile(
-          title: "My Tickets",
+          title: l10n.my_tickets,
           onTap: () {
             Get.to(() => AllMyTicketsPage());
           },
         ),
         const SizedBox(height: 20),
         ProfileOptionTile(
-          title: "Bookmarks",
+          title: l10n.bookmarks,
           onTap: () {
             Get.to(() => EventsPage(
                   getEventStream: EventController().getBookmarks(),
@@ -165,11 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 20),
         ProfileOptionTile(
-          title: "Settings",
+          title: l10n.settings,
           onTap: () {
             Get.to(() => SettingsScreen());
-
-            // TODO: Navigate to Interests
           },
         ),
       ],

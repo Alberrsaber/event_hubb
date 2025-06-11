@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -13,16 +13,14 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _currentPasswordController =
-      TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmNewPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmNewPasswordController = TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  final l10n = S.of(Get.context!);
 
   @override
   void dispose() {
@@ -55,18 +53,18 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Password changed successfully")),
+          SnackBar(content: Text(l10n.password_changed_success)),
         );
         Navigator.pop(context);
       }
     } on FirebaseAuthException catch (e) {
-      String errorMsg = "Current password is incorrect";
+      String errorMsg = l10n.current_password_incorrect;
       if (e.code == 'wrong-password') {
-        errorMsg = "Current password is incorrect";
+        errorMsg = l10n.current_password_incorrect;
       } else if (e.code == 'weak-password') {
-        errorMsg = "New password is too weak";
+        errorMsg = l10n.password_too_weak;
       } else if (e.code == 'user-not-found') {
-        errorMsg = "User not found";
+        errorMsg = l10n.user_not_found;
       }
 
       if (context.mounted) {
@@ -76,7 +74,7 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("An unexpected error occurred")),
+        SnackBar(content: Text(l10n.unexpected_error)),
       );
     }
 
@@ -101,9 +99,9 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                       icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () => Get.back(),
                     ),
-                    SizedBox(width: 10,),
-                    const Text("Change Password",
-                        style: TextStyle(
+                    const SizedBox(width: 10),
+                    Text(l10n.change_password,
+                        style: const TextStyle(
                             fontSize: 28, fontWeight: FontWeight.w500)),
                   ],
                 ),
@@ -114,7 +112,7 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                   controller: _currentPasswordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: "Current Password",
+                    labelText: l10n.current_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(_obscurePassword
@@ -126,9 +124,9 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty)
-                      return "Please enter your current password";
+                      return l10n.enter_current_password;
                     if (value.length < 6)
-                      return "Password must be at least 6 characters";
+                      return l10n.password_min_length;
                     return null;
                   },
                 ),
@@ -139,7 +137,7 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                   controller: _newPasswordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: "New Password",
+                    labelText: l10n.new_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(_obscurePassword
@@ -151,9 +149,9 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty)
-                      return "Please enter a new password";
+                      return l10n.enter_new_password;
                     if (value.length < 6)
-                      return "Password must be at least 6 characters";
+                      return l10n.password_min_length;
                     return null;
                   },
                 ),
@@ -164,7 +162,7 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                   controller: _confirmNewPasswordController,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
-                    labelText: "Confirm New Password",
+                    labelText: l10n.confirm_new_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(_obscureConfirmPassword
@@ -176,9 +174,9 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty)
-                      return "Please confirm your password";
+                      return l10n.confirm_password;
                     if (value != _newPasswordController.text)
-                      return "Passwords do not match";
+                      return l10n.passwords_not_match;
                     return null;
                   },
                 ),
@@ -196,9 +194,8 @@ class _ChangePasswordScreendState extends State<ChangePasswordScreen> {
                           ),
                           child: Center(
                             child: Text(
-                              'CHANGE PASSWORD',
-                              style:
-                                  TextStyle(color: MyTheme.white, fontSize: 16),
+                              l10n.change_password.toUpperCase(),
+                              style: TextStyle(color: MyTheme.white, fontSize: 16),
                             ),
                           ),
                         ),

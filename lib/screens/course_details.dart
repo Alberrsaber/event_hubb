@@ -2,6 +2,7 @@ import 'package:event_booking_app_ui/controllers/course_controller.dart';
 import 'package:event_booking_app_ui/models/course_model.dart';
 import 'package:event_booking_app_ui/models/program_Model.dart';
 import 'package:flutter/material.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final CourseModel course;
@@ -14,21 +15,25 @@ class CourseDetailsScreen extends StatefulWidget {
 
 class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   List<ProgramModel> programs = [];
+
   @override
   void initState() {
     super.initState();
     fetchPrograms();
   }
+
   Future<void> fetchPrograms() async {
     programs = await CourseController().getAllProgram(widget.course.courseId);
     setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
-    
+    final l10n = S.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Course Details'),
+        title: Text(l10n.course_details),
         backgroundColor: Colors.blue.shade600,
         foregroundColor: Colors.white,
         elevation: 2,
@@ -61,7 +66,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Description',
+                    l10n.description,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -79,7 +84,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
             // Course Program Table
             Text(
-              'Course Program',
+              l10n.course_program,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.blue.shade800,
@@ -111,11 +116,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                       ),
                     ),
                     children: [
-                      _buildTableHeaderCell('Program Name'),
-                      _buildTableHeaderCell('Date'),
-                      _buildTableHeaderCell('Time'),
-                      _buildTableHeaderCell('Type'),
-                      _buildTableHeaderCell('Location'),
+                      _buildTableHeaderCell(l10n.program_name),
+                      _buildTableHeaderCell(l10n.date),
+                      _buildTableHeaderCell(l10n.time),
+                      _buildTableHeaderCell(l10n.type),
+                      _buildTableHeaderCell(l10n.location),
                     ],
                   ),
                   // Table Rows
@@ -132,7 +137,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                         _buildTableCell(program.programName),
                         _buildTableCell(program.programDate.join('\n')),
                         _buildTableCell(program.programTime),
-                        _buildTableCell(program.programType, isChip: true ),
+                        _buildTableCell(program.programType, isChip: true),
                         _buildTableCell(program.programLocation),
                       ],
                     );
@@ -206,5 +211,3 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     }
   }
 }
-
-// Data Models

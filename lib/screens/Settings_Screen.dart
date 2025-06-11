@@ -2,11 +2,11 @@ import 'package:event_booking_app_ui/main.dart';
 import 'package:event_booking_app_ui/screens/Auth/resset_password_screen.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';  
-
+import 'package:get/get.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final ThemeController themeController = Get.find();  // Get the theme controller
+  final ThemeController themeController = Get.find();
 
   void _navigateToEditProfile(BuildContext context) {
     Navigator.push(
@@ -24,97 +24,71 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use S.of(context) for localization
+    final translations = S.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: Text("Settings")),
+      appBar: AppBar(title: Text(translations.settings)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             ListTile(
-              title: Text('Edit Profile'),
-              trailing: Icon(Icons.arrow_forward_ios),
+              title: Text(translations.edit_profile),
+              trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () => _navigateToEditProfile(context),
             ),
-            Divider(),
+            const Divider(),
 
             ListTile(
-              title: Text('Change Password'),
-              trailing: Icon(Icons.arrow_forward_ios),
+              title: Text(translations.change_password),
+              trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () => _navigateToResetPassword(context),
             ),
-            Divider(),
+            const Divider(),
 
-            SwitchListTile(
-              title: Text('Push Notifications'),
-              value: true,
-              onChanged: (value) {
-                // Handle push notification toggle
-              },
-              activeColor: Colors.blue,
-            ),
-            Divider(),
-
-            ListTile(
-              title: Text('Language Selection'),
-              subtitle: Text('English'), // You can change this dynamically
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () async {
-                String? selectedLang = await showDialog<String>(
-                  context: context,
-                  builder: (context) {
-                    return SimpleDialog(
-                      title: Text('Select Language'),
-                      children: [
-                        SimpleDialogOption(
-                          onPressed: () {
-                            Navigator.pop(context, 'English');
-                          },
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'icons/flags/png/gb.png',
-                                package: 'country_icons',
-                                width: 24,
-                              ),
-                              SizedBox(width: 10),
-                              Text('English'),
-                            ],
-                          ),
-                        ),
-                        SimpleDialogOption(
-                          onPressed: () {
-                            Navigator.pop(context, 'Arabic');
-                          },
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'icons/flags/png/sa.png',
-                                package: 'country_icons',
-                                width: 24,
-                              ),
-                              SizedBox(width: 10),
-                              Text('Arabic'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-                // Handle selectedLang value here (use GetX localization)
-                if (selectedLang != null) {
-                  // Set the language dynamically
-                  // For example, you can use Get.updateLocale() for dynamic language change
-                  Get.updateLocale(Locale(selectedLang == 'Arabic' ? 'ar' : 'en'));
-                }
-              },
-            ),
-            Divider(),
-
-            // Dark Mode Toggle with GetX
             Obx(() {
               return SwitchListTile(
-                title: Text('Dark Mode'),
+                title: Text(translations.push_notifications),
+                value: themeController.isNotificationsEnabled.value,
+                onChanged: (value) {
+                  themeController.toggleNotifications(value);
+                },
+                activeColor: Colors.blue,
+              );
+            }),
+            const Divider(),
+
+            ListTile(
+              title: Text(translations.language_selection),
+              subtitle: Text(themeController.selectedLanguage.value == 'en' 
+                  ? translations.english 
+                  : translations.arabic),
+              trailing: Obx(() {
+                return DropdownButton<String>(
+                  value: themeController.selectedLanguage.value,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  underline: const SizedBox(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      themeController.setLanguage(newValue);
+                    }
+                  },
+                  items: <String>['en', 'ar']
+                    .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value == 'en' ? translations.english : translations.arabic),
+                      );
+                    }).toList(),
+                );
+              }),
+            ),
+            const Divider(),
+
+            Obx(() {
+              return SwitchListTile(
+                title: Text(translations.dark_mode),
                 value: themeController.isDarkMode.value,
                 onChanged: (value) {
                   themeController.toggleTheme();

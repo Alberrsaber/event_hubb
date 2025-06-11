@@ -9,6 +9,10 @@ import 'screens/Auth/signin_screen.dart';
 import './screens/home_screen.dart';
 import './my_theme.dart';
 
+// 🌍 Add localization imports
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
+
 // Define the Theme Controller with language and notification toggle
 class ThemeController extends GetxController {
   var isDarkMode = false.obs;
@@ -96,6 +100,16 @@ class _MyAppState extends State<MyApp> {
             : ThemeMode.light,
         debugShowCheckedModeBanner: false,
         locale: Locale(widget.themeController.selectedLanguage.value),
+
+        // 🌍 Add localization support
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),

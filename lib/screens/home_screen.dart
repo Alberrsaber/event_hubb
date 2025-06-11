@@ -17,6 +17,7 @@ import 'search_screen.dart';
 import 'settings_screen.dart';
 import 'explore_screen.dart';
 import 'notification_screen.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,11 +26,10 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-UserModel? usser;
-
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool hasNotifications = false;
+  final l10n = S.of(Get.context!);
 
   final List<Widget> facultyScreens = [
     ExploreScreen(),
@@ -63,12 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Sign Out"),
-        content: Text("Are you sure you want to sign out?"),
+        title: Text(l10n.sign_out),
+        content: Text(l10n.sign_out_confirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Cancel"),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -76,11 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 AuthController().signOut(context);
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Error signing out: $e")),
+                  SnackBar(content: Text('${l10n.sign_out_error} $e')),
                 );
               }
             },
-            child: Text("Sign Out"),
+            child: Text(l10n.sign_out),
           ),
         ],
       ),
@@ -96,15 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           } else if (snapshot.hasError) {
-            return Scaffold(body: Center(child: Text('Error: ${snapshot.error}')));
+            return Scaffold(body: Center(child: Text('${l10n.error}: ${snapshot.error}')));
           } else {
             final UserModel? user = snapshot.data;
             final bool isStudent = user?.userQualification == 'Student';
 
             final currentScreens = isStudent ? studentScreens : facultyScreens;
             if (_selectedIndex >= currentScreens.length) {
-  _selectedIndex = 0; // Reset to prevent RangeError
-}
+              _selectedIndex = 0; // Reset to prevent RangeError
+            }
 
             return Scaffold(
               drawer: Drawer(
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     UserAccountsDrawerHeader(
                       decoration: BoxDecoration(color: Color(0xFF4A43EC)),
-                      accountName: Text(user?.userName ?? "Please edit your profile"),
+                      accountName: Text(user?.userName ?? l10n.edit_profile_prompt),
                       accountEmail: Text(user?.userEmail ?? ""),
                       currentAccountPicture: CircleAvatar(
                         backgroundImage: NetworkImage(user?.userImage ??
@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading: Image.asset("assets/navigation/bookmark_n.png", width: 24, height: 24),
-                      title: Text("Bookmarks"),
+                      title: Text(l10n.bookmarks),
                       onTap: () {
                         Get.to(() => EventsPage(
                             getEventStream: EventController().getBookmarks()));
@@ -129,22 +129,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading: Image.asset("assets/navigation/mail_n.png", width: 24, height: 24),
-                      title: Text("Contact Us"),
+                      title: Text(l10n.contact_us),
                       onTap: () => _navigateToDrawerScreen(ContactScreen()),
                     ),
                     ListTile(
                       leading: Image.asset("assets/navigation/settings_n.png", width: 24, height: 24),
-                      title: Text("Settings"),
+                      title: Text(l10n.settings),
                       onTap: () => _navigateToDrawerScreen(SettingsScreen()),
                     ),
                     ListTile(
                       leading: Image.asset("assets/navigation/helps_n.png", width: 24, height: 24),
-                      title: Text("Helps & FAQs"),
+                      title: Text(l10n.help_faq),
                       onTap: () => _navigateToDrawerScreen(HelpsScreen()),
                     ),
                     ListTile(
                       leading: Image.asset("assets/navigation/signout_n.png", width: 24, height: 24),
-                      title: Text("Sign Out"),
+                      title: Text(l10n.sign_out),
                       onTap: () => _signOut(context),
                     ),
                   ],
@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     width: 20, height: 20),
                                 SizedBox(width: 12),
                                 Text(
-                                  'Search...',
+                                  l10n.search_hint,
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ],
@@ -238,25 +238,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 items: [
                   BottomNavigationBarItem(
                     icon: Image.asset('assets/icons/compass.png', width: 24, height: 24),
-                    label: 'Explore',
+                    label: l10n.explore,
                   ),
                   BottomNavigationBarItem(
                     icon: Image.asset('assets/icons/calendar.png', width: 24, height: 24),
-                    label: 'Calendar',
+                    label: l10n.calendar,
                   ),
                   if (!isStudent)
                     BottomNavigationBarItem(
                       icon: Icon(Icons.school),
-                      label: 'Faculty',
+                      label: l10n.faculty,
                     ),
                   BottomNavigationBarItem(
                     icon: Image.asset('assets/icons/categories_icon.png',
                         width: 24, height: 24),
-                    label: 'Categories',
+                    label: l10n.categories,
                   ),
                   BottomNavigationBarItem(
                     icon: Image.asset('assets/icons/profile.png', width: 24, height: 24),
-                    label: 'Profile',
+                    label: l10n.profile,
                   ),
                 ],
               ),

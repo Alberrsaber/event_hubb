@@ -1,6 +1,4 @@
-// File: categories_screen.dart
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +7,7 @@ import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -34,7 +33,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context);
     return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.categories),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: isLoading
@@ -87,9 +90,9 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-     final random = Random();
+    final random = Random();
     final color = Color.fromARGB(
-      255, // fully opaque
+      255,
       random.nextInt(256),
       random.nextInt(256),
       random.nextInt(256),
@@ -123,7 +126,7 @@ class CategoryCard extends StatelessWidget {
             Text(
               category.categoryName,
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.white,
+                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -147,6 +150,7 @@ class EventsByCategoryScreen extends StatefulWidget {
 class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
   List<EventModel> events = [];
   bool isLoading = true;
+  final l10n = S.of(Get.context!);
 
   @override
   void initState() {
@@ -165,7 +169,7 @@ class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.category.categoryName} Events'),
+        title: Text('${widget.category.categoryName} ${l10n.events}'),
         backgroundColor: Color(widget.category.categoryColor),
       ),
       body: Padding(
@@ -176,17 +180,19 @@ class _EventsByCategoryScreenState extends State<EventsByCategoryScreen> {
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
                 itemBuilder: (_, __) => shimmerCard(),
               )
-            : ListView.separated(
-                itemCount: events.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 16),
-                itemBuilder: (context, index) {
-                  final event = events[index];
-                  return EventCard(
-                    event: event,
-                    onTap: () => Get.to(() => EventDetails(event: event)),
-                  );
-                },
-              ),
+            : events.isEmpty
+                ? Center(child: Text(l10n.no_events_found))
+                : ListView.separated(
+                    itemCount: events.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      return EventCard(
+                        event: event,
+                        onTap: () => Get.to(() => EventDetails(event: event)),
+                      );
+                    },
+                  ),
       ),
     );
   }
@@ -216,7 +222,6 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
-     
 
     return InkWell(
       onTap: onTap,

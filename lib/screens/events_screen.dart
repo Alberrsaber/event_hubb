@@ -4,6 +4,7 @@ import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart'; // <-- Localization import
 
 class EventsPage extends StatelessWidget {
   final Stream<QuerySnapshot> getEventStream;
@@ -11,6 +12,8 @@ class EventsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = S.of(context); // <-- Access localization
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -20,25 +23,23 @@ class EventsPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Events', style: TextStyle(color: Colors.black)),
-        
+        title: Text(
+          l10n.events, // <-- Localized 'Events'
+          style: const TextStyle(color: Colors.black),
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              
               stream: getEventStream,
               builder: (context, snapshot) {
-                 print('ConnectionState: ${snapshot.connectionState}');
-          print('HasData: ${snapshot.hasData}');
-          print('Error: ${snapshot.error}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text('${l10n.error}: ${snapshot.error}')); // <-- Localized 'Error'
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No events found'));
+                  return Center(child: Text(l10n.no_events_found)); // <-- Localized 'No events found'
                 } else {
                   List<EventModel> events = snapshot.data!.docs.map((doc) {
                     return EventModel.fromMap(
@@ -153,8 +154,10 @@ class EventCard extends StatelessWidget {
                             event.eventLocation,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style:
-                                const TextStyle(color: Colors.grey, fontSize: 13.5),
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 13.5,
+                            ),
                           ),
                         ),
                       ],
