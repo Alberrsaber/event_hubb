@@ -1,0 +1,203 @@
+{
+  "_comment1": "                                               sIGN IN PAGE                                         ",
+  "app_name": "EventHub",
+  "sign_in": "Sign In",
+  "email_hint": "abc@gmail.com",
+  "email_required": "Email is required",
+  "password_hint": "Your Password",
+  "password_required": "Password is required",
+  "remember_me": "Remember Me",
+  "forgot_password": "Forgot Password?",
+  "or": "OR",
+  "login_with_google": "Login with Google",
+  "no_account": "Don't have an account?",
+  "sign_up": "Sign up",
+   
+
+
+
+
+
+
+
+  "sign_up": "Sign Up",
+  "full_name": "Full Name",
+  "field_required": "This field cannot be empty",
+  "email": "Email",
+  "mobile_number": "Mobile Number",
+  "password": "Password",
+  "enter_password": "Please enter a password",
+  "password_min_length": "Password must be at least 6 characters",
+  "confirm_password": "Confirm Password",
+  "confirm_password_required": "Please confirm your password",
+  "passwords_not_match": "Passwords do not match",
+  "faculty_of": "Faculty of",
+  "pharmacy": "Pharmacy",
+  "medicine": "Medicine",
+  "engineering": "Engineering",
+  "sciences": "Sciences",
+  "computers_and_info": "Computers and Information",
+  "education": "Education",
+  "commerce": "Commerce",
+  "nursing": "Nursing",
+  "arts": "Arts",
+  "law": "Law",
+  "select_faculty": "Please select a Faculty",
+  "sign_up_as": "Sign up as:",
+  "student": "Student",
+  "faculty_member": "Faculty Member",
+  "email_required": "Please enter your email",
+  "invalid_email_format": "Please enter a valid email format (e.g., user@example.com)",
+  "phone_required": "Please enter your phone number",
+  "invalid_phone_format": "Please enter a valid phone number (e.g., +1234567890)",
+
+
+
+
+
+
+
+
+
+
+
+
+
+"_comment2": "                                                eXPLORE Screen                                         ",
+  "top_topics": "Top Topics",
+  "upcoming_events": "Upcoming Events",
+  "for_you": "For You",
+  "past_events": "Past Events",
+
+  "_comment3": "                                               categories Screen                                         ",
+"categories": "Categories",
+  "events": "Events",
+  "no_events_found": "No events found",
+"_comment4": "                                              allmytickets Screen                                         ",
+ "my_tickets": "My Tickets",
+  "error_loading_tickets": "Error loading tickets",
+  "no_tickets_found": "No tickets found",
+
+
+
+
+
+
+  "faculty_courses": "Faculty Courses",
+  "no_courses_available": "No courses available for this month",
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December",
+  
+
+
+
+
+ "course_details": "Course Details",
+  "description": "Description",
+  "course_program": "Course Program",
+  "program_name": "Program Name",
+  "date": "Date",
+  "time": "Time",
+  "type": "Type",
+  "location": "Location",
+
+
+
+
+
+
+
+"_comment5": "                                             Event Details Screen                                         ",
+  "location": "Location",
+  "organizer": "Organizer",
+  "about": "About",
+  "event_ended": "Event Ended",
+  "book_ticket": "Book Ticket",
+
+
+
+"_comment6": "                                             Event  Screen                                         ",
+  "events": "Events",
+  "error": "Error",
+  "no_events_found": "No events found",
+
+
+"_comment7": "                                             Home  Screen                                         ",
+  "sign_out": "Sign Out",
+  "sign_out_confirmation": "Are you sure you want to sign out?",
+  "cancel": "Cancel",
+  "sign_out_error": "Error signing out:",
+  "edit_profile_prompt": "Please edit your profile",
+  "bookmarks": "Bookmarks",
+  "contact_us": "Contact Us",
+  "settings": "Settings",
+  "help_faq": "Helps & FAQs",
+  "search_hint": "Search...",
+  "explore": "Explore",
+  "calendar": "Calendar",
+  "faculty": "Faculty",
+  "categories": "Categories",
+  "profile": "Profile",
+  "error": "Error",
+
+
+
+"change_password": "Change Password",
+  "current_password": "Current Password",
+  "new_password": "New Password",
+  "confirm_new_password": "Confirm New Password",
+  "enter_current_password": "Please enter your current password",
+  "enter_new_password": "Please enter a new password",
+  "confirm_password": "Please confirm your password",
+  "password_min_length": "Password must be at least 6 characters",
+  "passwords_not_match": "Passwords do not match",
+  "password_changed_success": "Password changed successfully",
+  "current_password_incorrect": "Current password is incorrect",
+  "password_too_weak": "New password is too weak",
+  "user_not_found": "User not found",
+  "unexpected_error": "An unexpected error occurred",
+
+
+  "my_profile": "My Profile",
+  "edit_profile": "Edit Profile",
+  "change_password": "Change Password",
+  "my_tickets": "My Tickets",
+  "bookmarks": "Bookmarks",
+  "settings": "Settings",
+
+"my_ticket": "My Ticket",
+  "present_qr_message": "Present this QR code at the gate.",
+  "name": "Name",
+  "loading": "Loading...",
+  "order_number": "Order No.",
+  "date": "Date",
+  "seat": "Seat",
+  "save": "Save",
+  "share": "Share",
+  "ticket_share_message": "Here's my ticket 🎟️",
+
+
+  "settings": "Settings",
+  "edit_profile": "Edit Profile",
+  "change_password": "Change Password",
+  "push_notifications": "Push Notifications",
+  "language_selection": "Language Selection",
+  "select_language": "Select Language",
+  "english": "English",
+  "arabic": "Arabic",
+  "dark_mode": "Dark Mode"
+
+
+
+  
+}
