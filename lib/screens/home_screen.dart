@@ -12,7 +12,7 @@ import 'calendar_screen.dart';
 import 'categories_screen.dart';
 import 'profile_screen.dart';
 import 'contact_us_screen.dart';
-import 'helps_faqs_screen.dart';
+import 'Helps_FAQs_Screen.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
 import 'explore_screen.dart';
