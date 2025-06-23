@@ -103,4 +103,26 @@ class EventController {
 
     await eventRef.update({'eventBookmarks': bookmarks});
   }
+// remove book marks
+  Future<void> removeFromBookmarks(String eventId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final eventRef = _firestore.collection('Events').doc(eventId);
+
+  await _firestore.runTransaction((transaction) async {
+    final snapshot = await transaction.get(eventRef);
+    final data = snapshot.data();
+
+    if (data == null) return;
+
+    List<dynamic> bookmarks = List.from(data['eventBookmarks'] ?? []);
+
+    if (bookmarks.contains(user.uid)) {
+      bookmarks.remove(user.uid);
+      transaction.update(eventRef, {'eventBookmarks': bookmarks});
+    }
+  });
+}
+
 }

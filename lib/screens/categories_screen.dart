@@ -35,9 +35,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     final l10n = S.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.categories),
-      ),
+      
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: isLoading
@@ -222,12 +220,14 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
     return InkWell(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: theme.cardColor,
+          color: isDark ? theme.cardColor : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

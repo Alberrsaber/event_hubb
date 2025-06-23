@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:event_booking_app_ui/controllers/category_controller.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/models/category_model.dart';
@@ -15,6 +16,18 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   List<CategoryModel> categoriess = [];
+  final ValueNotifier<int> _currentIndexNotifier = ValueNotifier<int>(0);
+  final List<String> images = [
+    'assets/images/image1.png',
+    'assets/images/image2.png',
+    'assets/images/image3.png',
+    'assets/images/image2.png',
+    'assets/images/image1.png',
+    'assets/images/image3.png',
+    'assets/images/image2.png',
+
+    
+  ];
 
   @override
   void initState() {
@@ -29,16 +42,26 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   @override
+  void dispose() {
+    _currentIndexNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = S.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 15),
+          const SizedBox(height: 8),           
+        
+          _buildCarouselSection(),
+          
+          const SizedBox(height: 8), 
           SizedBox(
             height: screenHeight * 0.075,
             child: ListView(
@@ -48,19 +71,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Streambuilderwidget(
             getEventStream: EventController().getAllEvents(),
             getAllEventStream: EventController().getAllEvents(),
             title: l10n.top_topics,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Streambuilderwidget(
             title: l10n.upcoming_events,
             getEventStream: EventController().getEvents(),
             getAllEventStream: EventController().getEvents(),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Streambuilderwidget(
             title: l10n.for_you,
             getEventStream: EventController().getForYouEvents(categoriess),
@@ -73,6 +96,54 @@ class _ExploreScreenState extends State<ExploreScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCarouselSection() {
+    return Column(
+      children: [
+        CarouselSlider(
+          items: images.map((imagePath) {
+            return Image.asset(
+              imagePath,
+              fit: BoxFit.fitHeight,
+              width: double.infinity,
+            );
+          }).toList(),
+          options: CarouselOptions(
+            autoPlay: true,
+            autoPlayInterval: Duration(seconds: 3),
+            enlargeCenterPage: true,
+            viewportFraction: 0.9,
+            aspectRatio: 2.0,
+            initialPage: 0,
+            onPageChanged: (index, reason) {
+              _currentIndexNotifier.value = index;
+            },
+          ),
+        ),
+        const SizedBox(height: 6),
+        ValueListenableBuilder<int>(
+          valueListenable: _currentIndexNotifier,
+          builder: (context, currentIndex, child) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(3, (index) {
+                return Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(horizontal: 3.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        currentIndex % 3 == index ? Colors.blue : Colors.grey,
+                  ),
+                );
+              }),
+            );
+          },
+        ),
+      ],
     );
   }
 }

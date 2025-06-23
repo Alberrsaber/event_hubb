@@ -6,6 +6,7 @@ import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/Auth/changepassword_screen.dart';
 import 'package:event_booking_app_ui/screens/Settings_Screen.dart';
 import 'package:event_booking_app_ui/screens/allmytickets_Screen.dart';
+import 'package:event_booking_app_ui/screens/bookmarks_screen.dart';
 import 'package:event_booking_app_ui/screens/edit_profile_screen.dart';
 import 'package:event_booking_app_ui/my_theme.dart';
 import 'package:event_booking_app_ui/screens/events_screen.dart';
@@ -158,9 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ProfileOptionTile(
           title: l10n.bookmarks,
           onTap: () {
-            Get.to(() => EventsPage(
-                  getEventStream: EventController().getBookmarks(),
-                ));
+            Get.to(() => BookMarksScreen());
           },
         ),
         const SizedBox(height: 20),

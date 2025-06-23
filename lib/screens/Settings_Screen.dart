@@ -28,7 +28,9 @@ class SettingsScreen extends StatelessWidget {
     final translations = S.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(translations.settings)),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: Text(translations.settings)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -40,12 +42,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             const Divider(),
 
-            ListTile(
-              title: Text(translations.change_password),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () => _navigateToResetPassword(context),
-            ),
-            const Divider(),
+            
 
             Obx(() {
               return SwitchListTile(

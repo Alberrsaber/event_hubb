@@ -174,6 +174,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildEditableField(String label, TextEditingController controller) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -184,7 +187,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           decoration: InputDecoration(
             hintText: "Enter $label",
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: isDark ? theme.cardColor : Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -201,6 +204,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -210,7 +216,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           value: items.contains(value) ? value : null,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: isDark ? theme.cardColor : Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -260,13 +266,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildInterestsDropdown() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return DropdownButtonFormField<CategoryModel>(
       value: null,
       hint: const Text("Select a category"),
       isExpanded: true,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.grey[100],
+        fillColor: isDark ? theme.cardColor : Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

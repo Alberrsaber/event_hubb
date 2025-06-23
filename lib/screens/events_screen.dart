@@ -15,17 +15,16 @@ class EventsPage extends StatelessWidget {
     final l10n = S.of(context); // <-- Access localization
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, ),
           onPressed: () => Get.back(),
         ),
         title: Text(
           l10n.events, // <-- Localized 'Events'
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -69,13 +68,18 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+        final l10n = S.of(context);
+
+    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () => Get.to(() => EventDetails(event: event)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? theme.cardColor : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -96,7 +100,7 @@ class EventCard extends StatelessWidget {
               child: Image.network(
                 event.eventImage,
                 width: screenWidth * 0.32,
-                height: 140,
+                height: screenHeight * 0.24,
                 fit: BoxFit.fill,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -160,6 +164,31 @@ class EventCard extends StatelessWidget {
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => EventDetails(event: event));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF5568FE),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              l10n.view_details,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        
                       ],
                     ),
                   ],

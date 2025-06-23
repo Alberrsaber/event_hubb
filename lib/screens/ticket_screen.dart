@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
@@ -28,6 +29,7 @@ class _TicketScreenState extends State<TicketScreen>
 
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
+  final l10n = S.of(Get.context!);
 
   @override
   void initState() {
@@ -112,6 +114,9 @@ class _TicketScreenState extends State<TicketScreen>
 
   Widget _buildGlassTicketCard(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
     return Container(
       width: size.width,
@@ -127,7 +132,7 @@ class _TicketScreenState extends State<TicketScreen>
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.85),
+              color: isDark ? theme.cardColor.withOpacity(0.8) : Colors.white.withOpacity(0.8),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
@@ -166,8 +171,8 @@ class _TicketScreenState extends State<TicketScreen>
                               .saveTicket(widget.event, orderNo, seat)
                               .then((value) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Ticket confirmed and saved")),
+                               SnackBar(
+                                  content: Text(l10n.ticket_booked_successfully)),
                             );
                             Get.offAll(() => HomeScreen());
                           });
@@ -176,7 +181,7 @@ class _TicketScreenState extends State<TicketScreen>
                     hasBooked ? Icons.check_circle : Icons.check_circle_outline,
                   ),
                   label: Text(
-                    hasBooked ? "YOU HAVE BOOKED" : "CONFIRM TICKET",
+                    hasBooked ? l10n.you_have_booked : l10n.confirm_ticket,
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: hasBooked ? Colors.grey : Colors.indigo,
@@ -216,14 +221,14 @@ class _TicketScreenState extends State<TicketScreen>
   Widget _buildTicketDetails() {
     return Column(
       children: [
-        _buildTicketRow("Name", user?.userName ?? "Loading..."),
+        _buildTicketRow(l10n.name, user?.userName ?? "Loading..."),
         const SizedBox(height: 12),
-        _buildTicketRow("Order No.", orderNo),
+        _buildTicketRow(l10n.order_number, orderNo),
         const SizedBox(height: 12),
-        _buildTicketRow("Date",
+        _buildTicketRow(l10n.date,
             DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)),
         const SizedBox(height: 12),
-        _buildTicketRow("Seat", seat),
+        _buildTicketRow(l10n.seat, seat),
       ],
     );
   }

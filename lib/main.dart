@@ -8,8 +8,6 @@ import './screens/splash_screen.dart';
 import 'screens/Auth/signin_screen.dart';
 import './screens/home_screen.dart';
 import './my_theme.dart';
-
-// 🌍 Add localization imports
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 

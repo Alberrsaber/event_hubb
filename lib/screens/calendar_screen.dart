@@ -87,6 +87,9 @@ Widget build(BuildContext context) {
   final events = _selectedDay != null
       ? _getEventsForDay(_selectedDay!)
       : [];
+          final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
   return Padding(
     padding: const EdgeInsets.all(12.0),
@@ -96,8 +99,8 @@ Widget build(BuildContext context) {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+ color: isDark ? theme.cardColor : Colors.white,
+               borderRadius: BorderRadius.circular(12),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
@@ -198,6 +201,7 @@ Widget build(BuildContext context) {
 
 
   Widget _buildEventList(double screenWidth) {
+            final theme = Theme.of(context);
     final events = _selectedDay != null
         ? _getEventsForDay(_selectedDay!)
         : _getEventsForDay(_focusedDay);
@@ -217,6 +221,9 @@ Widget build(BuildContext context) {
       itemBuilder: (context, index) {
         final event = events[index];
         final isPast = event.eventBegDate.isBefore(DateTime.now());
+        final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
         return InkWell(
           onTap: () {
@@ -226,7 +233,7 @@ Widget build(BuildContext context) {
             width: screenWidth * 0.85,
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? theme.cardColor : Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3)],
             ),
@@ -239,7 +246,7 @@ Widget build(BuildContext context) {
                     event.eventImage,
                     height: screenWidth * 0.35,
                     width: double.infinity,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Container(

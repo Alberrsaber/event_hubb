@@ -15,10 +15,15 @@
    
 
 
-
-
-
-
+"view_details": "View Details",
+"see_all": "See All",
+"confirm_ticket": "Confirm Ticket",
+"ticket_booked_successfully": "Ticket booked successfully!",
+"you_have_booked": "You Have Booked",
+"cancel_ticket": "Cancel Ticket",
+"all_months": "All Months",
+"notes":"Notes",
+"ticket_canceled_successfully":"Ticket canceled successfully!",
 
   "sign_up": "Sign Up",
   "full_name": "Full Name",

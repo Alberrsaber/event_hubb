@@ -19,16 +19,18 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, ),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Search', style: TextStyle(color: Colors.black)),
+        title: const Text('Search', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Column(
         children: [
@@ -41,7 +43,7 @@ class _SearchPageState extends State<SearchPage> {
                 prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
                 hintText: 'Search events...',
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: isDark ? theme.cardColor : Colors.white,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -96,13 +98,16 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () => Get.to(() => EventDetails(event: event)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? theme.cardColor : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

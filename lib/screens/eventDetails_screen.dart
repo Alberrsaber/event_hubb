@@ -40,7 +40,6 @@ class _EventDetailsState extends State<EventDetails> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(
         children: [
           // Event image and buttons
@@ -108,7 +107,7 @@ class _EventDetailsState extends State<EventDetails> {
                         fontWeight: FontWeight.bold,
                       )),
                   const SizedBox(height: 8),
-                  Divider(color: Colors.grey.shade300),
+                  Divider(color: Theme.of(context).dividerColor),
                   const SizedBox(height: 20),
                   _infoRow(
                     icon: Icons.calendar_month_rounded,
@@ -137,11 +136,7 @@ class _EventDetailsState extends State<EventDetails> {
                   const SizedBox(height: 12),
                   Text(
                     event.eventDes,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      height: 1.6,
-                      fontSize: 15.5,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.6),
                   ),
                 ],
               ),
@@ -153,8 +148,10 @@ class _EventDetailsState extends State<EventDetails> {
       // Bottom CTA
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).cardColor
+              : Colors.white,
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
         ),
         child: ElevatedButton(

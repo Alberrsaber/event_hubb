@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/bookmarks_screen.dart';
 import 'package:event_booking_app_ui/screens/events_screen.dart';
 import 'package:event_booking_app_ui/screens/faculty_courses_page.dart';
 import 'package:flutter/material.dart';
@@ -123,8 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       leading: Image.asset("assets/navigation/bookmark_n.png", width: 24, height: 24),
                       title: Text(l10n.bookmarks),
                       onTap: () {
-                        Get.to(() => EventsPage(
-                            getEventStream: EventController().getBookmarks()));
+                        Get.to(() => BookMarksScreen());
                       },
                     ),
                     ListTile(
