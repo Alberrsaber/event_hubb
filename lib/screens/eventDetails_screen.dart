@@ -111,9 +111,9 @@ class _EventDetailsState extends State<EventDetails> {
                   const SizedBox(height: 20),
                   _infoRow(
                     icon: Icons.calendar_month_rounded,
-                    title: DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    title: DateFormat('MMM dd, yyyy').format(event.eventDates[0]),
                     subtitle:
-                        '${DateFormat('EEEE, h:mm a').format(event.eventBegDate)} - ${DateFormat('h:mm a').format(event.eventEndDate)}',
+                        '${DateFormat('EEEE, h:mm a').format(event.eventDates[0])} - ${DateFormat('h:mm a').format(event.eventDates.last)}',
                   ),
                   const SizedBox(height: 16),
                   _infoRow(
@@ -155,13 +155,13 @@ class _EventDetailsState extends State<EventDetails> {
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
         ),
         child: ElevatedButton(
-          onPressed: event.eventEndDate.isBefore(DateTime.now())
+          onPressed: event.eventDates.last.isBefore(DateTime.now())
               ? null // disables the button
               : () {
                   Get.to(() => TicketScreen(event: event));
                 },
           style: ElevatedButton.styleFrom(
-            backgroundColor: event.eventEndDate.isBefore(DateTime.now())
+            backgroundColor: event.eventDates.last.isBefore(DateTime.now())
                 ? Colors.grey // disabled color
                 : const Color(0xFF5568FE),
             padding: const EdgeInsets.symmetric(vertical: 18),
@@ -169,7 +169,7 @@ class _EventDetailsState extends State<EventDetails> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
           child: Text(
-            event.eventEndDate.isBefore(DateTime.now())
+            event.eventDates.last.isBefore(DateTime.now())
                 ? l10n.event_ended.toUpperCase()
                 : l10n.book_ticket.toUpperCase(),
             style: const TextStyle(

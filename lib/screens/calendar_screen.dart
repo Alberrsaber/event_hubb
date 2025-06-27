@@ -64,14 +64,11 @@ class _CalendarContentState extends State<CalendarContent> {
   Map<DateTime, List<EventModel>> _groupEventsByDate(List<EventModel> events) {
     final Map<DateTime, List<EventModel>> eventsMap = {};
 
-    for (var event in events) {
-      final date = DateTime(
-        event.eventBegDate.year,
-        event.eventBegDate.month,
-        event.eventBegDate.day,
-      );
-
-      eventsMap.putIfAbsent(date, () => []).add(event);
+      for (var event in events) {
+      for (var date in event.eventDates) {
+        final key = DateTime(date.year, date.month, date.day);
+        eventsMap.putIfAbsent(key, () => []).add(event);
+      }
     }
 
     return eventsMap;
@@ -220,7 +217,7 @@ Widget build(BuildContext context) {
       itemCount: events.length,
       itemBuilder: (context, index) {
         final event = events[index];
-        final isPast = event.eventBegDate.isBefore(DateTime.now());
+        final isPast = event.eventDates[0].isBefore(DateTime.now());
         final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -278,7 +275,7 @@ Widget build(BuildContext context) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                        DateFormat('MMM dd, yyyy').format(event.eventDates[0]),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,

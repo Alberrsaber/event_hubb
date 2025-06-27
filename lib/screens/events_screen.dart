@@ -130,7 +130,7 @@ class EventCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                      DateFormat('MMM dd, yyyy').format(event.eventDates[0]),
                       style: const TextStyle(
                         color: Color(0xFF5568FE),
                         fontWeight: FontWeight.w500,

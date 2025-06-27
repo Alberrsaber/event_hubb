@@ -14,7 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
 class TicketController {
-  Future<void> saveTicket(EventModel event, orderId, seat) async {
+  Future<void> saveTicket(EventModel event, ticketDate, orderId, seat) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
@@ -25,7 +25,7 @@ class TicketController {
       eventId: event.eventId,
       eventName: event.eventName,
       eventImage: event.eventImage,
-      eventBegDate: event.eventBegDate,
+      eventBegDate: ticketDate,
       eventLocation: event.eventLocation,
       orderId: orderId,
       seat: seat,

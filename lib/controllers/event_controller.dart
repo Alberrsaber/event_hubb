@@ -11,6 +11,10 @@ class EventController {
     Stream<QuerySnapshot> getAllEvents() {
       return _firestore.collection('Events').snapshots().asBroadcastStream();
     }
+    // Get top Topic 
+    Stream <QuerySnapshot> getTopTopics() {
+      return _firestore.collection('Events').orderBy('eventBegDate').where('eventBegDate', isGreaterThanOrEqualTo: Timestamp.now()).where('eventToptopic', isEqualTo: 'Yes').snapshots();
+    }
 
   // Get Upcoming Events
 

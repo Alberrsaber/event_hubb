@@ -90,7 +90,7 @@ class EventCard extends StatelessWidget {
       },
       child: Container(
         width: screenWidth * 0.6,
-        height: screenHeight * 0.5,
+        height: screenHeight * 0.7,
         margin: EdgeInsets.only(right: 6, left: 6),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
@@ -106,19 +106,19 @@ class EventCard extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               child: Image.network(
                 event.eventImage,
-                height: screenWidth * 0.5,
+                height: screenWidth * 0.4,
                 width: double.infinity,
                 fit: BoxFit.fill,
               ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(1.5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                      DateFormat('MMM dd, yyyy').format(event.eventDates[0]),
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Color(0xFF5568FE),),
                     ),
@@ -168,7 +168,7 @@ class EventCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10), 
+                        SizedBox(height: 5), 
                       ],
                     ),
                   ],

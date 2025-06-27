@@ -37,7 +37,7 @@ class EventItem extends StatelessWidget {
               children: [
                 const Icon(Icons.people, color: MyTheme.customBlue, size: 16),
                 const SizedBox(width: 5),
-                Text("${eventModel.eventBegDate} Attending"),
+                Text("${eventModel.eventDates[0]} Attending"),
               ],
             ),
           ],

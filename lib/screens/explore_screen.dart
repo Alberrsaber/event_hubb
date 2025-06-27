@@ -73,8 +73,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
           ),
           const SizedBox(height: 20),
           Streambuilderwidget(
-            getEventStream: EventController().getAllEvents(),
-            getAllEventStream: EventController().getAllEvents(),
+            getEventStream: EventController().getTopTopics(),
+            getAllEventStream: EventController().getTopTopics(),
             title: l10n.top_topics,
           ),
           const SizedBox(height: 20),
