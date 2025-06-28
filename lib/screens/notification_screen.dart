@@ -14,20 +14,22 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
+            final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.primaryColor,
         title: const Text(
           'Notifications',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: NotificationsController().getNotifications(),

@@ -4,8 +4,7 @@ class EventModel {
   final String eventId;
   final String eventName;
   final String eventDes;
-  final DateTime eventBegDate;
-  final DateTime eventEndDate;
+  final List<DateTime> eventDates;
   final String eventImage;
   final String eventSponser;
   final String eventLocation;
@@ -13,14 +12,13 @@ class EventModel {
   final int eventAttendees;
   final String eventCategory;
   final String eventStatus;
-  final List<String> eventBookmarks ;
+  final List<String> eventBookmarks;
 
   EventModel({
     required this.eventId,
     required this.eventName,
     required this.eventDes,
-    required this.eventBegDate,
-    required this.eventEndDate,
+    required this.eventDates,
     required this.eventImage,
     required this.eventSponser,
     required this.eventLocation,
@@ -31,13 +29,11 @@ class EventModel {
     required this.eventAttendees,
   });
 
-  // Convert EventModel to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'eventName': eventName,
       'eventDes': eventDes,
-      'eventBegDate': Timestamp.fromDate(eventBegDate), // Convert DateTime to Timestamp
-      'eventEndDate': Timestamp.fromDate(eventEndDate),
+      'eventDates': eventDates.map((date) => Timestamp.fromDate(date)).toList(),
       'eventImage': eventImage,
       'eventSponser': eventSponser,
       'eventLocation': eventLocation,
@@ -49,33 +45,31 @@ class EventModel {
     };
   }
 
-  // Create EventModel from Firestore Map
-factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
-  return EventModel(
-    eventId: documentId,
-    eventName: data['eventName'] ?? '',
-    eventDes: data['eventDes'] ?? '',
-    eventBegDate: _convertToDate(data['eventBegDate']),
-    eventEndDate: _convertToDate(data['eventEndDate']),
-    eventImage: data['eventImage'] ?? '',
-    eventSponser: data['eventSponser'] ?? '',
-    eventLocation: data['eventLocation'] ?? '',
-    eventMaxAttendees: data['eventMaxAttendees'] ?? '',
-    eventCategory: data['eventCategory'] ?? '',
-    eventStatus: data['eventStatus'] ?? '',
-    eventAttendees: data['eventAttendees'] ?? 0,
-    eventBookmarks: List<String>.from(data['eventBookmarks'] ?? []),
-  );
-}
-
- static  DateTime _convertToDate(dynamic value) {
-  if (value is Timestamp) {
-    return value.toDate();
-  } else if (value is String) {
-    return DateTime.tryParse(value) ?? DateTime.now();
-  } else {
-    return DateTime.now();
+  factory EventModel.fromMap(Map<String, dynamic> data, String documentId) {
+    return EventModel(
+      eventId: documentId,
+      eventName: data['eventName'] ?? '',
+      eventDes: data['eventDes'] ?? '',
+      eventDates: _convertToDateList(data['eventDates']),
+      eventImage: data['eventImage'] ?? '',
+      eventSponser: data['eventSponser'] ?? '',
+      eventLocation: data['eventLocation'] ?? '',
+      eventMaxAttendees: data['eventMaxAttendees'] ?? '',
+      eventCategory: data['eventCategory'] ?? '',
+      eventStatus: data['eventStatus'] ?? '',
+      eventAttendees: data['eventAttendees'] ?? 0,
+      eventBookmarks: List<String>.from(data['eventBookmarks'] ?? []),
+    );
   }
-}
 
+  static List<DateTime> _convertToDateList(dynamic value) {
+    if (value is List) {
+      return value.map((item) {
+        if (item is Timestamp) return item.toDate();
+        if (item is String) return DateTime.tryParse(item) ?? DateTime.now();
+        return DateTime.now();
+      }).toList();
+    }
+    return [];
+  }
 }

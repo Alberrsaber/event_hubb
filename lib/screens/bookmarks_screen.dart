@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_booking_app_ui/controllers/event_controller.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/screens/eventDetails_screen.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:event_booking_app_ui/generated/l10n.dart'; // <-- Localization import
 
-class EventsPage extends StatelessWidget {
-  final Stream<QuerySnapshot> getEventStream;
-  const EventsPage({super.key, required this.getEventStream});
+class BookMarksScreen extends StatelessWidget {
+  const BookMarksScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,26 +21,27 @@ class EventsPage extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Get.back(),
         ),
         title: Text(
-          l10n.events, // <-- Localized 'Events'
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          l10n.bookmarks, // <-- Localized 'Bookmarks'
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: getEventStream,
+              stream: EventController().getBookmarks(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('${l10n.error}: ${snapshot.error}')); // <-- Localized 'Error'
+                  return Center(
+                      child: Text('${l10n.error}: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text(l10n.no_events_found)); // <-- Localized 'No events found'
+                  return Center(child: Text(l10n.no_events_found));
                 } else {
                   List<EventModel> events = snapshot.data!.docs.map((doc) {
                     return EventModel.fromMap(
@@ -68,18 +71,17 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-        final l10n = S.of(context);
-
-    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final l10n = S.of(context);
+
     return InkWell(
       onTap: () => Get.to(() => EventDetails(event: event)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: isDark ? theme.cardColor : Colors.white,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).cardColor
+              : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -100,7 +102,7 @@ class EventCard extends StatelessWidget {
               child: Image.network(
                 event.eventImage,
                 width: screenWidth * 0.32,
-                height: screenHeight * 0.24,
+                height: 185,
                 fit: BoxFit.fill,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -188,7 +190,22 @@ class EventCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        
+                        ElevatedButton(
+                          onPressed: () {
+                            EventController().removeFromBookmarks(event.eventId);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 244, 67, 54),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Icon(Icons.delete,
+                              color: Colors.white, size: 20),
+                        ),
                       ],
                     ),
                   ],

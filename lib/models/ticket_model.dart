@@ -10,6 +10,7 @@ class TicketModel {
   final String eventLocation;
   final String orderId;
   final String seat;
+  final String ticketState;
 
   TicketModel({
     required this.ticketId,
@@ -21,6 +22,7 @@ class TicketModel {
     required this.eventLocation,
     required this.orderId,
     required this.seat,
+    required this.ticketState,
   });
 
   /// Convert to Firestore map
@@ -35,6 +37,7 @@ class TicketModel {
       'eventLocation': eventLocation,
       'orderId': orderId,
       'seat': seat,
+      'ticketState': ticketState,
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
@@ -51,6 +54,7 @@ class TicketModel {
       eventLocation: map['eventLocation'] ?? '',
       orderId: map['orderId'] ?? '',
       seat: map['seat'] ?? '',
+      ticketState: map['ticketState'] ?? 'active', // Default state
     );
   }
 

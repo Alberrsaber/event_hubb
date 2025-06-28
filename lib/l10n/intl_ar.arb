@@ -57,11 +57,15 @@
   "phone_required": "الرجاء إدخال رقم الهاتف",
   "invalid_phone_format": "الرجاء إدخال رقم هاتف صحيح (مثال: +20123456789)",
 
-
-
-
-
-
+"view_details": "عرض التفاصيل",
+"see_all":"المزيد",
+"confirm_ticket":"تأكيد الحجز",
+"ticket_booked_successfully":"! تم حجز التذكرة بنجاح",
+"you_have_booked":"لقد قمت بحجز",
+"cancel_ticket":"إلغاء الحجز",
+"all_months":"كل الاشهر",
+"notes": "ملاحظات",
+"ticket_canceled_successfully":"! تم إلغاء التذكرة بنجاح",
 
     "_comment2": "                                               eXPLORE Screen                                         ",
     "top_topics": "أهم المواضيع",

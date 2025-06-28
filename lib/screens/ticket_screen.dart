@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
+import 'package:event_booking_app_ui/generated/l10n.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:event_booking_app_ui/screens/home_screen.dart';
@@ -25,9 +26,9 @@ class _TicketScreenState extends State<TicketScreen>
   String seat = '';
   final String orderNo = TicketController().generateOrderId();
   bool hasBooked = false;
+  DateTime? selectedDate;
 
-  late AnimationController _animationController;
-  late Animation<double> _fadeInAnimation;
+  final l10n = S.of(Get.context!);
 
   @override
   void initState() {
@@ -36,17 +37,10 @@ class _TicketScreenState extends State<TicketScreen>
     _loadSeatNumber();
     _checkIfUserBooked();
 
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+  selectedDate = widget.event.eventDates.isNotEmpty
+    ? widget.event.eventDates.first
+    : widget.event.eventDates[0];
 
-    _fadeInAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
-
-    _animationController.forward();
   }
 
   Future<void> _fetchUserData() async {
@@ -89,29 +83,29 @@ class _TicketScreenState extends State<TicketScreen>
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: FadeTransition(
-        opacity: _fadeInAnimation,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: RepaintBoundary(
-                    key: TicketScreen._ticketKey,
-                    child: _buildGlassTicketCard(context),
-                  ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Center(
+                child: RepaintBoundary(
+                  key: TicketScreen._ticketKey,
+                  child: _buildGlassTicketCard(context),
                 ),
               ),
             ),
-            // _buildBottomActionBar(context),
-          ],
-        ),
+          ),
+          // _buildBottomActionBar(context),
+        ],
       ),
     );
   }
 
   Widget _buildGlassTicketCard(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
     return Container(
       width: size.width,
@@ -127,7 +121,7 @@ class _TicketScreenState extends State<TicketScreen>
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.85),
+              color: isDark ? theme.cardColor.withOpacity(0.8) : Colors.white.withOpacity(0.8),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
@@ -145,7 +139,7 @@ class _TicketScreenState extends State<TicketScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "${DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)} | ${widget.event.eventLocation}",
+                  "${DateFormat('MMM dd, yyyy').format(widget.event.eventDates[0])} | ${widget.event.eventLocation}",
                   style: TextStyle(color: Colors.grey[700], fontSize: 14),
                 ),
                 const Divider(height: 30, color: Colors.grey),
@@ -163,11 +157,11 @@ class _TicketScreenState extends State<TicketScreen>
                       ? null
                       : () {
                           TicketController()
-                              .saveTicket(widget.event, orderNo, seat)
+                              .saveTicket(widget.event,selectedDate, orderNo, seat)
                               .then((value) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Ticket confirmed and saved")),
+                               SnackBar(
+                                  content: Text(l10n.ticket_booked_successfully)),
                             );
                             Get.offAll(() => HomeScreen());
                           });
@@ -176,7 +170,7 @@ class _TicketScreenState extends State<TicketScreen>
                     hasBooked ? Icons.check_circle : Icons.check_circle_outline,
                   ),
                   label: Text(
-                    hasBooked ? "YOU HAVE BOOKED" : "CONFIRM TICKET",
+                    hasBooked ? l10n.you_have_booked : l10n.confirm_ticket,
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: hasBooked ? Colors.grey : Colors.indigo,
@@ -214,16 +208,40 @@ class _TicketScreenState extends State<TicketScreen>
   }
 
   Widget _buildTicketDetails() {
+      final dateList = widget.event.eventDates;
     return Column(
       children: [
-        _buildTicketRow("Name", user?.userName ?? "Loading..."),
+        _buildTicketRow(l10n.name, user?.userName ?? "Loading..."),
         const SizedBox(height: 12),
-        _buildTicketRow("Order No.", orderNo),
+        _buildTicketRow(l10n.order_number, orderNo),
         const SizedBox(height: 12),
-        _buildTicketRow("Date",
-            DateFormat('MMM dd, yyyy').format(widget.event.eventBegDate)),
+        Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(l10n.date, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+          dateList.length <= 1
+              ? Text(
+                  DateFormat('MMM dd, yyyy').format(selectedDate!),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                )
+              : DropdownButton<DateTime>(
+                  value: selectedDate,
+                  items: dateList.map((date) {
+                    return DropdownMenuItem<DateTime>(
+                      value: date,
+                      child: Text(DateFormat('MMM dd, yyyy').format(date)),
+                    );
+                  }).toList(),
+                  onChanged: (newDate) {
+                    setState(() {
+                      selectedDate = newDate!;
+                    });
+                  },
+                ),
+        ],
+      ),
         const SizedBox(height: 12),
-        _buildTicketRow("Seat", seat),
+        _buildTicketRow(l10n.seat, seat),
       ],
     );
   }

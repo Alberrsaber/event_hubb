@@ -71,13 +71,16 @@ class _SplashScreenState extends State<SplashScreen>
                   Image(image: AssetImage('assets/images/top_right_shade.png')),
             ),
             Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image(image: AssetImage('assets/images/logo.png')),
-                  SizedBox(width: 8),
-                  Image(image: AssetImage('assets/images/vent_hub_label.png')),
-                ],
+              child: Directionality(
+                    textDirection: TextDirection.ltr, // <-- Force LTR layout
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image(image: AssetImage('assets/images/logo.png')),
+                    SizedBox(width: 8),
+                    Image(image: AssetImage('assets/images/vent_hub_label.png')),
+                  ],
+                ),
               ),
             ),
             Align(

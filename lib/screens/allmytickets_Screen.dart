@@ -20,15 +20,14 @@ class _EventsPageState extends State<AllMyTicketsPage> {
     final l10n = S.of(context);
     
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, ),
           onPressed: () => Get.back(),
         ),
-        title: Text(l10n.my_tickets, style: const TextStyle(color: Colors.black)),
+        title: Text(l10n.my_tickets, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Column(
         children: [
@@ -71,13 +70,16 @@ class TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
+        final isDark = theme.brightness == Brightness.dark;
+
     return InkWell(
       onTap: () => Get.to(() => MyticketScreen(ticket: ticket)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? theme.cardColor : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

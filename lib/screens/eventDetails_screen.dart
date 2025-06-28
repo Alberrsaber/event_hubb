@@ -40,7 +40,6 @@ class _EventDetailsState extends State<EventDetails> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(
         children: [
           // Event image and buttons
@@ -108,13 +107,13 @@ class _EventDetailsState extends State<EventDetails> {
                         fontWeight: FontWeight.bold,
                       )),
                   const SizedBox(height: 8),
-                  Divider(color: Colors.grey.shade300),
+                  Divider(color: Theme.of(context).dividerColor),
                   const SizedBox(height: 20),
                   _infoRow(
                     icon: Icons.calendar_month_rounded,
-                    title: DateFormat('MMM dd, yyyy').format(event.eventBegDate),
+                    title: DateFormat('MMM dd, yyyy').format(event.eventDates[0]),
                     subtitle:
-                        '${DateFormat('EEEE, h:mm a').format(event.eventBegDate)} - ${DateFormat('h:mm a').format(event.eventEndDate)}',
+                        '${DateFormat('EEEE, h:mm a').format(event.eventDates[0])} - ${DateFormat('h:mm a').format(event.eventDates.last)}',
                   ),
                   const SizedBox(height: 16),
                   _infoRow(
@@ -137,11 +136,7 @@ class _EventDetailsState extends State<EventDetails> {
                   const SizedBox(height: 12),
                   Text(
                     event.eventDes,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      height: 1.6,
-                      fontSize: 15.5,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.6),
                   ),
                 ],
               ),
@@ -153,18 +148,20 @@ class _EventDetailsState extends State<EventDetails> {
       // Bottom CTA
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).cardColor
+              : Colors.white,
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
         ),
         child: ElevatedButton(
-          onPressed: event.eventEndDate.isBefore(DateTime.now())
+          onPressed: event.eventDates.last.isBefore(DateTime.now())
               ? null // disables the button
               : () {
                   Get.to(() => TicketScreen(event: event));
                 },
           style: ElevatedButton.styleFrom(
-            backgroundColor: event.eventEndDate.isBefore(DateTime.now())
+            backgroundColor: event.eventDates.last.isBefore(DateTime.now())
                 ? Colors.grey // disabled color
                 : const Color(0xFF5568FE),
             padding: const EdgeInsets.symmetric(vertical: 18),
@@ -172,7 +169,7 @@ class _EventDetailsState extends State<EventDetails> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
           child: Text(
-            event.eventEndDate.isBefore(DateTime.now())
+            event.eventDates.last.isBefore(DateTime.now())
                 ? l10n.event_ended.toUpperCase()
                 : l10n.book_ticket.toUpperCase(),
             style: const TextStyle(

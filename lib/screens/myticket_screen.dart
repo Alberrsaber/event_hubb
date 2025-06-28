@@ -3,6 +3,7 @@ import 'package:event_booking_app_ui/controllers/ticket_controller.dart';
 import 'package:event_booking_app_ui/controllers/user_controller.dart';
 import 'package:event_booking_app_ui/models/ticket_model.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
+import 'package:event_booking_app_ui/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -91,6 +92,9 @@ class _TicketScreenState extends State<MyticketScreen> with TickerProviderStateM
 
   Widget _buildGlassTicketCard(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
     return Container(
       width: size.width,
@@ -106,7 +110,7 @@ class _TicketScreenState extends State<MyticketScreen> with TickerProviderStateM
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.85),
+              color: isDark ? theme.cardColor : Colors.white,
               borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
@@ -137,6 +141,32 @@ class _TicketScreenState extends State<MyticketScreen> with TickerProviderStateM
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed:  () {
+                          TicketController()
+                              .deleteTicket( widget.ticket.ticketId)
+                              .then((value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                               SnackBar(
+                                  content: Text(l10n.ticket_canceled_successfully),),
+                            );
+                            Get.offAll(() => HomeScreen());
+                          });
+                        },
+                  
+                  label: Text(
+                    l10n.cancel_ticket,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:  Colors.grey ,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -187,10 +217,13 @@ class _TicketScreenState extends State<MyticketScreen> with TickerProviderStateM
   }
 
   Widget _buildBottomActionBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: isDark ? theme.cardColor : Colors.white,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),

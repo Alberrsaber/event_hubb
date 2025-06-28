@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:event_booking_app_ui/models/event_model.dart';
 import 'package:event_booking_app_ui/models/ticket_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
 class TicketController {
-  Future<void> saveTicket(EventModel event, orderId, seat) async {
+  Future<void> saveTicket(EventModel event, ticketDate, orderId, seat) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
@@ -24,10 +25,11 @@ class TicketController {
       eventId: event.eventId,
       eventName: event.eventName,
       eventImage: event.eventImage,
-      eventBegDate: event.eventBegDate,
+      eventBegDate: ticketDate,
       eventLocation: event.eventLocation,
       orderId: orderId,
-      seat: seat, // or dynamically assigned
+      seat: seat,
+      ticketState: 'active', 
     );
   await  incrementEventAttendees(event.eventId);
 
@@ -107,9 +109,21 @@ class TicketController {
   }
 
   Future<bool> requestPermission() async {
-    var status = await Permission.storage.request();
+  if (Platform.isAndroid) {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    if (androidInfo.version.sdkInt >= 33) {
+      var photos = await Permission.photos.request();
+      return photos.isGranted;
+    } else {
+      var status = await Permission.storage.request();
+      return status.isGranted;
+    }
+  } else {
+    var status = await Permission.photos.request(); // iOS
     return status.isGranted;
   }
+}
+
 
   Future<String?> shareTicketPhoto(
       GlobalKey repaintBoundaryKey, BuildContext context) async {
@@ -137,13 +151,6 @@ class TicketController {
                 '${tempDir.path}/ticket_${DateTime.now().millisecondsSinceEpoch}.png')
             .create();
         await file.writeAsBytes(pngBytes);
-
-        // Also save to gallery
-        await ImageGallerySaverPlus.saveImage(pngBytes);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Ticket saved to gallery")),
-        );
         return file.path;
       }
     } catch (e) {
@@ -188,4 +195,8 @@ Future<bool> hasUserBookedEvent(String eventId) async {
 
   return snapshot.docs.isNotEmpty;
 }
+// delete ticket
+  Future<void> deleteTicket(String ticketId) async {
+    await FirebaseFirestore.instance.collection('Tickets').doc(ticketId).delete();
+  }
 }

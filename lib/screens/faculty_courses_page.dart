@@ -17,7 +17,7 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
   final CourseController _courseController = CourseController();
   List<CourseModel> courses = [];
 
-  DateTime selectedMonth = DateTime.now();
+  DateTime? selectedMonth; // Null means "All months"
   bool isSortedAscending = true;
 
   static const List<String> englishMonths = [
@@ -63,7 +63,7 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = S.of(context); // Moved inside build method
+    final l10n = S.of(context);
     localizedMonths = [
       l10n.january,
       l10n.february,
@@ -79,26 +79,27 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
       l10n.december,
     ];
 
-    // Get English month name for filtering
-    final englishMonth = englishMonths[selectedMonth.month - 1];
-
-    // Filter and sort only once
-    List<CourseModel> filteredCourses = courses
-        .where((course) => course.courseDate == englishMonth)
-        .toList();
+    // Filter courses based on selected month (if any)
+    List<CourseModel> filteredCourses = selectedMonth == null
+        ? List.from(courses) // Show all courses if no month is selected
+        : courses
+            .where((course) =>
+                course.courseDate == englishMonths[selectedMonth!.month - 1])
+            .toList();
 
     _sortCourses(filteredCourses);
 
-    final currentLocalizedMonth = localizedMonths[selectedMonth.month - 1];
+    final currentLocalizedMonth = selectedMonth == null
+        ? l10n.all_months // Show "All months" when no month is selected
+        : localizedMonths[selectedMonth!.month - 1];
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark?Colors.black: Colors.white,
         elevation: 1,
         title: Text(
           l10n.faculty_courses,
-          style: const TextStyle(color: Colors.black),
+          style:  TextStyle(color: Theme.of(context).brightness == Brightness.dark?Colors.white:Colors.black),
         ),
         actions: [
           Padding(
@@ -106,8 +107,12 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
             child: DropdownButton<String>(
               value: currentLocalizedMonth,
               onChanged: (String? newLocalizedMonth) {
-                if (newLocalizedMonth != null) {
-                  final monthIndex = localizedMonths.indexOf(newLocalizedMonth);
+                if (newLocalizedMonth == l10n.all_months) {
+                  setState(() {
+                    selectedMonth = null; // Show all months
+                  });
+                } else {
+                  final monthIndex = localizedMonths.indexOf(newLocalizedMonth!);
                   if (monthIndex != -1) {
                     setState(() {
                       selectedMonth = DateTime(
@@ -119,12 +124,18 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
                   }
                 }
               },
-              items: localizedMonths.map<DropdownMenuItem<String>>((String month) {
-                return DropdownMenuItem<String>(
-                  value: month,
-                  child: Text(month),
-                );
-              }).toList(),
+              items: [
+                DropdownMenuItem<String>(
+                  value: l10n.all_months,
+                  child: Text(l10n.all_months),
+                ),
+                ...localizedMonths.map<DropdownMenuItem<String>>((String month) {
+                  return DropdownMenuItem<String>(
+                    value: month,
+                    child: Text(month),
+                  );
+                }).toList(),
+              ],
             ),
           ),
           IconButton(
@@ -159,7 +170,7 @@ class _FacultyCoursesScreenState extends State<FacultyCoursesScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).brightness == Brightness.dark?Theme.of(context).cardColor: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: const [
             BoxShadow(
