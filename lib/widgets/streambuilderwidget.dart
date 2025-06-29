@@ -90,7 +90,7 @@ class EventCard extends StatelessWidget {
       },
       child: Container(
         width: screenWidth * 0.6,
-        height: screenHeight * 0.7,
+        height: screenHeight * 0.4,
         margin: EdgeInsets.only(right: 6, left: 6),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
@@ -145,7 +145,7 @@ class EventCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacer(),  
+                    SizedBox(height: 5),
                     Column(
                       children: [
                         SizedBox(
@@ -168,7 +168,6 @@ class EventCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 5), 
                       ],
                     ),
                   ],

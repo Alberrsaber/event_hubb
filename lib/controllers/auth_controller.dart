@@ -244,7 +244,7 @@ class AuthController {
       print("Google Sign-In Error: $e");
       Get.snackbar(
         'Error',
-        'Failed to sign in with Google: ${e.toString()}',
+        'Failed to sign in with Google. ',
         snackPosition: SnackPosition.BOTTOM,
       );
     }

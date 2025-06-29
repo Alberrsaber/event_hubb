@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_booking_app_ui/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
 
 class UserController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -104,5 +106,37 @@ class UserController {
       return null;
     }
   }
-  
+  // send email 
+  Future<void> sendEmail({
+  required String name,
+  required String subject,
+  required String message,
+}) async {
+  const serviceId = 'service_kgf2jq7';
+  const templateId = 'template_3q72lg7';
+  const userId = '-GcndrGwz3Zj8YqpE';
+
+  final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+  final response = await http.post(
+    url,
+    headers: {
+      'origin': 'http://localhost',
+      'Content-Type': 'application/json',
+    },
+    body: json.encode({
+      'service_id': serviceId,
+      'template_id': templateId,
+      'user_id': userId,
+      'template_params': {
+        'name': name,
+        'subject': subject,
+        'message': message,
+      },
+    }),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Failed to send email: ${response.body}');
+  }
+}
 }
